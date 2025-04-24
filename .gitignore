@@ -1,2 +1,7 @@
+__pycache__
 turnero_bla.db
 .venv/
+images/
+*.ui
+*.qrc
+__init__.py
