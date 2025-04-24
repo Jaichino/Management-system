@@ -80,6 +80,7 @@ def create_bd():
 # Ejecución solo para crear la base de datos
 ##############################################################################
 
-if __name__ == "__main__":
-    create_bd()
-
+#if __name__ == "__main__":
+#    create_bd()
+#
+#

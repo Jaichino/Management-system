@@ -12,7 +12,12 @@ from sqlmodel import select, Session
 class ModeloCliente():
 
     @staticmethod
-    def nuevo_cliente(nombre: str, apellido: str, cel: int, email: str):
+    def nuevo_cliente(
+        nombre: str, 
+        apellido: str, 
+        cel: int = None, 
+        email: str = None
+    ):
         ''' Método para insertar nuevos clientes a la base de datos
             :param str nombre: Nombre del cliente
             :param str apellido: Apellido del cliente
@@ -58,3 +63,31 @@ class ModeloCliente():
             ).all()
 
             return clientes_filtrados
+
+
+    @staticmethod
+    def editar_cliente(
+        id: int, 
+        nombre: str, 
+        apellido: str, 
+        cel: int = None, 
+        email: str = None
+    ):
+        ''' Método para editar un cliente segun su ID
+            :param int id: ID del cliente a editar
+            :param str nombre: Nombre del cliente
+            :param str apellido: Apellido del cliente
+            :param int cel: Telefono del cliente
+            :param str email: Email del cliente
+        '''
+        with Session(engine) as sesion:
+            cliente_editar = sesion.exec(
+                select(Cliente).where(Cliente.id == id)
+            ).one()
+
+            cliente_editar.nombre = nombre
+            cliente_editar.apellido = apellido
+            cliente_editar.telefono = cel
+            cliente_editar.email = email
+            sesion.add(cliente_editar)
+            sesion.commit()
