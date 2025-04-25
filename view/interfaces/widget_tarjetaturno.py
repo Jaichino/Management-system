@@ -22,9 +22,9 @@ class WidgetTarjetaTurno(object):
     def setupUi(self, widgetTarjetaTurnos):
         if not widgetTarjetaTurnos.objectName():
             widgetTarjetaTurnos.setObjectName(u"widgetTarjetaTurnos")
-        widgetTarjetaTurnos.resize(750, 200)
-        widgetTarjetaTurnos.setMinimumSize(QSize(750, 200))
-        widgetTarjetaTurnos.setMaximumSize(QSize(750, 200))
+        widgetTarjetaTurnos.resize(746, 150)
+        widgetTarjetaTurnos.setMinimumSize(QSize(0, 0))
+        widgetTarjetaTurnos.setMaximumSize(QSize(16777215, 150))
         widgetTarjetaTurnos.setStyleSheet(u"background-color:white")
         self.gridLayout = QGridLayout(widgetTarjetaTurnos)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -85,6 +85,7 @@ class WidgetTarjetaTurno(object):
         self.encabezados.setStyleSheet(u"border: 0px")
         self.verticalLayout_2 = QVBoxLayout(self.encabezados)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.titCliente = QLabel(self.encabezados)
         self.titCliente.setObjectName(u"titCliente")
         font1 = QFont()
@@ -141,7 +142,7 @@ class WidgetTarjetaTurno(object):
         self.labelsTurnos.setStyleSheet(u"border: 0px")
         self.verticalLayout_3 = QVBoxLayout(self.labelsTurnos)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.lblCliente = QLabel(self.labelsTurnos)
         self.lblCliente.setObjectName(u"lblCliente")
         font2 = QFont()
@@ -203,6 +204,7 @@ class WidgetTarjetaTurno(object):
         self.btnCancelarTurno.setMinimumSize(QSize(100, 30))
         self.btnCancelarTurno.setMaximumSize(QSize(100, 30))
         self.btnCancelarTurno.setFont(font2)
+        self.btnCancelarTurno.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnCancelarTurno.setStyleSheet(u"QPushButton {\n"
 "	color: #C18484;\n"
 "	border: 1px solid #C18484;\n"

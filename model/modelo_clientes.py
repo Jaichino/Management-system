@@ -2,7 +2,7 @@
 # Importaciones
 ##############################################################################
 
-from database import engine, Cliente
+from model.database import engine, Cliente
 from sqlmodel import select, Session
 
 ##############################################################################

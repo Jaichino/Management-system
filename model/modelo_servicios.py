@@ -2,7 +2,7 @@
 # Importaciones
 ##############################################################################
 
-from database import engine, Servicio
+from model.database import engine, Servicio
 from sqlmodel import select, Session
 
 ##############################################################################

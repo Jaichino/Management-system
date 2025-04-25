@@ -23,6 +23,7 @@ class VentanaCliente(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        MainWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
         MainWindow.resize(380, 380)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -212,7 +213,7 @@ class VentanaCliente(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"BLA - Nuevo cliente", None))
-        self.tituloVentana.setText(QCoreApplication.translate("MainWindow", u"Nuevo cliente", None))
+        self.tituloVentana.setText(QCoreApplication.translate("MainWindow", u"Clientes", None))
         self.labelNombre.setText(QCoreApplication.translate("MainWindow", u"Nombre", None))
         self.labelApellido.setText(QCoreApplication.translate("MainWindow", u"Apellido", None))
         self.labelCelular.setText(QCoreApplication.translate("MainWindow", u"Celular", None))

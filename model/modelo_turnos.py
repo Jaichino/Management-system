@@ -1,8 +1,9 @@
 ##############################################################################
 # Importaciones
 ##############################################################################
+
 from datetime import date, time
-from database import engine, Turno, Cliente, Servicio
+from model.database import engine, Turno, Cliente, Servicio
 from sqlmodel import select, Session, join
 
 ##############################################################################

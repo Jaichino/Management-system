@@ -23,6 +23,7 @@ class VentanaServicio(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        MainWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
         MainWindow.resize(380, 400)
         MainWindow.setMinimumSize(QSize(380, 400))
         MainWindow.setMaximumSize(QSize(380, 400))

@@ -26,17 +26,24 @@ class VentanaPrincipal(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.WindowModality.WindowModal)
-        MainWindow.resize(1000, 700)
-        MainWindow.setMinimumSize(QSize(1000, 700))
-        MainWindow.setMaximumSize(QSize(1000, 700))
+        MainWindow.resize(1100, 650)
+        MainWindow.setMinimumSize(QSize(1100, 650))
+        MainWindow.setMaximumSize(QSize(1100, 650))
         MainWindow.setStyleSheet(u"border-radius: 10px;")
         MainWindow.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.centralwidget.setStyleSheet(u"background-color:white")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy)
+        self.centralwidget.setMinimumSize(QSize(1100, 650))
+        self.centralwidget.setMaximumSize(QSize(1100, 650))
+        self.centralwidget.setStyleSheet(u"background-color: #f9f4f4")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setContentsMargins(5, -1, -1, -1)
+        self.horizontalLayout.setContentsMargins(2, 2, 2, 2)
         self.LeftMenu = QWidget(self.centralwidget)
         self.LeftMenu.setObjectName(u"LeftMenu")
         self.LeftMenu.setMinimumSize(QSize(200, 0))
@@ -47,9 +54,6 @@ class VentanaPrincipal(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.LogoNegocio = QWidget(self.LeftMenu)
         self.LogoNegocio.setObjectName(u"LogoNegocio")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.LogoNegocio.sizePolicy().hasHeightForWidth())
         self.LogoNegocio.setSizePolicy(sizePolicy)
         self.LogoNegocio.setMaximumSize(QSize(16777215, 200))
@@ -158,13 +162,14 @@ class VentanaPrincipal(object):
         self.verticalLayout_4.setSpacing(6)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_4.setSizeConstraint(QLayout.SizeConstraint.SetMaximumSize)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_4.setContentsMargins(0, 0, 2, 0)
         self.StackedWidget = QStackedWidget(self.MainBody)
         self.StackedWidget.setObjectName(u"StackedWidget")
         sizePolicy.setHeightForWidth(self.StackedWidget.sizePolicy().hasHeightForWidth())
         self.StackedWidget.setSizePolicy(sizePolicy)
-        self.StackedWidget.setMinimumSize(QSize(776, 680))
-        self.StackedWidget.setMaximumSize(QSize(776, 680))
+        self.StackedWidget.setMinimumSize(QSize(0, 0))
+        self.StackedWidget.setMaximumSize(QSize(16777215, 16777215))
+        self.StackedWidget.setStyleSheet(u"background-color: rgb(249, 244, 244);")
         self.MenuServicios = QWidget()
         self.MenuServicios.setObjectName(u"MenuServicios")
         self.verticalLayout_6 = QVBoxLayout(self.MenuServicios)
@@ -263,27 +268,20 @@ class VentanaPrincipal(object):
 
         self.verticalLayout_6.addWidget(self.encabezadoServicios)
 
-        self.scrollArea = QScrollArea(self.MenuServicios)
-        self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 772, 524))
-        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.scrollAreaServicio = QScrollArea(self.MenuServicios)
+        self.scrollAreaServicio.setObjectName(u"scrollAreaServicio")
+        self.scrollAreaServicio.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scrollAreaServicio.setWidgetResizable(True)
+        self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
+        self.contenedorServicios = QWidget()
+        self.contenedorServicios.setObjectName(u"contenedorServicios")
+        self.contenedorServicios.setGeometry(QRect(0, 0, 884, 490))
+        self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
-        self.contenedorServicios = QWidget(self.scrollAreaWidgetContents)
-        self.contenedorServicios.setObjectName(u"contenedorServicios")
-        sizePolicy1.setHeightForWidth(self.contenedorServicios.sizePolicy().hasHeightForWidth())
-        self.contenedorServicios.setSizePolicy(sizePolicy1)
-        self.contenedorServicios.setMinimumSize(QSize(768, 524))
-        self.contenedorServicios.setMaximumSize(QSize(768, 524))
+        self.scrollAreaServicio.setWidget(self.contenedorServicios)
 
-        self.verticalLayout_3.addWidget(self.contenedorServicios)
-
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
-        self.verticalLayout_6.addWidget(self.scrollArea)
+        self.verticalLayout_6.addWidget(self.scrollAreaServicio)
 
         self.StackedWidget.addWidget(self.MenuServicios)
         self.MenuTurnos = QWidget()
@@ -350,6 +348,7 @@ class VentanaPrincipal(object):
         self.calendarWidget.setFont(font3)
         self.calendarWidget.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.calendarWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.calendarWidget.setStyleSheet(u"")
         self.calendarWidget.setSelectedDate(QDate(2025, 4, 1))
         self.calendarWidget.setMinimumDate(QDate(2025, 4, 1))
         self.calendarWidget.setGridVisible(False)
@@ -406,28 +405,22 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos = QScrollArea(self.MenuTurnos)
         self.scrollAreaTurnos.setObjectName(u"scrollAreaTurnos")
         self.scrollAreaTurnos.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_2 = QWidget()
-        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 772, 504))
-        self.verticalLayout_16 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.contenedorTurnos = QWidget()
+        self.contenedorTurnos.setObjectName(u"contenedorTurnos")
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 884, 470))
+        self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
-        self.contenedorTurnos = QWidget(self.scrollAreaWidgetContents_2)
-        self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setMinimumSize(QSize(772, 504))
-        self.contenedorTurnos.setMaximumSize(QSize(772, 504))
-
-        self.verticalLayout_16.addWidget(self.contenedorTurnos)
-
-        self.scrollAreaTurnos.setWidget(self.scrollAreaWidgetContents_2)
+        self.scrollAreaTurnos.setWidget(self.contenedorTurnos)
 
         self.verticalLayout_8.addWidget(self.scrollAreaTurnos)
 
         self.StackedWidget.addWidget(self.MenuTurnos)
         self.IntroPage = QWidget()
         self.IntroPage.setObjectName(u"IntroPage")
-        self.IntroPage.setMinimumSize(QSize(776, 680))
-        self.IntroPage.setMaximumSize(QSize(776, 680))
+        self.IntroPage.setMinimumSize(QSize(0, 0))
+        self.IntroPage.setMaximumSize(QSize(16777215, 16777215))
+        self.IntroPage.setStyleSheet(u"background-color: rgb(249, 244, 244);")
         self.verticalLayout_13 = QVBoxLayout(self.IntroPage)
         self.verticalLayout_13.setSpacing(0)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
@@ -554,7 +547,8 @@ class VentanaPrincipal(object):
         self.btnNuevoCliente.setObjectName(u"btnNuevoCliente")
         sizePolicy2.setHeightForWidth(self.btnNuevoCliente.sizePolicy().hasHeightForWidth())
         self.btnNuevoCliente.setSizePolicy(sizePolicy2)
-        self.btnNuevoCliente.setMaximumSize(QSize(150, 50))
+        self.btnNuevoCliente.setMinimumSize(QSize(150, 40))
+        self.btnNuevoCliente.setMaximumSize(QSize(150, 40))
         self.btnNuevoCliente.setFont(font1)
         self.btnNuevoCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnNuevoCliente.setStyleSheet(u"QPushButton {\n"
@@ -574,6 +568,29 @@ class VentanaPrincipal(object):
 
         self.verticalLayout_12.addWidget(self.btnNuevoCliente)
 
+        self.btnEditarCliente = QPushButton(self.botoneraCliente)
+        self.btnEditarCliente.setObjectName(u"btnEditarCliente")
+        self.btnEditarCliente.setMinimumSize(QSize(150, 40))
+        self.btnEditarCliente.setMaximumSize(QSize(150, 40))
+        self.btnEditarCliente.setFont(font1)
+        self.btnEditarCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btnEditarCliente.setStyleSheet(u"QPushButton {\n"
+"	color: rgb(255, 255, 255);\n"
+"	border: 1px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"	font-weight: bold;\n"
+"	color: rgb(255, 255, 255);\n"
+"	border: 2px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: rgb(255, 255, 255);\n"
+"}")
+
+        self.verticalLayout_12.addWidget(self.btnEditarCliente)
+
 
         self.horizontalLayout_7.addWidget(self.botoneraCliente)
 
@@ -590,7 +607,7 @@ class VentanaPrincipal(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.tablaClientes = QTableView(self.widgetTabla)
         self.tablaClientes.setObjectName(u"tablaClientes")
-        self.tablaClientes.setFont(font4)
+        self.tablaClientes.setFont(font1)
         self.tablaClientes.setStyleSheet(u"color:black")
         self.tablaClientes.setShowGrid(True)
 
@@ -610,7 +627,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(1)
+        self.StackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -628,6 +645,7 @@ class VentanaPrincipal(object):
         self.btnNuevoTurno.setText(QCoreApplication.translate("MainWindow", u"Nuevo Turno", None))
         self.tituloClientes.setText(QCoreApplication.translate("MainWindow", u"GESTI\u00d3N DE CLIENTES", None))
         self.btnFiltrarCliente.setText(QCoreApplication.translate("MainWindow", u"Filtrar", None))
-        self.btnNuevoCliente.setText(QCoreApplication.translate("MainWindow", u"Nuevo Cliente", None))
+        self.btnNuevoCliente.setText(QCoreApplication.translate("MainWindow", u"Nuevo cliente", None))
+        self.btnEditarCliente.setText(QCoreApplication.translate("MainWindow", u"Editar cliente", None))
     # retranslateUi
 

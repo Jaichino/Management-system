@@ -24,6 +24,7 @@ class VentanaTurno(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        MainWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
         MainWindow.resize(470, 530)
         MainWindow.setMinimumSize(QSize(470, 530))
         MainWindow.setMaximumSize(QSize(470, 530))
