@@ -157,7 +157,13 @@ class MainController(QMainWindow):
         self.main_ui.btnEliminarCliente.clicked.connect(
             self.eliminar_cliente
         )
+
+        # Asignación método para filtrado de clientes
+        self.main_ui.btnFiltrarCliente.clicked.connect(
+            self.cargar_clientes
+        )
     
+
         # Llamadas para agregar tarjetas de servicios y turnos
         self.agregar_servicios()
         self.agregar_turnos()
@@ -205,27 +211,43 @@ class MainController(QMainWindow):
 
         # Se limpia el modelo antes de cargar clientes
         self.modelo_tcliente.removeRows(0, self.modelo_tcliente.rowCount())
-    
-        # Se recuperan clientes de la base de datos
-        clientes = ModeloCliente.lista_clientes()
 
-        for cliente in clientes:
-            fila = [
-                QStandardItem(str(cliente.id)),
-                QStandardItem(cliente.nombre),
-                QStandardItem(str(cliente.telefono)),
-                QStandardItem(cliente.email)
-            ]
-            self.modelo_tcliente.appendRow(fila)
+        # Se verifica si hay algún filtro de nombre de cliente aplicado
+        filtro = self.main_ui.lineEditCliente.text()
+        if filtro == '':
+            # Se recuperan clientes de la base de datos
+            clientes = ModeloCliente.lista_clientes()
+
+        else:
+            # Se recuperan clientes con el filtro de nombre aplicado
+            clientes = ModeloCliente.filtrar_cliente(filtro)
+            if not clientes:
+                QMessageBox.information(
+                    self,
+                    "Clientes",
+                    "No se encontraron clientes"
+                )
+                return
         
-    
+        # Se crean filas y se cargan al modelo
+        for cliente in clientes:
+                fila = [
+                    QStandardItem(str(cliente.id)),
+                    QStandardItem(cliente.nombre),
+                    QStandardItem(str(cliente.telefono)),
+                    QStandardItem(cliente.email)
+                ]
+                self.modelo_tcliente.appendRow(fila)
+
         self.main_ui.tablaClientes.setModel(self.modelo_tcliente)
 
+        # Se conecta evento itemChanged para cuando se modifica algún campo
         self.modelo_tcliente.itemChanged.connect(self.edicion_cliente)
         
         # Se oculta la columna de id de cliente
         self.main_ui.tablaClientes.setColumnHidden(0, True)
 
+        # Seteo de dimensiones fijas de columnas
         self.main_ui.tablaClientes.setColumnWidth(1,200)
         self.main_ui.tablaClientes.setColumnWidth(2,300)
         self.main_ui.tablaClientes.setColumnWidth(3,340)
