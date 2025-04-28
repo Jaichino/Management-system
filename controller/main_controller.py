@@ -76,7 +76,7 @@ class ClienteController(QMainWindow):
 
             # Actualización de tabla
             self.main_controller.cargar_clientes()
-            
+
             # Mensaje de confirmación
             QMessageBox.information(self, "Nuevo Cliente", "Cliente Creado!")
 
@@ -100,10 +100,11 @@ class ClienteController(QMainWindow):
 
 class ServicioController(QMainWindow):
     
-    def __init__(self):
+    def __init__(self, main_controller):
         super().__init__()
         self.ui_servicio = VentanaServicio()
         self.ui_servicio.setupUi(self)
+        self.main_controller = main_controller
 
 ##############################################################################
 # Controlador ventana nuevos turnos
@@ -111,10 +112,11 @@ class ServicioController(QMainWindow):
 
 class TurnoController(QMainWindow):
     
-    def __init__(self):
+    def __init__(self, main_controller):
         super().__init__()
         self.ui_turno = VentanaTurno()
         self.ui_turno.setupUi(self)
+        self.main_controller = main_controller
 
 
 ##############################################################################
@@ -150,7 +152,12 @@ class MainController(QMainWindow):
         self.main_ui.btnNuevoTurno.clicked.connect(
             self.ventana_nuevo_turno
         )
-        
+
+        # Asignación método eliminación de clientes
+        self.main_ui.btnEliminarCliente.clicked.connect(
+            self.eliminar_cliente
+        )
+    
         # Llamadas para agregar tarjetas de servicios y turnos
         self.agregar_servicios()
         self.agregar_turnos()
@@ -176,12 +183,12 @@ class MainController(QMainWindow):
     
     # Apertura ventana nuevo servicio
     def ventana_nuevo_servicio(self):
-        self.abrir_nuevo_servicio = ServicioController()
+        self.abrir_nuevo_servicio = ServicioController(self)
         self.abrir_nuevo_servicio.show()
 
     # Apertura ventana nuevo turno
     def ventana_nuevo_turno(self):
-        self.abrir_nuevo_turno = TurnoController()
+        self.abrir_nuevo_turno = TurnoController(self)
         self.abrir_nuevo_turno.show()
 
     ##############################################################################
@@ -191,29 +198,114 @@ class MainController(QMainWindow):
     def cargar_clientes(self):
         
         # Se establece modelo y headers del modelo
-        self.modelo = QStandardItemModel()
-        self.modelo.setHorizontalHeaderLabels(["Nombre", "Telefono", "Email"])
+        self.modelo_tcliente = QStandardItemModel()
+        self.modelo_tcliente.setHorizontalHeaderLabels(
+            ["ID","Nombre", "Teléfono", "Email"]
+        )
 
         # Se limpia el modelo antes de cargar clientes
-        self.modelo.removeRows(0, self.modelo.rowCount())
+        self.modelo_tcliente.removeRows(0, self.modelo_tcliente.rowCount())
     
         # Se recuperan clientes de la base de datos
         clientes = ModeloCliente.lista_clientes()
 
         for cliente in clientes:
             fila = [
+                QStandardItem(str(cliente.id)),
                 QStandardItem(cliente.nombre),
                 QStandardItem(str(cliente.telefono)),
                 QStandardItem(cliente.email)
             ]
-            self.modelo.appendRow(fila)
+            self.modelo_tcliente.appendRow(fila)
         
     
-        self.main_ui.tablaClientes.setModel(self.modelo)
+        self.main_ui.tablaClientes.setModel(self.modelo_tcliente)
 
-        self.main_ui.tablaClientes.setColumnWidth(0,200)
-        self.main_ui.tablaClientes.setColumnWidth(1,300)
-        self.main_ui.tablaClientes.setColumnWidth(2,360)
+        self.modelo_tcliente.itemChanged.connect(self.edicion_cliente)
+        
+        # Se oculta la columna de id de cliente
+        self.main_ui.tablaClientes.setColumnHidden(0, True)
+
+        self.main_ui.tablaClientes.setColumnWidth(1,200)
+        self.main_ui.tablaClientes.setColumnWidth(2,300)
+        self.main_ui.tablaClientes.setColumnWidth(3,340)
+    
+    ##############################################################################
+    # Método para edición de clientes
+    ##############################################################################
+
+    def edicion_cliente(self):
+
+        # Obtención de fila seleccionada
+        fila = self.main_ui.tablaClientes.currentIndex().row()
+        
+        # Verificación de fila seleccionada
+        if fila == -1:
+            QMessageBox.warning(
+                self,
+                "Edición de cliente",
+                "Se debe seleccionar un cliente"
+            )
+            return
+        
+        # Obtención del id del cliente (columna 0)
+        id_cliente = self.modelo_tcliente.item(fila, 0).text()
+
+        # Se recuperan valores de campos
+        nombre = self.modelo_tcliente.item(fila, 1).text().upper()
+        email = self.modelo_tcliente.item(fila, 3).text().lower()
+        try:
+            telefono = int(self.modelo_tcliente.item(fila, 2).text())
+
+            # Se llama a metodo de edición de cliente
+            ModeloCliente.editar_cliente(id_cliente, nombre, telefono, email)
+            self.cargar_clientes()
+
+        except ValueError:
+            QMessageBox.critical(
+                self,
+                "Edición de cliente",
+                "Revisar el campo teléfono"
+            )
+            self.cargar_clientes()
+    
+    ##############################################################################
+    # Método para eliminación de clientes
+    ##############################################################################
+    def eliminar_cliente(self):
+
+        # Obtención de fila seleccionada
+        fila = self.main_ui.tablaClientes.currentIndex().row()
+        
+        # Verificación de fila seleccionada
+        if fila == -1:
+            QMessageBox.warning(
+                self,
+                "Edición de cliente",
+                "Se debe seleccionar un cliente"
+            )
+            return
+        
+        # Obtención del id del cliente (columna 0)
+        id_cliente = self.modelo_tcliente.item(fila, 0).text()
+        nombre_cliente = ModeloCliente.info_cliente(id_cliente).nombre
+
+        # Consulta de eliminación
+        eliminar = QMessageBox.question(
+            self,
+            'Eliminar Cliente',
+            f"Desea eliminar al cliente ({nombre_cliente})?"
+        )
+
+        if eliminar == QMessageBox.Yes:
+            ModeloCliente.eliminar_cliente(id_cliente)
+            QMessageBox.information(
+                self,
+                "Cliente Eliminado",
+                f"Se eliminó a {nombre_cliente}"
+            )
+        
+        self.cargar_clientes()
 
     ##############################################################################
     # Posicionamiento de tarjetas de Servicios y Turnos

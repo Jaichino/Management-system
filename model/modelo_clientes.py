@@ -85,3 +85,32 @@ class ModeloCliente():
             cliente_editar.email = email
             sesion.add(cliente_editar)
             sesion.commit()
+
+
+    @staticmethod
+    def info_cliente(id: int):
+        ''' Método para obtener la información de un cliente en particular
+            según su ID.
+            :param int id: ID del cliente
+            :return: Lista con objeto Cliente
+        '''
+        with Session(engine) as sesion:
+            cliente = sesion.exec(
+                select(Cliente).where(Cliente.id == id)
+            ).one()
+
+            return cliente
+        
+    
+    @staticmethod
+    def eliminar_cliente(id: int):
+        ''' Método utilizado para eliminar un cliente determinado
+            :param int id: ID del cliente a eliminar
+        '''
+        with Session(engine) as sesion:
+            cliente_eliminar = sesion.exec(
+                select(Cliente).where(Cliente.id == id)
+            ).one()
+
+            sesion.delete(cliente_eliminar)
+            sesion.commit()

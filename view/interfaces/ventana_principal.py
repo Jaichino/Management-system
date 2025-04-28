@@ -277,7 +277,7 @@ class VentanaPrincipal(object):
         self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.contenedorServicios = QWidget()
         self.contenedorServicios.setObjectName(u"contenedorServicios")
-        self.contenedorServicios.setGeometry(QRect(0, 0, 890, 490))
+        self.contenedorServicios.setGeometry(QRect(0, 0, 84, 16))
         self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
@@ -570,13 +570,13 @@ class VentanaPrincipal(object):
 
         self.verticalLayout_12.addWidget(self.btnNuevoCliente)
 
-        self.btnEditarCliente = QPushButton(self.botoneraCliente)
-        self.btnEditarCliente.setObjectName(u"btnEditarCliente")
-        self.btnEditarCliente.setMinimumSize(QSize(150, 40))
-        self.btnEditarCliente.setMaximumSize(QSize(150, 40))
-        self.btnEditarCliente.setFont(font1)
-        self.btnEditarCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.btnEditarCliente.setStyleSheet(u"QPushButton {\n"
+        self.btnEliminarCliente = QPushButton(self.botoneraCliente)
+        self.btnEliminarCliente.setObjectName(u"btnEliminarCliente")
+        self.btnEliminarCliente.setMinimumSize(QSize(150, 40))
+        self.btnEliminarCliente.setMaximumSize(QSize(150, 40))
+        self.btnEliminarCliente.setFont(font1)
+        self.btnEliminarCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btnEliminarCliente.setStyleSheet(u"QPushButton {\n"
 "	color: rgb(255, 255, 255);\n"
 "	border: 1px solid;\n"
 "	border-radius: 5px;\n"
@@ -591,7 +591,7 @@ class VentanaPrincipal(object):
 "	border-color: rgb(255, 255, 255);\n"
 "}")
 
-        self.verticalLayout_12.addWidget(self.btnEditarCliente)
+        self.verticalLayout_12.addWidget(self.btnEliminarCliente)
 
 
         self.horizontalLayout_7.addWidget(self.botoneraCliente)
@@ -621,23 +621,28 @@ class VentanaPrincipal(object):
 "	font-family: century-gothic;\n"
 "	font-size: 12pt;\n"
 "	padding: 5px;\n"
+"	gridline-color: #C18484;\n"
 "}\n"
 "\n"
 "QTableView {\n"
 "	color: black;\n"
 "	font-family: century-gothic;\n"
 "	font-size: 12pt;\n"
-"	gridline-color: #ccc;\n"
+"	gridline-color: #C18484;\n"
 "	selection-background-color: #D3B9B4;\n"
-"	text-align: center;\n"
+"	selection-color: rgb(0, 0, 0);\n"
 "}\n"
-"")
+"\n"
+"QLineEdit {\n"
+"	color: black\n"
+"}")
         self.tablaClientes.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.tablaClientes.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tablaClientes.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
         self.tablaClientes.setAlternatingRowColors(True)
         self.tablaClientes.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tablaClientes.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tablaClientes.setShowGrid(True)
+        self.tablaClientes.setCornerButtonEnabled(False)
 
         self.gridLayout.addWidget(self.tablaClientes, 0, 0, 1, 1)
 
@@ -674,6 +679,6 @@ class VentanaPrincipal(object):
         self.tituloClientes.setText(QCoreApplication.translate("MainWindow", u"GESTI\u00d3N DE CLIENTES", None))
         self.btnFiltrarCliente.setText(QCoreApplication.translate("MainWindow", u"Filtrar", None))
         self.btnNuevoCliente.setText(QCoreApplication.translate("MainWindow", u"Nuevo cliente", None))
-        self.btnEditarCliente.setText(QCoreApplication.translate("MainWindow", u"Editar cliente", None))
+        self.btnEliminarCliente.setText(QCoreApplication.translate("MainWindow", u"Eliminar Cliente", None))
     # retranslateUi
 
