@@ -55,7 +55,6 @@ class ModeloTurno:
                 select(
                     Turno.hora,
                     Cliente.nombre, 
-                    Cliente.apellido, 
                     Servicio.nombre, 
                     Turno.observacion, 
                     Servicio.precio

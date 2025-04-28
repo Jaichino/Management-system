@@ -13,21 +13,18 @@ class ModeloCliente():
 
     @staticmethod
     def nuevo_cliente(
-        nombre: str, 
-        apellido: str, 
+        nombre: str,  
         cel: int = None, 
         email: str = None
     ):
         ''' Método para insertar nuevos clientes a la base de datos
             :param str nombre: Nombre del cliente
-            :param str apellido: Apellido del cliente
             :param int cel: Teléfono del cliente
             :param str email: Email del cliente
         '''
         with Session(engine) as sesion:
             cliente = Cliente(
                 nombre=nombre,
-                apellido=apellido,
                 telefono=cel,
                 email=email
             )
@@ -69,14 +66,12 @@ class ModeloCliente():
     def editar_cliente(
         id: int, 
         nombre: str, 
-        apellido: str, 
         cel: int = None, 
         email: str = None
     ):
         ''' Método para editar un cliente segun su ID
             :param int id: ID del cliente a editar
             :param str nombre: Nombre del cliente
-            :param str apellido: Apellido del cliente
             :param int cel: Telefono del cliente
             :param str email: Email del cliente
         '''
@@ -86,7 +81,6 @@ class ModeloCliente():
             ).one()
 
             cliente_editar.nombre = nombre
-            cliente_editar.apellido = apellido
             cliente_editar.telefono = cel
             cliente_editar.email = email
             sesion.add(cliente_editar)

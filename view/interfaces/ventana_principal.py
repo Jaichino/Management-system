@@ -15,10 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCalendarWidget, QGridLayout, QHBoxLayout,
-    QHeaderView, QLabel, QLayout, QLineEdit,
-    QMainWindow, QPushButton, QScrollArea, QSizePolicy,
-    QStackedWidget, QTableView, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCalendarWidget, QGridLayout,
+    QHBoxLayout, QHeaderView, QLabel, QLayout,
+    QLineEdit, QMainWindow, QPushButton, QScrollArea,
+    QSizePolicy, QStackedWidget, QTableView, QVBoxLayout,
+    QWidget)
 from view import recursos_rc
 
 class VentanaPrincipal(object):
@@ -40,10 +41,11 @@ class VentanaPrincipal(object):
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setMinimumSize(QSize(1100, 650))
         self.centralwidget.setMaximumSize(QSize(1100, 650))
-        self.centralwidget.setStyleSheet(u"background-color: #f9f4f4")
+        self.centralwidget.setStyleSheet(u"background-color: white;")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setSpacing(2)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setContentsMargins(2, 2, 2, 2)
+        self.horizontalLayout.setContentsMargins(2, 2, 0, 2)
         self.LeftMenu = QWidget(self.centralwidget)
         self.LeftMenu.setObjectName(u"LeftMenu")
         self.LeftMenu.setMinimumSize(QSize(200, 0))
@@ -157,7 +159,7 @@ class VentanaPrincipal(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.MainBody.sizePolicy().hasHeightForWidth())
         self.MainBody.setSizePolicy(sizePolicy1)
-        self.MainBody.setStyleSheet(u"background-color: rgb(255, 255, 255);")
+        self.MainBody.setStyleSheet(u"")
         self.verticalLayout_4 = QVBoxLayout(self.MainBody)
         self.verticalLayout_4.setSpacing(6)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -169,7 +171,7 @@ class VentanaPrincipal(object):
         self.StackedWidget.setSizePolicy(sizePolicy)
         self.StackedWidget.setMinimumSize(QSize(0, 0))
         self.StackedWidget.setMaximumSize(QSize(16777215, 16777215))
-        self.StackedWidget.setStyleSheet(u"background-color: rgb(249, 244, 244);")
+        self.StackedWidget.setStyleSheet(u"")
         self.MenuServicios = QWidget()
         self.MenuServicios.setObjectName(u"MenuServicios")
         self.verticalLayout_6 = QVBoxLayout(self.MenuServicios)
@@ -275,7 +277,7 @@ class VentanaPrincipal(object):
         self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.contenedorServicios = QWidget()
         self.contenedorServicios.setObjectName(u"contenedorServicios")
-        self.contenedorServicios.setGeometry(QRect(0, 0, 884, 490))
+        self.contenedorServicios.setGeometry(QRect(0, 0, 890, 490))
         self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
@@ -407,7 +409,7 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos.setWidgetResizable(True)
         self.contenedorTurnos = QWidget()
         self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setGeometry(QRect(0, 0, 884, 470))
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 100, 30))
         self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -602,13 +604,39 @@ class VentanaPrincipal(object):
 
         self.widgetTabla = QWidget(self.MenuClientes)
         self.widgetTabla.setObjectName(u"widgetTabla")
+        self.widgetTabla.setStyleSheet(u"background-color: rgb(249, 244, 244);")
         self.gridLayout = QGridLayout(self.widgetTabla)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.tablaClientes = QTableView(self.widgetTabla)
         self.tablaClientes.setObjectName(u"tablaClientes")
-        self.tablaClientes.setFont(font1)
-        self.tablaClientes.setStyleSheet(u"color:black")
+        font5 = QFont()
+        font5.setFamilies([u"century-gothic"])
+        font5.setPointSize(12)
+        self.tablaClientes.setFont(font5)
+        self.tablaClientes.setStyleSheet(u"QHeaderView::section {\n"
+"	color: #C18484;\n"
+"	background-color: #EDE2E0;\n"
+"	font-weight: bold;\n"
+"	font-family: century-gothic;\n"
+"	font-size: 12pt;\n"
+"	padding: 5px;\n"
+"}\n"
+"\n"
+"QTableView {\n"
+"	color: black;\n"
+"	font-family: century-gothic;\n"
+"	font-size: 12pt;\n"
+"	gridline-color: #ccc;\n"
+"	selection-background-color: #D3B9B4;\n"
+"	text-align: center;\n"
+"}\n"
+"")
+        self.tablaClientes.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tablaClientes.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tablaClientes.setAlternatingRowColors(True)
+        self.tablaClientes.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tablaClientes.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tablaClientes.setShowGrid(True)
 
         self.gridLayout.addWidget(self.tablaClientes, 0, 0, 1, 1)

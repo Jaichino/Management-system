@@ -9,7 +9,10 @@ from view.interfaces.ventana_turnos import VentanaTurno
 from view.interfaces.widget_tarjetaservicio import WidgetTarjetaServicio
 from view.interfaces.widget_tarjetaturno import WidgetTarjetaTurno
 from model.modelo_clientes import ModeloCliente
-from PySide6.QtWidgets import QMainWindow, QDialog, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy
+from PySide6.QtWidgets import (
+    QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+
 
 ##############################################################################
 # Controlador Widget - Tarjetas de Servicios
@@ -37,10 +40,11 @@ class TarjetaServiciosController(QWidget):
 
 class ClienteController(QMainWindow):
     
-    def __init__(self):
+    def __init__(self, main_controller):
         super().__init__()
         self.ui_cliente = VentanaCliente()
         self.ui_cliente.setupUi(self)
+        self.main_controller = main_controller
         self.modelo_cliente = ModeloCliente()
 
         self.ui_cliente.btnAgregarCliente.clicked.connect(self.nuevo_cliente)
@@ -48,29 +52,47 @@ class ClienteController(QMainWindow):
 
     def nuevo_cliente(self):
         try:
-
             # Recuperación de valores de campo
-            nombre = self.ui_cliente.txtNombre.text() 
-            apellido = self.ui_cliente.txtApellido.text()
+            nombre = self.ui_cliente.txtNombre.text().upper() 
             cel = int(self.ui_cliente.txtCelular.text())
-            email = self.ui_cliente.txtEmail.text()
+            email = self.ui_cliente.txtEmail.text().lower()
 
             # Comprobación de que se llenan campos obligatorios
-            if nombre == '' or apellido == '':
-                print('Completar datos')
+            if nombre == '':
+                QMessageBox.critical(
+                    self,
+                    "Nuevo Cliente",
+                    "El campo de nombre es obligatorio"
+                )
                 return
 
             # Carga de cliente
-            self.modelo_cliente.nuevo_cliente(nombre, apellido, cel, email)
+            self.modelo_cliente.nuevo_cliente(nombre, cel, email)
 
             # Limpieza de campos
             nombre = self.ui_cliente.txtNombre.setText("")
-            apellido = self.ui_cliente.txtApellido.setText("")
             cel = self.ui_cliente.txtCelular.setText("")
             email = self.ui_cliente.txtEmail.setText("")
 
+            # Actualización de tabla
+            self.main_controller.cargar_clientes()
+            
+            # Mensaje de confirmación
+            QMessageBox.information(self, "Nuevo Cliente", "Cliente Creado!")
+
+        except ValueError:
+            QMessageBox.critical(
+                self,
+                "Nuevo Cliente",
+                "Revisar campos"
+            )
+
         except Exception as e:
-            print(f'Error - {e}')
+            QMessageBox.critical(
+                self,
+                "Nuevo Cliente",
+                f"Error - {e}"
+            )
 
 ##############################################################################
 # Controlador ventana nuevos servicios
@@ -133,6 +155,9 @@ class MainController(QMainWindow):
         self.agregar_servicios()
         self.agregar_turnos()
 
+        # Visualización de clientes en tabla
+        self.cargar_clientes()
+
 
     # Movimiento entre menú principal
     def abrir_menu_clientes(self):
@@ -146,7 +171,7 @@ class MainController(QMainWindow):
 
     # Apertura ventana nuevo cliente
     def ventana_nuevo_cliente(self):
-        self.abrir_nuevo_cliente = ClienteController()
+        self.abrir_nuevo_cliente = ClienteController(self)
         self.abrir_nuevo_cliente.show()
     
     # Apertura ventana nuevo servicio
@@ -158,6 +183,37 @@ class MainController(QMainWindow):
     def ventana_nuevo_turno(self):
         self.abrir_nuevo_turno = TurnoController()
         self.abrir_nuevo_turno.show()
+
+    ##############################################################################
+    # Método para carga de clientes en QTableView
+    ##############################################################################
+
+    def cargar_clientes(self):
+        
+        # Se establece modelo y headers del modelo
+        self.modelo = QStandardItemModel()
+        self.modelo.setHorizontalHeaderLabels(["Nombre", "Telefono", "Email"])
+
+        # Se limpia el modelo antes de cargar clientes
+        self.modelo.removeRows(0, self.modelo.rowCount())
+    
+        # Se recuperan clientes de la base de datos
+        clientes = ModeloCliente.lista_clientes()
+
+        for cliente in clientes:
+            fila = [
+                QStandardItem(cliente.nombre),
+                QStandardItem(str(cliente.telefono)),
+                QStandardItem(cliente.email)
+            ]
+            self.modelo.appendRow(fila)
+        
+    
+        self.main_ui.tablaClientes.setModel(self.modelo)
+
+        self.main_ui.tablaClientes.setColumnWidth(0,200)
+        self.main_ui.tablaClientes.setColumnWidth(1,300)
+        self.main_ui.tablaClientes.setColumnWidth(2,360)
 
     ##############################################################################
     # Posicionamiento de tarjetas de Servicios y Turnos
@@ -201,14 +257,8 @@ class MainController(QMainWindow):
     def agregar_turnos(self):
 
         turnos = [
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'cliente':'Juan Aichino', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
+            {'id': 1,'cliente':'Juan', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
+            {'id':2,'cliente':'Juan', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
         ]
         # Se define el contenedor donde irán las tarjetas
         contenedor = self.main_ui.contenedorTurnos.layout()
@@ -220,8 +270,18 @@ class MainController(QMainWindow):
             tarjeta.widget_tarjetaturno.lblObservacion.setText(turno["obs"])
             tarjeta.widget_tarjetaturno.lblHoraTurno.setText(turno["hora"])
             tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno["precio"]}')
+            #################################
+            # Ejemplo de como capturar el id en los botones
+            tarjeta.widget_tarjetaturno.btnCancelarTurno.clicked.connect(
+                lambda _, turno_id=turno['id']: self.imprimir_turno(turno_id))
+            #################################
+
             contenedor.addWidget(tarjeta)
-        
+
         contenedor.addSpacerItem(
             QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         )
+    
+    # Ejemplo para imprimir el id capturado en cada boton
+    def imprimir_turno(self, turno_id):
+        print(turno_id)

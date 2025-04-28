@@ -15,7 +15,6 @@ class Cliente(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     nombre: str
-    apellido: str
     telefono: int | None = None
     email: str | None = None
 
@@ -82,5 +81,4 @@ def create_bd():
 
 #if __name__ == "__main__":
 #    create_bd()
-#
-#
+
