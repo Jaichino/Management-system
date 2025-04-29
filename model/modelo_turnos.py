@@ -53,16 +53,19 @@ class ModeloTurno:
         with Session(engine) as sesion:
             turnos_fecha = sesion.exec(
                 select(
+                    Turno.fecha,
                     Turno.hora,
                     Cliente.nombre, 
                     Servicio.nombre, 
                     Turno.observacion, 
                     Servicio.precio,
-                    Servicio.duracion
+                    Servicio.duracion,
+                    Turno.id
                 )
                 .join(Cliente, Cliente.id == Turno.cliente_id)
                 .join(Servicio, Servicio.id == Turno.servicio_id)
                 .where(Turno.fecha == fecha)
+                .order_by(Turno.hora)
             ).all()
 
             return turnos_fecha
@@ -79,6 +82,3 @@ class ModeloTurno:
             ).one()
             sesion.delete(turno_eliminar)
             sesion.commit()
-
-
-

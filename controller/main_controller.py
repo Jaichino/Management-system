@@ -2,7 +2,7 @@
 # Importaciones
 ##############################################################################
 
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from view.interfaces.ventana_principal import VentanaPrincipal
 from view.interfaces.ventana_clientes import VentanaCliente
 from view.interfaces.ventana_servicios import VentanaServicio
@@ -208,6 +208,7 @@ class TurnoController(QMainWindow):
         super().__init__()
         self.ui_turno = VentanaTurno()
         self.ui_turno.setupUi(self)
+        self.modelo_turno = ModeloTurno()
         self.main_controller = main_controller
 
         # Inicialización de ComboBox clientes y servicios
@@ -249,8 +250,28 @@ class TurnoController(QMainWindow):
 
 
     ##########################################################################
-    # Método para cargar nuevos turnos
+    # Métodos para cargar nuevos turnos y logíca de agendado
     ##########################################################################
+    def solapamiento_turnos(self, fecha_turno, hora_inicio, duracion):
+        # Cálculo inicio y fin del turno a agendar
+        inicio = datetime.combine(fecha_turno, hora_inicio)
+        fin = inicio + timedelta(minutes=duracion)
+
+        # Obtención del listado de turnos existentes
+        turnos = self.modelo_turno.turnos_fecha(fecha_turno)
+        
+        # Se recorren turnos y se comprueba que no haya solapamiento
+        for turno in turnos:
+            turno_inicio = datetime.combine(turno[0], turno[1])
+            turno_fin = turno_inicio + timedelta(minutes=turno[6])
+
+            # Logica de solapamiento
+            if inicio < turno_fin and fin > turno_inicio:
+                return False # Hay solapamiento de turno
+            
+        return True # No hay solapamientos, se puede agendar el turno
+
+
     def nuevo_turno(self):
         # Obtención de campos
         cliente = self.ui_turno.cmbCliente.currentData()
@@ -269,6 +290,9 @@ class TurnoController(QMainWindow):
             )
             return
         
+        # Obtención de la duración del turno
+        duracion = ModeloServicio.info_servicio(servicio).duracion
+
         # Se convierte fecha y hora en formatos date y time de python
         fecha_form = date(
             fecha.year(),
@@ -280,16 +304,27 @@ class TurnoController(QMainWindow):
             hora.minute()
         )
 
-
+        if not self.solapamiento_turnos(fecha_form, hora_form, duracion):
+            QMessageBox.critical(
+                self,
+                'Carga de turno',
+                'Hay un turno que coincide con el horario elegido!'
+            )
+            return
+            
         # Carga de turno
-        ModeloTurno.nuevo_turno(
+        self.modelo_turno.nuevo_turno(
             cliente, servicio, fecha_form, hora_form, observacion
         )
+
+        self.main_controller.agregar_turnos(fecha_form)
+
         QMessageBox.information(
             self,
             'Carga de turno',
             f'{nombre_servicio} agendado para {fecha_form.strftime("%d/%m")}'
         )
+
 
 
 ##############################################################################
@@ -343,9 +378,16 @@ class MainController(QMainWindow):
         self.main_ui.calendarWidget.setSelectedDate(datetime.now())
 
 
-        # Llamadas para agregar tarjetas de servicios y turnos
+        # Que siempre arranque mostrando los turnos del día actual
+        self.agregar_turnos(date.today())
+
+        # Asignación de evento para mostrar tarjetas de turnos segun fecha
+        self.main_ui.calendarWidget.selectionChanged.connect(
+            self.actualizar_turnos
+        )
+
+        # Llamadas para agregar tarjetas de servicios
         self.mostrar_servicios()
-        self.agregar_turnos()
 
         # Visualización de clientes en tabla
         self.cargar_clientes()
@@ -510,7 +552,7 @@ class MainController(QMainWindow):
         self.cargar_clientes()
 
     ##########################################################################
-    # Posicionamiento de tarjetas de Servicios y Turnos
+    # Posicionamiento de tarjetas de Servicios
     ##########################################################################
 
     def mostrar_servicios(self):
@@ -593,34 +635,55 @@ class MainController(QMainWindow):
         self.ventana_servicio = ventana
         
 
-    def agregar_turnos(self):
+    ##########################################################################
+    # Posicionamiento de tarjetas de Turnos
+    ##########################################################################
 
-        turnos = [
-            {'id': 1,'cliente':'Juan', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-            {'id':2,'cliente':'Juan', 'servicio':'Limpieza Facial', 'obs':'Todo OK', 'precio':10000, 'hora': '12:00'},
-        ]
+    def agregar_turnos(self, fecha: date):
         # Se define el contenedor donde irán las tarjetas
         contenedor = self.main_ui.contenedorTurnos.layout()
 
+        # Se borran widgets del layout
+        while contenedor.count():
+            item = contenedor.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        # Se recuperan turnos para fecha elegida
+        turnos = ModeloTurno.turnos_fecha(fecha)
+
         for turno in turnos:
             tarjeta = TarjetaTurnosController()
-            tarjeta.widget_tarjetaturno.lblCliente.setText(turno["cliente"])
-            tarjeta.widget_tarjetaturno.lblServicio.setText(turno["servicio"])
-            tarjeta.widget_tarjetaturno.lblObservacion.setText(turno["obs"])
-            tarjeta.widget_tarjetaturno.lblHoraTurno.setText(turno["hora"])
-            tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno["precio"]}')
-            #################################
-            # Ejemplo de como capturar el id en los botones
+            tarjeta.widget_tarjetaturno.lblCliente.setText(turno[2])
+            tarjeta.widget_tarjetaturno.lblServicio.setText(turno[3])
+            tarjeta.widget_tarjetaturno.lblObservacion.setText(turno[4])
+            tarjeta.widget_tarjetaturno.lblHoraTurno.setText(time.strftime(turno[1],"%H:%M"))
+            tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno[5]}')
+            tarjeta.widget_tarjetaturno.lblDuracion.setText(f'{turno[6]} min')
+            # Se captura id en botón
             tarjeta.widget_tarjetaturno.btnCancelarTurno.clicked.connect(
-                lambda _, turno_id=turno['id']: self.imprimir_turno(turno_id))
-            #################################
+                lambda _, turno_id=turno[7]: self.imprimir_turno(turno_id))
 
             contenedor.addWidget(tarjeta)
+        
 
         contenedor.addSpacerItem(
             QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         )
+
+
+    # Método para asignar al evento de cambio de fecha en calendarWidget
+    def actualizar_turnos(self):
+        fecha_qdate = self.main_ui.calendarWidget.selectedDate()
+        fecha = date(
+            year=fecha_qdate.year(),
+            month=fecha_qdate.month(),
+            day=fecha_qdate.day()
+        )
+        self.agregar_turnos(fecha)
     
+
     # Ejemplo para imprimir el id capturado en cada boton
     def imprimir_turno(self, turno_id):
         print(turno_id)
