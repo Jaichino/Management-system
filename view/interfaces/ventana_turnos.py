@@ -19,15 +19,19 @@ from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QComboBox, QDateE
     QGridLayout, QHBoxLayout, QLabel, QMainWindow,
     QPushButton, QSizePolicy, QTextEdit, QTimeEdit,
     QVBoxLayout, QWidget)
+from view import recursos_rc
 
 class VentanaTurno(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
-        MainWindow.resize(470, 530)
-        MainWindow.setMinimumSize(QSize(470, 530))
-        MainWindow.setMaximumSize(QSize(470, 530))
+        MainWindow.resize(400, 511)
+        MainWindow.setMinimumSize(QSize(400, 400))
+        MainWindow.setMaximumSize(QSize(400, 511))
+        icon = QIcon()
+        icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"background-color:white;")
@@ -89,21 +93,32 @@ class VentanaTurno(object):
 
         self.widget_8 = QWidget(self.widget_2)
         self.widget_8.setObjectName(u"widget_8")
+        font2 = QFont()
+        font2.setFamilies([u"Century Gothic"])
+        font2.setPointSize(12)
+        self.widget_8.setFont(font2)
         self.gridLayout_8 = QGridLayout(self.widget_8)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
         self.gridLayout_8.setContentsMargins(0, -1, 0, -1)
         self.cmbCliente = QComboBox(self.widget_8)
         self.cmbCliente.setObjectName(u"cmbCliente")
-        font2 = QFont()
-        font2.setFamilies([u"century-gothic"])
-        font2.setPointSize(12)
-        self.cmbCliente.setFont(font2)
-        self.cmbCliente.setStyleSheet(u"background-color: white;\n"
-"color:black;\n"
-"border-radius:5px;\n"
-"font-family: century-gothic;\n"
-"font-size: 12pt;\n"
-"")
+        font3 = QFont()
+        font3.setFamilies([u"Century Gothic"])
+        self.cmbCliente.setFont(font3)
+        self.cmbCliente.setStyleSheet(u"QComboBox {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    color: white;\n"
+"    padding: 5px;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    selection-background-color: #e0e0e0;\n"
+"    padding: 5px;\n"
+"    outline: none;\n"
+"}")
         self.cmbCliente.setEditable(True)
         self.cmbCliente.setMaxVisibleItems(5)
         self.cmbCliente.setMinimumContentsLength(0)
@@ -138,6 +153,7 @@ class VentanaTurno(object):
 
         self.widget_10 = QWidget(self.widget_5)
         self.widget_10.setObjectName(u"widget_10")
+        self.widget_10.setFont(font2)
         self.gridLayout_9 = QGridLayout(self.widget_10)
         self.gridLayout_9.setObjectName(u"gridLayout_9")
         self.gridLayout_9.setContentsMargins(0, -1, 0, -1)
@@ -148,12 +164,11 @@ class VentanaTurno(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dateEditTurno.sizePolicy().hasHeightForWidth())
         self.dateEditTurno.setSizePolicy(sizePolicy)
-        font3 = QFont()
-        font3.setFamilies([u"century-gothic"])
-        font3.setPointSize(14)
-        self.dateEditTurno.setFont(font3)
-        self.dateEditTurno.setStyleSheet(u"font-family: century-gothic;\n"
-"font-size: 14pt;")
+        font4 = QFont()
+        font4.setFamilies([u"Segoe UI"])
+        font4.setPointSize(12)
+        self.dateEditTurno.setFont(font4)
+        self.dateEditTurno.setStyleSheet(u"")
         self.dateEditTurno.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.dateEditTurno.setDateTime(QDateTime(QDate(2025, 1, 1), QTime(0, 0, 0)))
         self.dateEditTurno.setMinimumDateTime(QDateTime(QDate(2025, 1, 1), QTime(0, 0, 0)))
@@ -193,9 +208,8 @@ class VentanaTurno(object):
         self.gridLayout_10.setContentsMargins(0, -1, -1, -1)
         self.timeEditTurno = QTimeEdit(self.widget_12)
         self.timeEditTurno.setObjectName(u"timeEditTurno")
-        self.timeEditTurno.setFont(font3)
-        self.timeEditTurno.setStyleSheet(u"font-family: century-gothic;\n"
-"font-size: 14pt;")
+        self.timeEditTurno.setFont(font2)
+        self.timeEditTurno.setStyleSheet(u"")
         self.timeEditTurno.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.timeEditTurno.setKeyboardTracking(True)
         self.timeEditTurno.setProperty(u"showGroupSeparator", False)
@@ -231,19 +245,29 @@ class VentanaTurno(object):
 
         self.widget_14 = QWidget(self.widget_4)
         self.widget_14.setObjectName(u"widget_14")
+        self.widget_14.setFont(font1)
         self.gridLayout_11 = QGridLayout(self.widget_14)
         self.gridLayout_11.setObjectName(u"gridLayout_11")
         self.gridLayout_11.setContentsMargins(0, -1, 0, -1)
         self.cmbServicio = QComboBox(self.widget_14)
         self.cmbServicio.setObjectName(u"cmbServicio")
-        self.cmbServicio.setFont(font2)
-        self.cmbServicio.setStyleSheet(u"background-color: white;\n"
-"color:black;\n"
-"border-radius:5px;\n"
-"font-family: century-gothic;\n"
-"font-size: 12pt;\n"
-"")
+        self.cmbServicio.setFont(font3)
+        self.cmbServicio.setStyleSheet(u"QComboBox {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    color: white;\n"
+"    padding: 5px;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    selection-background-color: #e0e0e0;\n"
+"    padding: 5px;\n"
+"    outline: none;\n"
+"}")
         self.cmbServicio.setEditable(False)
+        self.cmbServicio.setMaxVisibleItems(5)
 
         self.gridLayout_11.addWidget(self.cmbServicio, 0, 0, 1, 1)
 
@@ -279,10 +303,7 @@ class VentanaTurno(object):
         self.gridLayout_12.setContentsMargins(-1, 0, 0, 0)
         self.txtObservacion = QTextEdit(self.widget_16)
         self.txtObservacion.setObjectName(u"txtObservacion")
-        font4 = QFont()
-        font4.setFamilies([u"Century Gothic"])
-        font4.setPointSize(12)
-        self.txtObservacion.setFont(font4)
+        self.txtObservacion.setFont(font2)
         self.txtObservacion.setStyleSheet(u"background-color: white;\n"
 "color:black;\n"
 "border-radius:5px;")
@@ -306,7 +327,7 @@ class VentanaTurno(object):
         self.gridLayout_13.setObjectName(u"gridLayout_13")
         self.btnAgendarTurno = QPushButton(self.contenedorBoton)
         self.btnAgendarTurno.setObjectName(u"btnAgendarTurno")
-        self.btnAgendarTurno.setMaximumSize(QSize(150, 60))
+        self.btnAgendarTurno.setMaximumSize(QSize(120, 60))
         self.btnAgendarTurno.setFont(font1)
         self.btnAgendarTurno.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnAgendarTurno.setStyleSheet(u"QPushButton {\n"

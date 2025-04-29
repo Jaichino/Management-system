@@ -333,6 +333,7 @@ class TurnoController(QMainWindow):
 
         # Actualización de contenedor
         self.main_controller.agregar_turnos(fecha_form)
+        self.main_controller.main_ui.calendarWidget.setSelectedDate(fecha)
 
         QMessageBox.information(
             self,

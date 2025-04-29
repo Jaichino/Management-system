@@ -18,6 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QSizePolicy,
     QVBoxLayout, QWidget)
+from view import recursos_rc
 
 class VentanaServicio(object):
     def setupUi(self, MainWindow):
@@ -27,6 +28,9 @@ class VentanaServicio(object):
         MainWindow.resize(380, 400)
         MainWindow.setMinimumSize(QSize(380, 400))
         MainWindow.setMaximumSize(QSize(380, 400))
+        icon = QIcon()
+        icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        MainWindow.setWindowIcon(icon)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"background-color:white;")
