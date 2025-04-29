@@ -57,7 +57,8 @@ class ModeloTurno:
                     Cliente.nombre, 
                     Servicio.nombre, 
                     Turno.observacion, 
-                    Servicio.precio
+                    Servicio.precio,
+                    Servicio.duracion
                 )
                 .join(Cliente, Cliente.id == Turno.cliente_id)
                 .join(Servicio, Servicio.id == Turno.servicio_id)

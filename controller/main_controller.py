@@ -2,6 +2,7 @@
 # Importaciones
 ##############################################################################
 
+from datetime import datetime, date, time
 from view.interfaces.ventana_principal import VentanaPrincipal
 from view.interfaces.ventana_clientes import VentanaCliente
 from view.interfaces.ventana_servicios import VentanaServicio
@@ -14,7 +15,7 @@ from model.modelo_turnos import ModeloTurno
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-
+from PySide6.QtCore import QDate
 
 ##############################################################################
 # Controlador Widget - Tarjetas de Servicios
@@ -209,6 +210,87 @@ class TurnoController(QMainWindow):
         self.ui_turno.setupUi(self)
         self.main_controller = main_controller
 
+        # Inicialización de ComboBox clientes y servicios
+        self.cargar_lista_clientes()
+        self.cargar_lista_servicios()
+
+        # Inicialización de campo de fecha con día actual
+        self.ui_turno.dateEditTurno.setDate(datetime.now())
+
+        # Asignación método nuevo_turno a botón
+        self.ui_turno.btnAgendarTurno.clicked.connect(
+            self.nuevo_turno
+        )
+
+    ##########################################################################
+    # Métodos para setear elementos en comboboxs
+    ##########################################################################
+
+    def cargar_lista_clientes(self):
+        ''' Método para cargar el listado de clientes existentes al ComboBox
+            cmbCliente
+        '''
+        self.ui_turno.cmbCliente.clear()
+        self.ui_turno.cmbCliente.addItem("Seleccionar cliente", None)
+
+        clientes = ModeloCliente.lista_clientes()
+        for cliente in clientes:
+            self.ui_turno.cmbCliente.addItem(cliente.nombre, cliente.id)
+    
+    def cargar_lista_servicios(self):
+        ''' Método para cargar el listado de servicios existentes al ComboBox
+            cmbServicio
+        '''
+        self.ui_turno.cmbServicio.clear()
+
+        servicios = ModeloServicio.lista_servicios()
+        for servicio in servicios:
+            self.ui_turno.cmbServicio.addItem(servicio.nombre, servicio.id)
+
+
+    ##########################################################################
+    # Método para cargar nuevos turnos
+    ##########################################################################
+    def nuevo_turno(self):
+        # Obtención de campos
+        cliente = self.ui_turno.cmbCliente.currentData()
+        fecha = self.ui_turno.dateEditTurno.date()
+        hora = self.ui_turno.timeEditTurno.time()
+        servicio = self.ui_turno.cmbServicio.currentData()
+        observacion = self.ui_turno.txtObservacion.toPlainText()
+        nombre_servicio = self.ui_turno.cmbServicio.currentText()
+
+        # Comprobación de selección de cliente
+        if cliente is None:
+            QMessageBox.critical(
+                self,
+                "Carga de turno",
+                "Se debe elegir un cliente"
+            )
+            return
+        
+        # Se convierte fecha y hora en formatos date y time de python
+        fecha_form = date(
+            fecha.year(),
+            fecha.month(),
+            fecha.day()
+        )
+        hora_form = time(
+            hora.hour(),
+            hora.minute()
+        )
+
+
+        # Carga de turno
+        ModeloTurno.nuevo_turno(
+            cliente, servicio, fecha_form, hora_form, observacion
+        )
+        QMessageBox.information(
+            self,
+            'Carga de turno',
+            f'{nombre_servicio} agendado para {fecha_form.strftime("%d/%m")}'
+        )
+
 
 ##############################################################################
 # Controlador Principal
@@ -254,6 +336,12 @@ class MainController(QMainWindow):
             self.cargar_clientes
         )
 
+        self.main_ui.calendarWidget.setCurrentPage(
+            QDate.currentDate().year(),
+            QDate.currentDate().month()
+        )
+        self.main_ui.calendarWidget.setSelectedDate(datetime.now())
+
 
         # Llamadas para agregar tarjetas de servicios y turnos
         self.mostrar_servicios()
@@ -288,9 +376,9 @@ class MainController(QMainWindow):
         self.abrir_nuevo_turno = TurnoController(self)
         self.abrir_nuevo_turno.show()
 
-    ##############################################################################
+    ##########################################################################
     # Método para carga de clientes en QTableView
-    ##############################################################################
+    ##########################################################################
 
     def cargar_clientes(self):
         
@@ -343,9 +431,9 @@ class MainController(QMainWindow):
         self.main_ui.tablaClientes.setColumnWidth(2,300)
         self.main_ui.tablaClientes.setColumnWidth(3,340)
     
-    ##############################################################################
+    ##########################################################################
     # Método para edición de clientes
-    ##############################################################################
+    ##########################################################################
 
     def edicion_cliente(self):
 
@@ -383,9 +471,9 @@ class MainController(QMainWindow):
             )
             self.cargar_clientes()
     
-    ##############################################################################
+    ##########################################################################
     # Método para eliminación de clientes
-    ##############################################################################
+    ##########################################################################
     def eliminar_cliente(self):
 
         # Obtención de fila seleccionada
@@ -421,9 +509,9 @@ class MainController(QMainWindow):
         
         self.cargar_clientes()
 
-    ##############################################################################
+    ##########################################################################
     # Posicionamiento de tarjetas de Servicios y Turnos
-    ##############################################################################
+    ##########################################################################
 
     def mostrar_servicios(self):
 

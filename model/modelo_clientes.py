@@ -41,6 +41,7 @@ class ModeloCliente():
         with Session(engine) as sesion:
             clientes = sesion.exec(
                 select(Cliente)
+                .order_by(Cliente.nombre)
             ).all()
             return clientes
     

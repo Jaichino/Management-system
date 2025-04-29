@@ -56,7 +56,7 @@ class WidgetTarjetaTurno(object):
         self.lblHoraTurno.setObjectName(u"lblHoraTurno")
         font = QFont()
         font.setFamilies([u"Century Gothic"])
-        font.setPointSize(20)
+        font.setPointSize(18)
         font.setBold(True)
         self.lblHoraTurno.setFont(font)
         self.lblHoraTurno.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
@@ -69,10 +69,25 @@ class WidgetTarjetaTurno(object):
 
         self.verticalLayout.addWidget(self.contenedorHora)
 
-        self.widget_6 = QWidget(self.widget)
-        self.widget_6.setObjectName(u"widget_6")
+        self.contenedorDuracion = QWidget(self.widget)
+        self.contenedorDuracion.setObjectName(u"contenedorDuracion")
+        self.contenedorDuracion.setStyleSheet(u"border: 2px solid #C18484;\n"
+"")
+        self.gridLayout_4 = QGridLayout(self.contenedorDuracion)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.lblDuracion = QLabel(self.contenedorDuracion)
+        self.lblDuracion.setObjectName(u"lblDuracion")
+        self.lblDuracion.setFont(font)
+        self.lblDuracion.setStyleSheet(u"color: #C18484;\n"
+"border: 0px")
+        self.lblDuracion.setScaledContents(False)
+        self.lblDuracion.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lblDuracion.setWordWrap(True)
 
-        self.verticalLayout.addWidget(self.widget_6)
+        self.gridLayout_4.addWidget(self.lblDuracion, 0, 0, 1, 1)
+
+
+        self.verticalLayout.addWidget(self.contenedorDuracion)
 
 
         self.horizontalLayout.addWidget(self.widget)
@@ -238,6 +253,7 @@ class WidgetTarjetaTurno(object):
     def retranslateUi(self, widgetTarjetaTurnos):
         widgetTarjetaTurnos.setWindowTitle(QCoreApplication.translate("widgetTarjetaTurnos", u"TarjetaTurno", None))
         self.lblHoraTurno.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"18:00", None))
+        self.lblDuracion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"120 min", None))
         self.titCliente.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Cliente:", None))
         self.titServicio.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Servicio:", None))
         self.titObservacion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Observaci\u00f3n: ", None))

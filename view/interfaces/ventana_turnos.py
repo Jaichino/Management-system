@@ -105,6 +105,8 @@ class VentanaTurno(object):
 "font-size: 12pt;\n"
 "")
         self.cmbCliente.setEditable(True)
+        self.cmbCliente.setMaxVisibleItems(5)
+        self.cmbCliente.setMinimumContentsLength(0)
         self.cmbCliente.setModelColumn(0)
 
         self.gridLayout_8.addWidget(self.cmbCliente, 0, 0, 1, 1)

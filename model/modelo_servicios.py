@@ -37,6 +37,7 @@ class ModeloServicio:
         with Session(engine) as sesion:
             servicios = sesion.exec(
                 select(Servicio)
+                .order_by(Servicio.nombre)
             ).all()
 
             return servicios
