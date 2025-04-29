@@ -252,7 +252,14 @@ class TurnoController(QMainWindow):
     ##########################################################################
     # Métodos para cargar nuevos turnos y logíca de agendado
     ##########################################################################
+
     def solapamiento_turnos(self, fecha_turno, hora_inicio, duracion):
+        ''' Este método contiene la lógica que se utiliza para comprobar que
+            no se superpongan turnos.
+            Se calcula la fecha y hora inicial y final del turno agendar, y
+            luego se recorre el listado de turnos agendados para esa fecha
+            y se verifica que no haya superposición horaria
+        '''
         # Cálculo inicio y fin del turno a agendar
         inicio = datetime.combine(fecha_turno, hora_inicio)
         fin = inicio + timedelta(minutes=duracion)
@@ -273,6 +280,10 @@ class TurnoController(QMainWindow):
 
 
     def nuevo_turno(self):
+        ''' Método para agendar nuevos turnos en la base de datos. Se
+            recuperan valores de campos, se carga turno a la base de datos y
+            se actualiza el contenedor de turnos.
+        '''
         # Obtención de campos
         cliente = self.ui_turno.cmbCliente.currentData()
         fecha = self.ui_turno.dateEditTurno.date()
@@ -311,12 +322,16 @@ class TurnoController(QMainWindow):
                 'Hay un turno que coincide con el horario elegido!'
             )
             return
-            
+
         # Carga de turno
         self.modelo_turno.nuevo_turno(
             cliente, servicio, fecha_form, hora_form, observacion
         )
 
+        # Cerrado de ventana
+        self.close()
+
+        # Actualización de contenedor
         self.main_controller.agregar_turnos(fecha_form)
 
         QMessageBox.information(
@@ -655,18 +670,26 @@ class MainController(QMainWindow):
 
         for turno in turnos:
             tarjeta = TarjetaTurnosController()
+            
+            # Se obtiene hora de finalización
+            hora_inicio = datetime.combine(datetime.today(), turno[1])
+            hora_fin = hora_inicio + timedelta(minutes=turno[6])
+            hora_fin_format = hora_fin.strftime("%H:%M")
+
+            # Carga de valores en widget
             tarjeta.widget_tarjetaturno.lblCliente.setText(turno[2])
             tarjeta.widget_tarjetaturno.lblServicio.setText(turno[3])
             tarjeta.widget_tarjetaturno.lblObservacion.setText(turno[4])
             tarjeta.widget_tarjetaturno.lblHoraTurno.setText(time.strftime(turno[1],"%H:%M"))
             tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno[5]}')
-            tarjeta.widget_tarjetaturno.lblDuracion.setText(f'{turno[6]} min')
+            tarjeta.widget_tarjetaturno.lblDuracion.setText(hora_fin_format)
+
             # Se captura id en botón
             tarjeta.widget_tarjetaturno.btnCancelarTurno.clicked.connect(
-                lambda _, turno_id=turno[7]: self.imprimir_turno(turno_id))
+                lambda _, turno_id=turno[7]: self.eliminar_turno(turno_id))
 
+            # Carga de tarjeta en contenedor
             contenedor.addWidget(tarjeta)
-        
 
         contenedor.addSpacerItem(
             QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -683,7 +706,29 @@ class MainController(QMainWindow):
         )
         self.agregar_turnos(fecha)
     
+    
+    # Método para eliminar turnos agendados
+    def eliminar_turno(self, turno_id):
+        # Se consulta si se quiere eliminar un turno
+        eliminar = QMessageBox.question(
+            self,
+            'Turnos',
+            'Queres eliminar este turno?'
+        )
+        if eliminar == QMessageBox.Yes:
+            ModeloTurno.eliminar_turno(turno_id)
+            QMessageBox.information(
+            self,
+            'Turnos',
+            'Turno eliminado!'
+            )
 
-    # Ejemplo para imprimir el id capturado en cada boton
-    def imprimir_turno(self, turno_id):
-        print(turno_id)
+        # Se busca fecha seleccionada en calendario y se actualiza vista
+        fecha_qt = self.main_ui.calendarWidget.selectedDate()
+        fecha = date(
+            year=fecha_qt.year(),
+            month=fecha_qt.month(),
+            day=fecha_qt.day()
+        )
+
+        self.agregar_turnos(fecha)
