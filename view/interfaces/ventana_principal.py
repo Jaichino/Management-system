@@ -30,6 +30,9 @@ class VentanaPrincipal(object):
         MainWindow.resize(1100, 650)
         MainWindow.setMinimumSize(QSize(1100, 650))
         MainWindow.setMaximumSize(QSize(1100, 650))
+        icon = QIcon()
+        icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet(u"border-radius: 10px;")
         MainWindow.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         self.centralwidget = QWidget(MainWindow)
@@ -409,7 +412,7 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos.setWidgetResizable(True)
         self.contenedorTurnos = QWidget()
         self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setGeometry(QRect(0, 0, 100, 30))
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 890, 470))
         self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -660,7 +663,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(3)
+        self.StackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
