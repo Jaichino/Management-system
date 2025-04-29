@@ -74,3 +74,16 @@ class ModeloServicio:
             servicio_editar.precio = precio
             sesion.add(servicio_editar)
             sesion.commit()
+
+    
+    @staticmethod
+    def info_servicio(id: int):
+        ''' Método para devolver la información de un servicio determinado
+            :param int id: ID del servicio a obtener
+        '''
+        with Session(engine) as sesion:
+            info = sesion.exec(
+                select(Servicio).where(Servicio.id == id)
+            ).one()
+
+            return info

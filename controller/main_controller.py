@@ -9,6 +9,8 @@ from view.interfaces.ventana_turnos import VentanaTurno
 from view.interfaces.widget_tarjetaservicio import WidgetTarjetaServicio
 from view.interfaces.widget_tarjetaturno import WidgetTarjetaTurno
 from model.modelo_clientes import ModeloCliente
+from model.modelo_servicios import ModeloServicio
+from model.modelo_turnos import ModeloTurno
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -31,8 +33,8 @@ class TarjetaTurnosController(QWidget):
 class TarjetaServiciosController(QWidget):
     def __init__(self):
         super().__init__()
-        self.widget_tarjetaservicio = WidgetTarjetaServicio()
-        self.widget_tarjetaservicio.setupUi(self)
+        self.widget_tserv = WidgetTarjetaServicio()
+        self.widget_tserv.setupUi(self)
 
 ##############################################################################
 # Controlador ventana nuevos clientes
@@ -54,7 +56,7 @@ class ClienteController(QMainWindow):
         try:
             # Recuperación de valores de campo
             nombre = self.ui_cliente.txtNombre.text().upper() 
-            cel = int(self.ui_cliente.txtCelular.text())
+            cel = self.ui_cliente.txtCelular.text()
             email = self.ui_cliente.txtEmail.text().lower()
 
             # Comprobación de que se llenan campos obligatorios
@@ -65,6 +67,9 @@ class ClienteController(QMainWindow):
                     "El campo de nombre es obligatorio"
                 )
                 return
+            
+            if cel != '':
+                cel = int(cel)
 
             # Carga de cliente
             self.modelo_cliente.nuevo_cliente(nombre, cel, email)
@@ -105,6 +110,92 @@ class ServicioController(QMainWindow):
         self.ui_servicio = VentanaServicio()
         self.ui_servicio.setupUi(self)
         self.main_controller = main_controller
+
+        # Variables que sirven para decidir en método guardar_servicio
+        self.modo = 'nuevo'
+        self.id_servicio = None
+    
+        # Asignación método nuevo_servicio a boton btnGuardarServicio
+        self.ui_servicio.btnGuardarServicio.clicked.connect(
+            self.guardar_servicio
+        )
+    
+    ##############################################################################
+    # Métodos guardar servicio (Decicide entre crear y editar)
+    ##############################################################################
+
+    def guardar_servicio(self):
+        # Recuperación de valores de campos
+        nombre = self.ui_servicio.txtNombre.text().upper()
+        duracion = self.ui_servicio.txtDuracion.text()
+        precio = self.ui_servicio.txtPrecio.text()
+
+        try:
+            duracion = int(duracion)
+            precio = float(precio)
+
+            # Decición si se carga nuevo producto o se edita uno seleccionado
+            if self.modo == 'nuevo':
+                ModeloServicio.nuevo_servicio(nombre, duracion, precio)
+                QMessageBox.information(
+                    self,
+                    'Nuevo Servicio',
+                    f'{nombre} agregado a listado de servicios!'
+                )
+
+            elif self.modo == 'editar':
+                ModeloServicio.editar_servicio(
+                    self.id_servicio, nombre, duracion, precio
+                )
+                QMessageBox.information(
+                    self,
+                    'Servicios',
+                    'Servicio actualizado!'
+                )
+            
+            # Limpieza de campos
+            self.ui_servicio.txtNombre.setText("")
+            self.ui_servicio.txtDuracion.setText("")
+            self.ui_servicio.txtPrecio.setText("")
+
+            # Actualización del listado de servicios
+            self.main_controller.mostrar_servicios()
+            
+        except ValueError:
+            QMessageBox.critical(
+                self,
+                'Nuevo Servicio',
+                'Revisar campos'
+            )
+        
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                'Nuevo Servicio',
+                f'Error - {e}'
+            )
+
+
+    def cargar_datos(self, servicio=None):
+        ''' Método para decidir si al presionar boton btnGuardarServicio, se 
+            edita un servicio seleccionado o se carga un nuevo servicio.
+
+            Se llama desde MainController y se le pasa el servicio que se
+            selecciona en una determinada tarjeta. Se setea el self.modo a
+            editar para que luego el metodo guardar_servicio no lo cargue como
+            uno nuevo, sino que aplique el metodo editar_servicio
+        '''
+        if servicio:
+            self.modo = 'editar'
+            self.id_servicio = servicio.id
+            self.ui_servicio.txtNombre.setText(servicio.nombre)
+            self.ui_servicio.txtDuracion.setText(str(servicio.duracion))
+            self.ui_servicio.txtPrecio.setText(str(servicio.precio))
+        else:
+            self.modo = 'nuevo'
+            self.id_servicio = None
+
+
 
 ##############################################################################
 # Controlador ventana nuevos turnos
@@ -162,10 +253,10 @@ class MainController(QMainWindow):
         self.main_ui.btnFiltrarCliente.clicked.connect(
             self.cargar_clientes
         )
-    
+
 
         # Llamadas para agregar tarjetas de servicios y turnos
-        self.agregar_servicios()
+        self.mostrar_servicios()
         self.agregar_turnos()
 
         # Visualización de clientes en tabla
@@ -277,8 +368,9 @@ class MainController(QMainWindow):
         nombre = self.modelo_tcliente.item(fila, 1).text().upper()
         email = self.modelo_tcliente.item(fila, 3).text().lower()
         try:
-            telefono = int(self.modelo_tcliente.item(fila, 2).text())
-
+            telefono = self.modelo_tcliente.item(fila, 2).text()
+            if telefono != "":
+                telefono = int(telefono)
             # Se llama a metodo de edición de cliente
             ModeloCliente.editar_cliente(id_cliente, nombre, telefono, email)
             self.cargar_clientes()
@@ -333,40 +425,85 @@ class MainController(QMainWindow):
     # Posicionamiento de tarjetas de Servicios y Turnos
     ##############################################################################
 
-    def agregar_servicios(self):
+    def mostrar_servicios(self):
 
-        servicios = [
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            {"nombre": "Limpieza Facial", "duracion": 60, "precio": 2500},
-            
-            
-        ]
-
+        # Definición del contenedor de las tarjetas
         contenedor = self.main_ui.contenedorServicios.layout()
-        
-        if contenedor is None:
-            contenedor = QVBoxLayout(self.main_ui.contenedorServicios)
-            contenedor.setContentsMargins(0,0,0,0)
-            contenedor.setSpacing(10)
-            self.main_ui.contenedorServicios.setLayout(contenedor)
-            
-        
-        for servicio in servicios:
-            tarjeta = TarjetaServiciosController()
-            tarjeta.widget_tarjetaservicio.lblServicio.setText(servicio["nombre"])
-            tarjeta.widget_tarjetaservicio.lblDuracion.setText(f'{servicio["duracion"]} minutos')
-            tarjeta.widget_tarjetaservicio.lblPrecio.setText(f'$ {servicio["precio"]}')
-            contenedor.addWidget(tarjeta)
-        
-        contenedor.addSpacerItem(
-            QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        )
+        contenedor.setContentsMargins(0,0,0,0)
+        contenedor.setSpacing(10)
+
+        # Limpieza previa del contenedor
+        while contenedor.count():
+            item = contenedor.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        # Obtención de servicios de base de datos
+        servicios = ModeloServicio.lista_servicios()
+        if servicios:
+            for serv in servicios:
+                tarjeta = TarjetaServiciosController()
+                tarjeta.widget_tserv.lblServicio.setText(
+                    serv.nombre
+                )
+                tarjeta.widget_tserv.lblDuracion.setText(
+                    f'{serv.duracion} minutos'
+                )
+                tarjeta.widget_tserv.lblPrecio.setText(
+                    f'$ {serv.precio}'
+                )
+                # Asignación de método eliminar servicio
+                tarjeta.widget_tserv.btnEliminarServicio.clicked.connect(
+                    lambda _,id_servicio=serv.id : self.eliminar_servicio(
+                        id_servicio
+                    )
+                )
+
+                # Método que guarda el id asociado de cada tarjeta de servicio
+                tarjeta.widget_tserv.btnEditarServicio.clicked.connect(
+                    lambda _, servicio_id = serv.id : self.servicio_editar(
+                        servicio_id
+                    )
+                )
+                contenedor.addWidget(tarjeta)
+
+            contenedor.addSpacerItem(
+                QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+            )
     
+    
+    def eliminar_servicio(self, id_servicio):
+
+        # Consulta de eliminación
+        eliminar = QMessageBox.question(
+            self,
+            "Servicios",
+            "Eliminar el servicio?"
+        )
+        if eliminar == QMessageBox.Yes:
+            # Eliminación del servicio
+            ModeloServicio.eliminar_servicio(id_servicio)
+            QMessageBox.information(
+                self,
+                'Servicios',
+                'Servicio Eliminado'
+            )
+
+            # Actualización del listado
+            self.mostrar_servicios()
+    
+
+    def servicio_editar(self, servicio_id):
+        # Se obtiene el objeto Servicio a partir del id guardado en boton
+        servicio = ModeloServicio.info_servicio(servicio_id)
+        # Se inicializa ventana con metodo cargar_datos
+        ventana = ServicioController(self)
+        ventana.cargar_datos(servicio)
+        ventana.show()
+        # Se debe guardar la referencia para que no se destruya la ventana
+        self.ventana_servicio = ventana
+        
 
     def agregar_turnos(self):
 

@@ -22,14 +22,14 @@ class WidgetTarjetaServicio(object):
     def setupUi(self, widgetTarjetaServicio):
         if not widgetTarjetaServicio.objectName():
             widgetTarjetaServicio.setObjectName(u"widgetTarjetaServicio")
-        widgetTarjetaServicio.resize(750, 150)
+        widgetTarjetaServicio.resize(750, 130)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(widgetTarjetaServicio.sizePolicy().hasHeightForWidth())
         widgetTarjetaServicio.setSizePolicy(sizePolicy)
-        widgetTarjetaServicio.setMinimumSize(QSize(750, 150))
-        widgetTarjetaServicio.setMaximumSize(QSize(1000000, 150))
+        widgetTarjetaServicio.setMinimumSize(QSize(750, 130))
+        widgetTarjetaServicio.setMaximumSize(QSize(1000000, 130))
         widgetTarjetaServicio.setStyleSheet(u"background-color:white")
         self.gridLayout = QGridLayout(widgetTarjetaServicio)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -93,16 +93,16 @@ class WidgetTarjetaServicio(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.lblServicio = QLabel(self.contenedorLabels)
         self.lblServicio.setObjectName(u"lblServicio")
-        font1 = QFont()
-        font1.setFamilies([u"Century Gothic"])
-        font1.setPointSize(16)
-        self.lblServicio.setFont(font1)
+        self.lblServicio.setFont(font)
         self.lblServicio.setStyleSheet(u"color: #C18484")
 
         self.verticalLayout_2.addWidget(self.lblServicio)
 
         self.lblDuracion = QLabel(self.contenedorLabels)
         self.lblDuracion.setObjectName(u"lblDuracion")
+        font1 = QFont()
+        font1.setFamilies([u"Century Gothic"])
+        font1.setPointSize(16)
         self.lblDuracion.setFont(font1)
         self.lblDuracion.setStyleSheet(u"color: #C18484")
 
