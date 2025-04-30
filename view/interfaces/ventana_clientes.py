@@ -44,8 +44,13 @@ class VentanaCliente(object):
         self.verticalLayout.setContentsMargins(5, 5, 5, 5)
         self.contenedorForm = QWidget(self.centralwidget)
         self.contenedorForm.setObjectName(u"contenedorForm")
-        self.contenedorForm.setStyleSheet(u"background-color: #C18484;\n"
-"border-radius:10px;")
+        self.contenedorForm.setStyleSheet(u"\n"
+"\n"
+"background-color: #F7E7DC;\n"
+"border: 2px solid #DCBCA6;\n"
+"border-radius: 10px\n"
+"\n"
+"")
         self.verticalLayout_2 = QVBoxLayout(self.contenedorForm)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.frame = QFrame(self.contenedorForm)
@@ -56,6 +61,7 @@ class VentanaCliente(object):
         sizePolicy1.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy1)
         self.frame.setMaximumSize(QSize(16777215, 50))
+        self.frame.setStyleSheet(u"border: 0;")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.frame)
@@ -67,6 +73,7 @@ class VentanaCliente(object):
         font.setPointSize(18)
         font.setBold(True)
         self.tituloVentana.setFont(font)
+        self.tituloVentana.setStyleSheet(u"color: #7D3928; border: 0;")
         self.tituloVentana.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tituloVentana.setWordWrap(True)
 
@@ -77,8 +84,10 @@ class VentanaCliente(object):
 
         self.cuerpoForm = QWidget(self.contenedorForm)
         self.cuerpoForm.setObjectName(u"cuerpoForm")
+        self.cuerpoForm.setStyleSheet(u"border: 0;")
         self.horizontalLayout = QHBoxLayout(self.cuerpoForm)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.widget_2 = QWidget(self.cuerpoForm)
         self.widget_2.setObjectName(u"widget_2")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
@@ -88,6 +97,7 @@ class VentanaCliente(object):
         self.widget_2.setSizePolicy(sizePolicy2)
         self.widget_2.setMinimumSize(QSize(100, 0))
         self.widget_2.setMaximumSize(QSize(100, 16777215))
+        self.widget_2.setStyleSheet(u"border: 0")
         self.verticalLayout_3 = QVBoxLayout(self.widget_2)
         self.verticalLayout_3.setSpacing(21)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -98,6 +108,7 @@ class VentanaCliente(object):
         font1.setFamilies([u"Century Gothic"])
         font1.setPointSize(14)
         self.labelNombre.setFont(font1)
+        self.labelNombre.setStyleSheet(u"color: #7D3928;")
         self.labelNombre.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_3.addWidget(self.labelNombre)
@@ -105,6 +116,7 @@ class VentanaCliente(object):
         self.labelCelular = QLabel(self.widget_2)
         self.labelCelular.setObjectName(u"labelCelular")
         self.labelCelular.setFont(font1)
+        self.labelCelular.setStyleSheet(u"color: #7D3928;")
         self.labelCelular.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_3.addWidget(self.labelCelular)
@@ -117,6 +129,7 @@ class VentanaCliente(object):
         sizePolicy3.setHeightForWidth(self.labelEmail.sizePolicy().hasHeightForWidth())
         self.labelEmail.setSizePolicy(sizePolicy3)
         self.labelEmail.setFont(font1)
+        self.labelEmail.setStyleSheet(u"color: #7D3928;")
         self.labelEmail.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.labelEmail.setMargin(0)
 
@@ -127,6 +140,7 @@ class VentanaCliente(object):
 
         self.widget_3 = QWidget(self.cuerpoForm)
         self.widget_3.setObjectName(u"widget_3")
+        self.widget_3.setStyleSheet(u"border: 0")
         self.verticalLayout_4 = QVBoxLayout(self.widget_3)
         self.verticalLayout_4.setSpacing(30)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -134,27 +148,33 @@ class VentanaCliente(object):
         self.txtNombre = QLineEdit(self.widget_3)
         self.txtNombre.setObjectName(u"txtNombre")
         self.txtNombre.setFont(font1)
-        self.txtNombre.setStyleSheet(u"color:black;\n"
+        self.txtNombre.setStyleSheet(u"color: rgb(125, 57, 40);\n"
+"border: 2px solid #C18484;\n"
 "background-color: white;\n"
-"border-radius: 5px;")
+"border-radius: 5px;\n"
+"")
 
         self.verticalLayout_4.addWidget(self.txtNombre)
 
         self.txtCelular = QLineEdit(self.widget_3)
         self.txtCelular.setObjectName(u"txtCelular")
         self.txtCelular.setFont(font1)
-        self.txtCelular.setStyleSheet(u"color:black;\n"
+        self.txtCelular.setStyleSheet(u"color: rgb(125, 57, 40);\n"
+"border: 2px solid #C18484;\n"
 "background-color: white;\n"
-"border-radius: 5px;")
+"border-radius: 5px;\n"
+"")
 
         self.verticalLayout_4.addWidget(self.txtCelular)
 
         self.txtEmail = QLineEdit(self.widget_3)
         self.txtEmail.setObjectName(u"txtEmail")
         self.txtEmail.setFont(font1)
-        self.txtEmail.setStyleSheet(u"color:black;\n"
+        self.txtEmail.setStyleSheet(u"color: rgb(125, 57, 40);\n"
+"border: 2px solid #C18484;\n"
 "background-color: white;\n"
-"border-radius: 5px;")
+"border-radius: 5px;\n"
+"")
 
         self.verticalLayout_4.addWidget(self.txtEmail)
 
@@ -167,23 +187,31 @@ class VentanaCliente(object):
         self.contenedorBoton = QWidget(self.contenedorForm)
         self.contenedorBoton.setObjectName(u"contenedorBoton")
         self.contenedorBoton.setMaximumSize(QSize(16777215, 60))
+        self.contenedorBoton.setStyleSheet(u"border: 0")
         self.gridLayout_2 = QGridLayout(self.contenedorBoton)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.gridLayout_2.setContentsMargins(-1, 4, -1, 4)
         self.btnAgregarCliente = QPushButton(self.contenedorBoton)
         self.btnAgregarCliente.setObjectName(u"btnAgregarCliente")
         self.btnAgregarCliente.setMinimumSize(QSize(0, 35))
         self.btnAgregarCliente.setMaximumSize(QSize(100, 35))
         self.btnAgregarCliente.setFont(font1)
         self.btnAgregarCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.btnAgregarCliente.setStyleSheet(u"QPushButton{\n"
-"	border: 1px solid white;\n"
+        self.btnAgregarCliente.setStyleSheet(u"QPushButton {\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
 "}\n"
 "\n"
-"QPushButton:hover{\n"
-"	border: 2px solid white;\n"
+"QPushButton:hover {\n"
 "	font-weight: bold;\n"
+"	color: #7D3928;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
 "}")
 
         self.gridLayout_2.addWidget(self.btnAgregarCliente, 0, 0, 1, 1)

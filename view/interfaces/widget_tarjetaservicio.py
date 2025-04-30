@@ -36,9 +36,13 @@ class WidgetTarjetaServicio(object):
         self.gridLayout.setContentsMargins(2, 2, 2, 2)
         self.tarjetaServicio = QWidget(widgetTarjetaServicio)
         self.tarjetaServicio.setObjectName(u"tarjetaServicio")
-        self.tarjetaServicio.setStyleSheet(u"background-color: #EDE2E0;\n"
-"border: 2px solid #C18484;\n"
-"border-radius: 10px;")
+        self.tarjetaServicio.setStyleSheet(u"\n"
+"\n"
+"background-color: #F7E7DC;\n"
+"border: 2px solid #7D3928;\n"
+"border-radius: 10px\n"
+"\n"
+"")
         self.horizontalLayout = QHBoxLayout(self.tarjetaServicio)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(4, 4, 4, 4)
@@ -61,24 +65,21 @@ class WidgetTarjetaServicio(object):
         font.setPointSize(16)
         font.setBold(True)
         self.encabezadoServicio.setFont(font)
-        self.encabezadoServicio.setStyleSheet(u"color: #C18484;\n"
-"font-weight: bold;")
+        self.encabezadoServicio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout.addWidget(self.encabezadoServicio)
 
         self.encabezadoDuracion = QLabel(self.encabezadosServicios)
         self.encabezadoDuracion.setObjectName(u"encabezadoDuracion")
         self.encabezadoDuracion.setFont(font)
-        self.encabezadoDuracion.setStyleSheet(u"color: #C18484;\n"
-"font-weight: bold;")
+        self.encabezadoDuracion.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout.addWidget(self.encabezadoDuracion)
 
         self.encabezadoPrecio = QLabel(self.encabezadosServicios)
         self.encabezadoPrecio.setObjectName(u"encabezadoPrecio")
         self.encabezadoPrecio.setFont(font)
-        self.encabezadoPrecio.setStyleSheet(u"color: #C18484;\n"
-"font-weight: bold;")
+        self.encabezadoPrecio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout.addWidget(self.encabezadoPrecio)
 
@@ -94,7 +95,7 @@ class WidgetTarjetaServicio(object):
         self.lblServicio = QLabel(self.contenedorLabels)
         self.lblServicio.setObjectName(u"lblServicio")
         self.lblServicio.setFont(font)
-        self.lblServicio.setStyleSheet(u"color: #C18484")
+        self.lblServicio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_2.addWidget(self.lblServicio)
 
@@ -104,14 +105,14 @@ class WidgetTarjetaServicio(object):
         font1.setFamilies([u"Century Gothic"])
         font1.setPointSize(16)
         self.lblDuracion.setFont(font1)
-        self.lblDuracion.setStyleSheet(u"color: #C18484")
+        self.lblDuracion.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_2.addWidget(self.lblDuracion)
 
         self.lblPrecio = QLabel(self.contenedorLabels)
         self.lblPrecio.setObjectName(u"lblPrecio")
         self.lblPrecio.setFont(font1)
-        self.lblPrecio.setStyleSheet(u"color: #C18484")
+        self.lblPrecio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_2.addWidget(self.lblPrecio)
 
@@ -148,16 +149,20 @@ class WidgetTarjetaServicio(object):
         self.btnEditarServicio.setFont(font2)
         self.btnEditarServicio.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnEditarServicio.setStyleSheet(u"QPushButton {\n"
-"	color: #C18484;\n"
-"	border: 1px solid #C18484;\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"	color: #C18484;\n"
-"	border: 2px solid #C18484;\n"
-"	border-radius: 5px;\n"
 "	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
 "}")
 
         self.verticalLayout_4.addWidget(self.btnEditarServicio)
@@ -168,16 +173,20 @@ class WidgetTarjetaServicio(object):
         self.btnEliminarServicio.setFont(font2)
         self.btnEliminarServicio.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnEliminarServicio.setStyleSheet(u"QPushButton {\n"
-"	color: #C18484;\n"
-"	border: 1px solid #C18484;\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"	color: #C18484;\n"
-"	border: 2px solid #C18484;\n"
-"	border-radius: 5px;\n"
 "	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
 "}")
 
         self.verticalLayout_4.addWidget(self.btnEliminarServicio)

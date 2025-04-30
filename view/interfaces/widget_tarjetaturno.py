@@ -31,9 +31,13 @@ class WidgetTarjetaTurno(object):
         self.gridLayout.setContentsMargins(2, 2, 2, 2)
         self.tarjetaTurnos = QWidget(widgetTarjetaTurnos)
         self.tarjetaTurnos.setObjectName(u"tarjetaTurnos")
-        self.tarjetaTurnos.setStyleSheet(u"background-color: #EDE2E0;\n"
-"border: 2px solid #C18484;\n"
-"border-radius: 10px;")
+        self.tarjetaTurnos.setStyleSheet(u"\n"
+"\n"
+"background-color: #F7E7DC;\n"
+"border: 2px solid #7D3928;\n"
+"border-radius: 10px\n"
+"\n"
+"")
         self.horizontalLayout = QHBoxLayout(self.tarjetaTurnos)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.widget = QWidget(self.tarjetaTurnos)
@@ -46,8 +50,7 @@ class WidgetTarjetaTurno(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.contenedorHora = QWidget(self.widget)
         self.contenedorHora.setObjectName(u"contenedorHora")
-        self.contenedorHora.setStyleSheet(u"border: 2px solid #C18484;\n"
-"\n"
+        self.contenedorHora.setStyleSheet(u"border: 2px solid #7D3928;\n"
 "\n"
 "")
         self.gridLayout_2 = QGridLayout(self.contenedorHora)
@@ -60,8 +63,7 @@ class WidgetTarjetaTurno(object):
         font.setBold(True)
         self.lblHoraTurno.setFont(font)
         self.lblHoraTurno.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
-        self.lblHoraTurno.setStyleSheet(u"color: #C18484;\n"
-"border: 0px")
+        self.lblHoraTurno.setStyleSheet(u"color: #7D3928; border: 0px;")
         self.lblHoraTurno.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.lblHoraTurno, 0, 0, 1, 1)
@@ -71,15 +73,14 @@ class WidgetTarjetaTurno(object):
 
         self.contenedorDuracion = QWidget(self.widget)
         self.contenedorDuracion.setObjectName(u"contenedorDuracion")
-        self.contenedorDuracion.setStyleSheet(u"border: 2px solid #C18484;\n"
+        self.contenedorDuracion.setStyleSheet(u"border: 2px solid #7D3928;\n"
 "")
         self.gridLayout_4 = QGridLayout(self.contenedorDuracion)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.lblDuracion = QLabel(self.contenedorDuracion)
         self.lblDuracion.setObjectName(u"lblDuracion")
         self.lblDuracion.setFont(font)
-        self.lblDuracion.setStyleSheet(u"color: #C18484;\n"
-"border: 0px")
+        self.lblDuracion.setStyleSheet(u"color: #7D3928; border: 0px;")
         self.lblDuracion.setScaledContents(False)
         self.lblDuracion.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lblDuracion.setWordWrap(True)
@@ -109,9 +110,7 @@ class WidgetTarjetaTurno(object):
         font1.setBold(True)
         self.titCliente.setFont(font1)
         self.titCliente.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.titCliente.setStyleSheet(u"color:  #C18484;\n"
-"border:0px;\n"
-"")
+        self.titCliente.setStyleSheet(u"color: #7D3928;")
         self.titCliente.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.titCliente)
@@ -120,9 +119,7 @@ class WidgetTarjetaTurno(object):
         self.titServicio.setObjectName(u"titServicio")
         self.titServicio.setFont(font1)
         self.titServicio.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.titServicio.setStyleSheet(u"color:  #C18484;\n"
-"border:0px;\n"
-"")
+        self.titServicio.setStyleSheet(u"color: #7D3928;")
         self.titServicio.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.titServicio)
@@ -131,9 +128,7 @@ class WidgetTarjetaTurno(object):
         self.titObservacion.setObjectName(u"titObservacion")
         self.titObservacion.setFont(font1)
         self.titObservacion.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.titObservacion.setStyleSheet(u"color:  #C18484;\n"
-"border:0px;\n"
-"")
+        self.titObservacion.setStyleSheet(u"color: #7D3928;")
         self.titObservacion.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.titObservacion)
@@ -142,9 +137,7 @@ class WidgetTarjetaTurno(object):
         self.titPrecio.setObjectName(u"titPrecio")
         self.titPrecio.setFont(font1)
         self.titPrecio.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.titPrecio.setStyleSheet(u"color:  #C18484;\n"
-"border:0px;\n"
-"")
+        self.titPrecio.setStyleSheet(u"color: #7D3928;")
         self.titPrecio.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_2.addWidget(self.titPrecio)
@@ -164,32 +157,28 @@ class WidgetTarjetaTurno(object):
         font2.setFamilies([u"Century Gothic"])
         font2.setPointSize(12)
         self.lblCliente.setFont(font2)
-        self.lblCliente.setStyleSheet(u"color: #C18484;\n"
-"")
+        self.lblCliente.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_3.addWidget(self.lblCliente)
 
         self.lblServicio = QLabel(self.labelsTurnos)
         self.lblServicio.setObjectName(u"lblServicio")
         self.lblServicio.setFont(font2)
-        self.lblServicio.setStyleSheet(u"color: #C18484;\n"
-"")
+        self.lblServicio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_3.addWidget(self.lblServicio)
 
         self.lblObservacion = QLabel(self.labelsTurnos)
         self.lblObservacion.setObjectName(u"lblObservacion")
         self.lblObservacion.setFont(font2)
-        self.lblObservacion.setStyleSheet(u"color: #C18484;\n"
-"")
+        self.lblObservacion.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_3.addWidget(self.lblObservacion)
 
         self.lblPrecio = QLabel(self.labelsTurnos)
         self.lblPrecio.setObjectName(u"lblPrecio")
         self.lblPrecio.setFont(font2)
-        self.lblPrecio.setStyleSheet(u"color: #C18484;\n"
-"")
+        self.lblPrecio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_3.addWidget(self.lblPrecio)
 
@@ -221,16 +210,20 @@ class WidgetTarjetaTurno(object):
         self.btnCancelarTurno.setFont(font2)
         self.btnCancelarTurno.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnCancelarTurno.setStyleSheet(u"QPushButton {\n"
-"	color: #C18484;\n"
-"	border: 1px solid #C18484;\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"	color: #C18484;\n"
-"	border: 2px solid #C18484;\n"
-"	border-radius: 5px;\n"
 "	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
 "}")
 
         self.gridLayout_3.addWidget(self.btnCancelarTurno, 0, 0, 1, 1)

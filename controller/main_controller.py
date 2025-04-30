@@ -487,7 +487,6 @@ class MainController(QMainWindow):
         # Seteo de dimensiones fijas de columnas
         self.main_ui.tablaClientes.setColumnWidth(1,200)
         self.main_ui.tablaClientes.setColumnWidth(2,300)
-        self.main_ui.tablaClientes.setColumnWidth(3,340)
     
     ##########################################################################
     # Método para edición de clientes
@@ -575,8 +574,8 @@ class MainController(QMainWindow):
 
         # Definición del contenedor de las tarjetas
         contenedor = self.main_ui.contenedorServicios.layout()
-        contenedor.setContentsMargins(0,0,0,0)
-        contenedor.setSpacing(10)
+        contenedor.setContentsMargins(10,10,10,10)
+        contenedor.setSpacing(5)
 
         # Limpieza previa del contenedor
         while contenedor.count():
@@ -658,6 +657,8 @@ class MainController(QMainWindow):
     def agregar_turnos(self, fecha: date):
         # Se define el contenedor donde irán las tarjetas
         contenedor = self.main_ui.contenedorTurnos.layout()
+        contenedor.setContentsMargins(10,10,10,10)
+        contenedor.setSpacing(5)
 
         # Se borran widgets del layout
         while contenedor.count():

@@ -26,27 +26,39 @@ class VentanaTurno(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
-        MainWindow.resize(400, 511)
-        MainWindow.setMinimumSize(QSize(400, 400))
-        MainWindow.setMaximumSize(QSize(400, 511))
+        MainWindow.resize(400, 500)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QSize(400, 350))
+        MainWindow.setMaximumSize(QSize(400, 500))
         icon = QIcon()
         icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+        self.centralwidget.setMinimumSize(QSize(0, 500))
+        self.centralwidget.setMaximumSize(QSize(16777215, 500))
         self.centralwidget.setStyleSheet(u"background-color:white;")
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(5, 5, 5, 5)
         self.widget = QWidget(self.centralwidget)
         self.widget.setObjectName(u"widget")
-        self.widget.setStyleSheet(u"background-color: #C18484;\n"
-"border-radius: 10px;")
+        self.widget.setStyleSheet(u"\n"
+"background-color: #F7E7DC;\n"
+"border: 2px solid #DCBCA6;\n"
+"border-radius: 10px\n"
+"\n"
+"")
         self.verticalLayout = QVBoxLayout(self.widget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.contenedorTitulo = QWidget(self.widget)
         self.contenedorTitulo.setObjectName(u"contenedorTitulo")
         self.contenedorTitulo.setMaximumSize(QSize(16777215, 50))
+        self.contenedorTitulo.setStyleSheet(u"border:0px")
         self.gridLayout_2 = QGridLayout(self.contenedorTitulo)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label = QLabel(self.contenedorTitulo)
@@ -56,6 +68,7 @@ class VentanaTurno(object):
         font.setPointSize(18)
         font.setBold(True)
         self.label.setFont(font)
+        self.label.setStyleSheet(u"color: #7D3928; ")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setWordWrap(True)
 
@@ -66,6 +79,7 @@ class VentanaTurno(object):
 
         self.contenedorForm = QWidget(self.widget)
         self.contenedorForm.setObjectName(u"contenedorForm")
+        self.contenedorForm.setStyleSheet(u"border: 0px")
         self.verticalLayout_2 = QVBoxLayout(self.contenedorForm)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
@@ -77,6 +91,7 @@ class VentanaTurno(object):
         self.widget_7 = QWidget(self.widget_2)
         self.widget_7.setObjectName(u"widget_7")
         self.widget_7.setMaximumSize(QSize(150, 16777215))
+        self.widget_7.setStyleSheet(u"color: #7D3928; ")
         self.gridLayout_3 = QGridLayout(self.widget_7)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
         self.label_2 = QLabel(self.widget_7)
@@ -108,13 +123,14 @@ class VentanaTurno(object):
         self.cmbCliente.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
-"    color: white;\n"
+"    color: #7D3928;\n"
 "    padding: 5px;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
+"	color: #7D3928;\n"
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
 "    outline: none;\n"
@@ -145,6 +161,7 @@ class VentanaTurno(object):
         self.label_3 = QLabel(self.widget_9)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setFont(font1)
+        self.label_3.setStyleSheet(u"color: #7D3928; ")
 
         self.gridLayout_4.addWidget(self.label_3, 0, 0, 1, 1)
 
@@ -159,16 +176,16 @@ class VentanaTurno(object):
         self.gridLayout_9.setContentsMargins(0, -1, 0, -1)
         self.dateEditTurno = QDateEdit(self.widget_10)
         self.dateEditTurno.setObjectName(u"dateEditTurno")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dateEditTurno.sizePolicy().hasHeightForWidth())
-        self.dateEditTurno.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.dateEditTurno.sizePolicy().hasHeightForWidth())
+        self.dateEditTurno.setSizePolicy(sizePolicy1)
         font4 = QFont()
         font4.setFamilies([u"Segoe UI"])
         font4.setPointSize(12)
         self.dateEditTurno.setFont(font4)
-        self.dateEditTurno.setStyleSheet(u"")
+        self.dateEditTurno.setStyleSheet(u"color: #7D3928;")
         self.dateEditTurno.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.dateEditTurno.setDateTime(QDateTime(QDate(2025, 1, 1), QTime(0, 0, 0)))
         self.dateEditTurno.setMinimumDateTime(QDateTime(QDate(2025, 1, 1), QTime(0, 0, 0)))
@@ -195,6 +212,7 @@ class VentanaTurno(object):
         self.label_4 = QLabel(self.widget_11)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setFont(font1)
+        self.label_4.setStyleSheet(u"color: #7D3928; ")
 
         self.gridLayout_5.addWidget(self.label_4, 0, 0, 1, 1)
 
@@ -209,7 +227,7 @@ class VentanaTurno(object):
         self.timeEditTurno = QTimeEdit(self.widget_12)
         self.timeEditTurno.setObjectName(u"timeEditTurno")
         self.timeEditTurno.setFont(font2)
-        self.timeEditTurno.setStyleSheet(u"")
+        self.timeEditTurno.setStyleSheet(u"color: #7D3928;")
         self.timeEditTurno.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         self.timeEditTurno.setKeyboardTracking(True)
         self.timeEditTurno.setProperty(u"showGroupSeparator", False)
@@ -237,6 +255,7 @@ class VentanaTurno(object):
         self.label_5 = QLabel(self.widget_13)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setFont(font1)
+        self.label_5.setStyleSheet(u"color: #7D3928; ")
 
         self.gridLayout_6.addWidget(self.label_5, 0, 0, 1, 1)
 
@@ -255,13 +274,14 @@ class VentanaTurno(object):
         self.cmbServicio.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
-"    color: white;\n"
+"    color: #7D3928;\n"
 "    padding: 5px;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
+"	color: #7D3928;\n"
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
 "    outline: none;\n"
@@ -279,6 +299,7 @@ class VentanaTurno(object):
 
         self.widget_6 = QWidget(self.contenedorForm)
         self.widget_6.setObjectName(u"widget_6")
+        self.widget_6.setMinimumSize(QSize(0, 80))
         self.horizontalLayout_5 = QHBoxLayout(self.widget_6)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.horizontalLayout_5.setContentsMargins(0, -1, 0, -1)
@@ -290,6 +311,7 @@ class VentanaTurno(object):
         self.label_6 = QLabel(self.widget_15)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font1)
+        self.label_6.setStyleSheet(u"color: #7D3928; ")
 
         self.gridLayout_7.addWidget(self.label_6, 0, 0, 1, 1)
 
@@ -304,9 +326,11 @@ class VentanaTurno(object):
         self.txtObservacion = QTextEdit(self.widget_16)
         self.txtObservacion.setObjectName(u"txtObservacion")
         self.txtObservacion.setFont(font2)
-        self.txtObservacion.setStyleSheet(u"background-color: white;\n"
-"color:black;\n"
-"border-radius:5px;")
+        self.txtObservacion.setStyleSheet(u"color: rgb(125, 57, 40);\n"
+"border: 2px solid #C18484;\n"
+"background-color: white;\n"
+"border-radius: 5px;\n"
+"")
 
         self.gridLayout_12.addWidget(self.txtObservacion, 0, 0, 1, 1)
 
@@ -323,22 +347,29 @@ class VentanaTurno(object):
         self.contenedorBoton.setObjectName(u"contenedorBoton")
         self.contenedorBoton.setMinimumSize(QSize(0, 60))
         self.contenedorBoton.setMaximumSize(QSize(16777215, 100))
+        self.contenedorBoton.setStyleSheet(u"border: 0px")
         self.gridLayout_13 = QGridLayout(self.contenedorBoton)
         self.gridLayout_13.setObjectName(u"gridLayout_13")
         self.btnAgendarTurno = QPushButton(self.contenedorBoton)
         self.btnAgendarTurno.setObjectName(u"btnAgendarTurno")
-        self.btnAgendarTurno.setMaximumSize(QSize(120, 60))
+        self.btnAgendarTurno.setMaximumSize(QSize(120, 35))
         self.btnAgendarTurno.setFont(font1)
         self.btnAgendarTurno.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnAgendarTurno.setStyleSheet(u"QPushButton {\n"
-"	border: 1px solid white;\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
 "	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"	border: 2px solid white;\n"
-"	border-radius: 5px;\n"
 "	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
 "}")
 
         self.gridLayout_13.addWidget(self.btnAgendarTurno, 0, 0, 1, 1)
