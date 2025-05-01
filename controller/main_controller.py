@@ -15,7 +15,7 @@ from model.modelo_turnos import ModeloTurno
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import QDate
+from PySide6.QtCore import QDate, Qt
 
 ##############################################################################
 # Controlador Widget - Tarjetas de Servicios
@@ -354,13 +354,23 @@ class MainController(QMainWindow):
         self.main_ui = VentanaPrincipal()
         self.main_ui.setupUi(self)
 
-        # Seteo de la página principal StackedWidget
-        self.main_ui.StackedWidget.setCurrentIndex(2)
-
+        
+        ######################################################################
         # Seteo de botones para recorrer menú
+        ######################################################################
+        # Seteo de la página principal StackedWidget
+        self.main_ui.StackedWidget.setCurrentIndex(3)
+
         self.main_ui.btn_clientes.clicked.connect(self.abrir_menu_clientes)
         self.main_ui.btn_servicios.clicked.connect(self.abrir_menu_servicios)
         self.main_ui.btn_turnos.clicked.connect(self.abrir_menu_turnos)
+        self.main_ui.btnHistoriaClientes.clicked.connect(
+            self.abrir_menu_historial
+        )
+
+        ######################################################################
+        # Asignaciones de métodos a botones
+        ######################################################################
 
         # Abrir ventana para agendar nuevo cliente
         self.main_ui.btnNuevoCliente.clicked.connect(
@@ -387,12 +397,26 @@ class MainController(QMainWindow):
             self.cargar_clientes
         )
 
+        # Asignación método para mostrar historial de turnos por cliente
+        self.main_ui.btnBuscarHist.clicked.connect(
+            self.carga_historial
+        )
+
+        ######################################################################
+        # Llenado comboboxs
+        ######################################################################
+        self.llenar_cmb_clientes()
+        self.llenar_cmb_servicios()
+        ######################################################################
+        # Configuraciones turnos
+        ######################################################################
+
+        # Seteo del calendarWidget
         self.main_ui.calendarWidget.setCurrentPage(
             QDate.currentDate().year(),
             QDate.currentDate().month()
         )
         self.main_ui.calendarWidget.setSelectedDate(datetime.now())
-
 
         # Que siempre arranque mostrando los turnos del día actual
         self.agregar_turnos(date.today())
@@ -401,24 +425,33 @@ class MainController(QMainWindow):
         self.main_ui.calendarWidget.selectionChanged.connect(
             self.actualizar_turnos
         )
-
+        ######################################################################
         # Llamadas para agregar tarjetas de servicios
+        ######################################################################
         self.mostrar_servicios()
 
         # Visualización de clientes en tabla
         self.cargar_clientes()
 
-
+    ##########################################################################
     # Movimiento entre menú principal
+    ##########################################################################
     def abrir_menu_clientes(self):
-        self.main_ui.StackedWidget.setCurrentIndex(3)
+        self.main_ui.StackedWidget.setCurrentIndex(4)
     
     def abrir_menu_servicios(self):
         self.main_ui.StackedWidget.setCurrentIndex(0)
     
     def abrir_menu_turnos(self):
         self.main_ui.StackedWidget.setCurrentIndex(1)
+    
+    def abrir_menu_historial(self):
+        self.main_ui.StackedWidget.setCurrentIndex(2)
 
+    ##########################################################################
+    # Apertura de ventanas secundarias
+    ##########################################################################
+    
     # Apertura ventana nuevo cliente
     def ventana_nuevo_cliente(self):
         self.abrir_nuevo_cliente = ClienteController(self)
@@ -434,12 +467,15 @@ class MainController(QMainWindow):
         self.abrir_nuevo_turno = TurnoController(self)
         self.abrir_nuevo_turno.show()
 
+
+    ##########################################################################
+    #                             CLIENTES                                   #
+    ##########################################################################
     ##########################################################################
     # Método para carga de clientes en QTableView
     ##########################################################################
 
     def cargar_clientes(self):
-        
         # Se establece modelo y headers del modelo
         self.modelo_tcliente = QStandardItemModel()
         self.modelo_tcliente.setHorizontalHeaderLabels(
@@ -474,6 +510,10 @@ class MainController(QMainWindow):
                     QStandardItem(str(cliente.telefono)),
                     QStandardItem(cliente.email)
                 ]
+                # Alineado de valores
+                for item in fila:
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                
                 self.modelo_tcliente.appendRow(fila)
 
         self.main_ui.tablaClientes.setModel(self.modelo_tcliente)
@@ -566,6 +606,10 @@ class MainController(QMainWindow):
         
         self.cargar_clientes()
 
+
+    ##########################################################################
+    #                            SERVICIOS                                   #
+    ##########################################################################
     ##########################################################################
     # Posicionamiento de tarjetas de Servicios
     ##########################################################################
@@ -648,8 +692,10 @@ class MainController(QMainWindow):
         ventana.show()
         # Se debe guardar la referencia para que no se destruya la ventana
         self.ventana_servicio = ventana
-        
 
+
+    ##########################################################################
+    #                               TURNOS                                   #
     ##########################################################################
     # Posicionamiento de tarjetas de Turnos
     ##########################################################################
@@ -734,3 +780,85 @@ class MainController(QMainWindow):
         )
 
         self.agregar_turnos(fecha)
+
+
+    ##########################################################################
+    #                          HISTORIAL TURNOS                              #
+    ##########################################################################
+    
+    ##########################################################################
+    # Carga de ComboBoxs de cliente y servicios
+    ##########################################################################
+    def llenar_cmb_clientes(self):
+        # Obtención de clientes
+        clientes = ModeloTurno.clientes_con_turnos()
+        # Asignación primer valor del combobox
+        self.main_ui.cmbClienteHist.clear()
+        self.main_ui.cmbClienteHist.addItem("Seleccionar cliente", None)
+        # Asignación a combobox
+        for cliente in clientes:
+            self.main_ui.cmbClienteHist.addItem(cliente.nombre, cliente.id)
+
+    def llenar_cmb_servicios(self):
+        # Obtención de servicios
+        servicios = ModeloServicio.lista_servicios()
+        # Asignación primer valor del combobox
+        self.main_ui.cmbServicioHist.clear()
+        self.main_ui.cmbServicioHist.addItem("Seleccionar servicio", None)
+        # Asignación a combobox
+        for servicio in servicios:
+            self.main_ui.cmbServicioHist.addItem(servicio.nombre, servicio.id)
+
+    ##########################################################################
+    # Carga de Historiales de tratamientos a clientes en Tabla
+    ##########################################################################
+    def carga_historial(self):
+        # Obtención de entradas de usuario
+        cliente = self.main_ui.cmbClienteHist.currentData()
+        servicio = self.main_ui.cmbServicioHist.currentData()
+        fecha = date.today()
+
+        # Verificación de que cliente no es None
+        if cliente == None:
+            QMessageBox.critical(
+                self,
+                'Historial Clientes - Error',
+                'Tenes que elegir un cliente !'
+            )
+            return
+        
+        # Definición del modelo para insertar datos
+        self.model_thist = QStandardItemModel()
+        self.model_thist.setHorizontalHeaderLabels(
+            ["Turno", "Fecha Turno", "Tratamiento", "Observación"]
+        )
+
+        # Se limpia el modelo antes de cargar clientes
+        self.model_thist.removeRows(0, self.model_thist.rowCount())
+
+        # Obtención de historial
+        turnos = ModeloTurno.historial_turnos(cliente=cliente, fecha=fecha, servicio=servicio)
+
+        # Carga de datos en tabla
+        for i, turno in enumerate(turnos, start=1):
+            fecha_format = date.strftime(turno[0], '%d/%m/%Y')
+            fila = [
+                QStandardItem(str(i)),
+                QStandardItem(fecha_format),
+                QStandardItem(turno[2]),
+                QStandardItem(turno[3])
+            ]
+            # Alineado de valores
+            for item in fila:
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            self.model_thist.appendRow(fila)
+        
+        # Seteo del modelo a tabla y dimensiones de columnas
+        self.main_ui.tablaHistorial.setModel(self.model_thist)
+
+        self.main_ui.tablaHistorial.setColumnWidth(0,80)
+        self.main_ui.tablaHistorial.setColumnWidth(1,120)
+        self.main_ui.tablaHistorial.setColumnWidth(2,250)
+        
+

@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCalendarWidget, QGridLayout,
-    QHBoxLayout, QHeaderView, QLabel, QLayout,
-    QLineEdit, QMainWindow, QPushButton, QScrollArea,
-    QSizePolicy, QStackedWidget, QTableView, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCalendarWidget, QComboBox,
+    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
+    QLayout, QLineEdit, QMainWindow, QPushButton,
+    QScrollArea, QSizePolicy, QStackedWidget, QTableView,
+    QVBoxLayout, QWidget)
 from view import recursos_rc
 
 class VentanaPrincipal(object):
@@ -100,38 +100,12 @@ class VentanaPrincipal(object):
 
         self.verticalLayout_2.addWidget(self.label)
 
-        self.btn_clientes = QPushButton(self.MenuBotones)
-        self.btn_clientes.setObjectName(u"btn_clientes")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.btn_clientes.sizePolicy().hasHeightForWidth())
-        self.btn_clientes.setSizePolicy(sizePolicy1)
-        self.btn_clientes.setMaximumSize(QSize(16777215, 50))
-        font1 = QFont()
-        font1.setFamilies([u"Century Gothic"])
-        font1.setPointSize(16)
-        self.btn_clientes.setFont(font1)
-        self.btn_clientes.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.btn_clientes.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.btn_clientes.setStyleSheet(u"QPushButton {\n"
-"	color: #7D3928;\n"
-"	border: 0px\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"	font-weight: bold;\n"
-"	border-bottom: 2px solid;\n"
-"	border-radius: 5px;\n"
-"	border-color: #7D3928;\n"
-"}")
-        self.btn_clientes.setIconSize(QSize(20, 20))
-
-        self.verticalLayout_2.addWidget(self.btn_clientes)
-
         self.btn_servicios = QPushButton(self.MenuBotones)
         self.btn_servicios.setObjectName(u"btn_servicios")
         self.btn_servicios.setMaximumSize(QSize(16777215, 50))
+        font1 = QFont()
+        font1.setFamilies([u"Century Gothic"])
+        font1.setPointSize(16)
         self.btn_servicios.setFont(font1)
         self.btn_servicios.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btn_servicios.setStyleSheet(u"QPushButton {\n"
@@ -166,6 +140,50 @@ class VentanaPrincipal(object):
 "}")
 
         self.verticalLayout_2.addWidget(self.btn_turnos)
+
+        self.btn_clientes = QPushButton(self.MenuBotones)
+        self.btn_clientes.setObjectName(u"btn_clientes")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.btn_clientes.sizePolicy().hasHeightForWidth())
+        self.btn_clientes.setSizePolicy(sizePolicy1)
+        self.btn_clientes.setMaximumSize(QSize(16777215, 50))
+        self.btn_clientes.setFont(font1)
+        self.btn_clientes.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btn_clientes.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btn_clientes.setStyleSheet(u"QPushButton {\n"
+"	color: #7D3928;\n"
+"	border: 0px\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"	font-weight: bold;\n"
+"	border-bottom: 2px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: #7D3928;\n"
+"}")
+        self.btn_clientes.setIconSize(QSize(20, 20))
+
+        self.verticalLayout_2.addWidget(self.btn_clientes)
+
+        self.btnHistoriaClientes = QPushButton(self.MenuBotones)
+        self.btnHistoriaClientes.setObjectName(u"btnHistoriaClientes")
+        self.btnHistoriaClientes.setMaximumSize(QSize(16777215, 50))
+        self.btnHistoriaClientes.setFont(font1)
+        self.btnHistoriaClientes.setStyleSheet(u"QPushButton {\n"
+"	color: #7D3928;\n"
+"	border: 0px\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"	font-weight: bold;\n"
+"	border-bottom: 2px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: #7D3928;\n"
+"}")
+
+        self.verticalLayout_2.addWidget(self.btnHistoriaClientes)
 
 
         self.verticalLayout.addWidget(self.MenuBotones)
@@ -315,7 +333,7 @@ class VentanaPrincipal(object):
         self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.contenedorServicios = QWidget()
         self.contenedorServicios.setObjectName(u"contenedorServicios")
-        self.contenedorServicios.setGeometry(QRect(0, 0, 82, 16))
+        self.contenedorServicios.setGeometry(QRect(0, 0, 879, 482))
         self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
@@ -360,7 +378,7 @@ class VentanaPrincipal(object):
         self.tituloTurnos.setFont(font2)
         self.tituloTurnos.setStyleSheet(u"color: #7D3928;\n"
 "border: 0px")
-        self.tituloTurnos.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.tituloTurnos.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.tituloTurnos.setWordWrap(True)
 
         self.horizontalLayout_6.addWidget(self.tituloTurnos)
@@ -474,7 +492,7 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos.setWidgetResizable(True)
         self.contenedorTurnos = QWidget()
         self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setGeometry(QRect(0, 0, 98, 28))
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 879, 462))
         self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -483,6 +501,255 @@ class VentanaPrincipal(object):
         self.verticalLayout_8.addWidget(self.scrollAreaTurnos)
 
         self.StackedWidget.addWidget(self.MenuTurnos)
+        self.MenuHistorial = QWidget()
+        self.MenuHistorial.setObjectName(u"MenuHistorial")
+        self.verticalLayout_18 = QVBoxLayout(self.MenuHistorial)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.verticalLayout_18.setContentsMargins(2, 0, 2, 0)
+        self.encabezadoHistorial = QWidget(self.MenuHistorial)
+        self.encabezadoHistorial.setObjectName(u"encabezadoHistorial")
+        self.encabezadoHistorial.setMaximumSize(QSize(16777215, 150))
+        self.encabezadoHistorial.setStyleSheet(u"background-color: #F7E7DC;\n"
+"border: 2px solid #DCBCA6;\n"
+"border-radius: 10px\n"
+"")
+        self.horizontalLayout_9 = QHBoxLayout(self.encabezadoHistorial)
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.horizontalLayout_9.setContentsMargins(9, -1, -1, -1)
+        self.encabezado = QWidget(self.encabezadoHistorial)
+        self.encabezado.setObjectName(u"encabezado")
+        sizePolicy.setHeightForWidth(self.encabezado.sizePolicy().hasHeightForWidth())
+        self.encabezado.setSizePolicy(sizePolicy)
+        self.encabezado.setMinimumSize(QSize(250, 0))
+        self.encabezado.setMaximumSize(QSize(250, 16777215))
+        self.encabezado.setStyleSheet(u"border: 0px;")
+        self.gridLayout_3 = QGridLayout(self.encabezado)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.tituloHistorial = QLabel(self.encabezado)
+        self.tituloHistorial.setObjectName(u"tituloHistorial")
+        self.tituloHistorial.setFont(font2)
+        self.tituloHistorial.setStyleSheet(u"color: rgb(125, 57, 40);")
+        self.tituloHistorial.setWordWrap(True)
+
+        self.gridLayout_3.addWidget(self.tituloHistorial, 0, 0, 1, 1)
+
+
+        self.horizontalLayout_9.addWidget(self.encabezado)
+
+        self.widgetLabels = QWidget(self.encabezadoHistorial)
+        self.widgetLabels.setObjectName(u"widgetLabels")
+        self.widgetLabels.setMaximumSize(QSize(100, 16777215))
+        self.widgetLabels.setStyleSheet(u"border: 0px;")
+        self.verticalLayout_19 = QVBoxLayout(self.widgetLabels)
+        self.verticalLayout_19.setSpacing(6)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.verticalLayout_19.setContentsMargins(10, 0, 0, 0)
+        self.lblClienteHist = QLabel(self.widgetLabels)
+        self.lblClienteHist.setObjectName(u"lblClienteHist")
+        self.lblClienteHist.setFont(font3)
+        self.lblClienteHist.setStyleSheet(u"color: #7D3928;")
+
+        self.verticalLayout_19.addWidget(self.lblClienteHist)
+
+        self.lblServicioHist = QLabel(self.widgetLabels)
+        self.lblServicioHist.setObjectName(u"lblServicioHist")
+        self.lblServicioHist.setFont(font3)
+        self.lblServicioHist.setStyleSheet(u"color: #7D3928;")
+
+        self.verticalLayout_19.addWidget(self.lblServicioHist)
+
+
+        self.horizontalLayout_9.addWidget(self.widgetLabels)
+
+        self.widget_4 = QWidget(self.encabezadoHistorial)
+        self.widget_4.setObjectName(u"widget_4")
+        self.widget_4.setStyleSheet(u"border: 0px;")
+        self.verticalLayout_20 = QVBoxLayout(self.widget_4)
+        self.verticalLayout_20.setSpacing(24)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.verticalLayout_20.setContentsMargins(0, 0, -1, 0)
+        self.cmbClienteHist = QComboBox(self.widget_4)
+        self.cmbClienteHist.setObjectName(u"cmbClienteHist")
+        font5 = QFont()
+        font5.setFamilies([u"Century Gothic"])
+        self.cmbClienteHist.setFont(font5)
+        self.cmbClienteHist.setStyleSheet(u"QComboBox {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    color: #7D3928;\n"
+"    padding: 5px;\n"
+"	border: 1px solid #7D3928;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"	color: #7D3928;\n"
+"    selection-background-color: #e0e0e0;\n"
+"    padding: 5px;\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    border: none; /* Elimina el borde del cuadro desplegable */\n"
+"    background: transparent; /* Elimina el fondo del bot\u00f3n */\n"
+"    width: 20px; /* Opcional: control\u00e1s el espacio ocupado por la flechita */\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"	\n"
+"	image: url(:/images/images/flecha.svg.svg);\n"
+"	width: 30px;\n"
+"    height: 30px;\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"")
+        self.cmbClienteHist.setEditable(True)
+        self.cmbClienteHist.setMaxVisibleItems(5)
+
+        self.verticalLayout_20.addWidget(self.cmbClienteHist)
+
+        self.cmbServicioHist = QComboBox(self.widget_4)
+        self.cmbServicioHist.setObjectName(u"cmbServicioHist")
+        self.cmbServicioHist.setFont(font5)
+        self.cmbServicioHist.setStyleSheet(u"QComboBox {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"    color: #7D3928;\n"
+"    padding: 5px;\n"
+"	border: 1px solid #7D3928;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    font-family: \"Century Gothic\";\n"
+"    font-size: 14px;\n"
+"	color: #7D3928;\n"
+"    selection-background-color: #e0e0e0;\n"
+"    padding: 5px;\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    border: none; /* Elimina el borde del cuadro desplegable */\n"
+"    background: transparent; /* Elimina el fondo del bot\u00f3n */\n"
+"    width: 20px; /* Opcional: control\u00e1s el espacio ocupado por la flechita */\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"	\n"
+"	image: url(:/images/images/flecha.svg.svg);\n"
+"	width: 30px;\n"
+"    height: 30px;\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"")
+        self.cmbServicioHist.setMaxVisibleItems(5)
+
+        self.verticalLayout_20.addWidget(self.cmbServicioHist)
+
+
+        self.horizontalLayout_9.addWidget(self.widget_4)
+
+        self.botoneraHist = QWidget(self.encabezadoHistorial)
+        self.botoneraHist.setObjectName(u"botoneraHist")
+        self.botoneraHist.setStyleSheet(u"border: 0px;")
+        self.gridLayout_4 = QGridLayout(self.botoneraHist)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.btnBuscarHist = QPushButton(self.botoneraHist)
+        self.btnBuscarHist.setObjectName(u"btnBuscarHist")
+        self.btnBuscarHist.setMinimumSize(QSize(0, 40))
+        self.btnBuscarHist.setMaximumSize(QSize(150, 16777215))
+        self.btnBuscarHist.setFont(font3)
+        self.btnBuscarHist.setStyleSheet(u"QPushButton {\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
+"}")
+
+        self.gridLayout_4.addWidget(self.btnBuscarHist, 0, 0, 1, 1)
+
+
+        self.horizontalLayout_9.addWidget(self.botoneraHist)
+
+
+        self.verticalLayout_18.addWidget(self.encabezadoHistorial)
+
+        self.widgetTablaHist = QWidget(self.MenuHistorial)
+        self.widgetTablaHist.setObjectName(u"widgetTablaHist")
+        self.widgetTablaHist.setStyleSheet(u"border: 0px;")
+        self.gridLayout_5 = QGridLayout(self.widgetTablaHist)
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.tablaHistorial = QTableView(self.widgetTablaHist)
+        self.tablaHistorial.setObjectName(u"tablaHistorial")
+        self.tablaHistorial.setStyleSheet(u"QTableView {\n"
+"	border: 2px solid #DEC4AE;\n"
+"	border-radius: 10px;\n"
+"	color: black;\n"
+"	font: 12pt \"Century Gothic\";\n"
+"	gridline-color: rgb(125, 57, 40);\n"
+"	selection-background-color: #D3B9B4;\n"
+"	selection-color: rgb(0, 0, 0);\n"
+"	background-color: #FDF5EE;\n"
+"}\n"
+"\n"
+"\n"
+"/*QHeaderView {\n"
+"	color: rgb(125, 57, 40);\n"
+"	background-color: #F7E7DC;\n"
+"	font-weight: bold;\n"
+"	font-family: century-gothic;\n"
+"	font-size: 12pt;\n"
+"	gridline-color: rgb(125, 57, 40);\n"
+"	border-radius: 10px;\n"
+"	border-right: 1px solid rgb(125, 57, 40);\n"
+"}*/\n"
+"\n"
+"QHeaderView::section {\n"
+"    color: rgb(125, 57, 40);\n"
+"    background-color: #F7E0D3;\n"
+"    font-weight: bold;\n"
+"    font-family: century-gothic;\n"
+"    font-size: 12pt;\n"
+"    padding: 5px;\n"
+"    border: none;\n"
+"    border-right: 1px solid rgb(125, 57, 40); /* Esto simula el gridline */\n"
+"    border-bottom: 1px solid rgb(125, 57, 40); /* Opcional, l\u00ednea debajo del header */\n"
+"}\n"
+"\n"
+"QLineEdit {\n"
+"	color: blac"
+                        "k\n"
+"}\n"
+"")
+        self.tablaHistorial.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tablaHistorial.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tablaHistorial.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        self.tablaHistorial.horizontalHeader().setStretchLastSection(True)
+        self.tablaHistorial.verticalHeader().setVisible(False)
+
+        self.gridLayout_5.addWidget(self.tablaHistorial, 0, 0, 1, 1)
+
+
+        self.verticalLayout_18.addWidget(self.widgetTablaHist)
+
+        self.StackedWidget.addWidget(self.MenuHistorial)
         self.IntroPage = QWidget()
         self.IntroPage.setObjectName(u"IntroPage")
         self.IntroPage.setMinimumSize(QSize(0, 0))
@@ -565,10 +832,10 @@ class VentanaPrincipal(object):
         self.lineEditCliente = QLineEdit(self.widgetLineEdit)
         self.lineEditCliente.setObjectName(u"lineEditCliente")
         self.lineEditCliente.setMaximumSize(QSize(16777215, 30))
-        font5 = QFont()
-        font5.setFamilies([u"Century Gothic"])
-        font5.setPointSize(12)
-        self.lineEditCliente.setFont(font5)
+        font6 = QFont()
+        font6.setFamilies([u"Century Gothic"])
+        font6.setPointSize(12)
+        self.lineEditCliente.setFont(font6)
         self.lineEditCliente.setStyleSheet(u"color: rgb(125, 57, 40);\n"
 "border: 2px solid #C18484;\n"
 "background-color: white;\n"
@@ -593,7 +860,7 @@ class VentanaPrincipal(object):
         sizePolicy2.setHeightForWidth(self.btnFiltrarCliente.sizePolicy().hasHeightForWidth())
         self.btnFiltrarCliente.setSizePolicy(sizePolicy2)
         self.btnFiltrarCliente.setMinimumSize(QSize(100, 30))
-        self.btnFiltrarCliente.setFont(font5)
+        self.btnFiltrarCliente.setFont(font6)
         self.btnFiltrarCliente.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnFiltrarCliente.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
@@ -693,12 +960,12 @@ class VentanaPrincipal(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.tablaClientes = QTableView(self.widgetTabla)
         self.tablaClientes.setObjectName(u"tablaClientes")
-        font6 = QFont()
-        font6.setFamilies([u"Century Gothic"])
-        font6.setPointSize(12)
-        font6.setBold(False)
-        font6.setItalic(False)
-        self.tablaClientes.setFont(font6)
+        font7 = QFont()
+        font7.setFamilies([u"Century Gothic"])
+        font7.setPointSize(12)
+        font7.setBold(False)
+        font7.setItalic(False)
+        self.tablaClientes.setFont(font7)
         self.tablaClientes.setStyleSheet(u"\n"
 "QTableView {\n"
 "	border: 2px solid #DEC4AE;\n"
@@ -766,7 +1033,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(3)
+        self.StackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -775,13 +1042,18 @@ class VentanaPrincipal(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Turnero BLA", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Men\u00fa", None))
-        self.btn_clientes.setText(QCoreApplication.translate("MainWindow", u"Clientes", None))
         self.btn_servicios.setText(QCoreApplication.translate("MainWindow", u"Servicios", None))
         self.btn_turnos.setText(QCoreApplication.translate("MainWindow", u"Turnos", None))
+        self.btn_clientes.setText(QCoreApplication.translate("MainWindow", u"Clientes", None))
+        self.btnHistoriaClientes.setText(QCoreApplication.translate("MainWindow", u"Historia Clientes", None))
         self.tituloServicios.setText(QCoreApplication.translate("MainWindow", u"SERVICIOS DISPONIBLES", None))
         self.btnNuevoServicio.setText(QCoreApplication.translate("MainWindow", u"Nuevo Servicio", None))
         self.tituloTurnos.setText(QCoreApplication.translate("MainWindow", u"GESTI\u00d3N DE TURNOS", None))
         self.btnNuevoTurno.setText(QCoreApplication.translate("MainWindow", u"Nuevo Turno", None))
+        self.tituloHistorial.setText(QCoreApplication.translate("MainWindow", u"HISTORIAL DE TRATAMIENTOS", None))
+        self.lblClienteHist.setText(QCoreApplication.translate("MainWindow", u"Cliente", None))
+        self.lblServicioHist.setText(QCoreApplication.translate("MainWindow", u"Servicio", None))
+        self.btnBuscarHist.setText(QCoreApplication.translate("MainWindow", u"Buscar", None))
         self.tituloClientes.setText(QCoreApplication.translate("MainWindow", u"GESTI\u00d3N DE CLIENTES", None))
         self.btnFiltrarCliente.setText(QCoreApplication.translate("MainWindow", u"Filtrar", None))
         self.btnNuevoCliente.setText(QCoreApplication.translate("MainWindow", u"Nuevo cliente", None))

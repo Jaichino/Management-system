@@ -125,6 +125,7 @@ class VentanaTurno(object):
 "    font-size: 14px;\n"
 "    color: #7D3928;\n"
 "    padding: 5px;\n"
+"	border: 1px solid #7D3928;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
@@ -134,7 +135,24 @@ class VentanaTurno(object):
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
 "    outline: none;\n"
-"}")
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    border: none; /* Elimina el borde del cuadro desplegable */\n"
+"    background: transparent; /* Elimina el fondo del bot\u00f3n */\n"
+"    width: 20px; /* Opcional: control\u00e1s el espacio ocupado por la flechita */\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"	\n"
+"	image: url(:/images/images/flecha.svg.svg);\n"
+"	width: 30px;\n"
+"    height: 30px;\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"")
         self.cmbCliente.setEditable(True)
         self.cmbCliente.setMaxVisibleItems(5)
         self.cmbCliente.setMinimumContentsLength(0)
@@ -276,6 +294,7 @@ class VentanaTurno(object):
 "    font-size: 14px;\n"
 "    color: #7D3928;\n"
 "    padding: 5px;\n"
+"	border: 1px solid #7D3928;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
@@ -285,7 +304,24 @@ class VentanaTurno(object):
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
 "    outline: none;\n"
-"}")
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    border: none; /* Elimina el borde del cuadro desplegable */\n"
+"    background: transparent; /* Elimina el fondo del bot\u00f3n */\n"
+"    width: 20px; /* Opcional: control\u00e1s el espacio ocupado por la flechita */\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"	\n"
+"	image: url(:/images/images/flecha.svg.svg);\n"
+"	width: 30px;\n"
+"    height: 30px;\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"")
         self.cmbServicio.setEditable(False)
         self.cmbServicio.setMaxVisibleItems(5)
 
