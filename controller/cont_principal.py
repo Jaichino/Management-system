@@ -14,7 +14,7 @@ from controller.cont_turnos import (
     TurnoController, TarjetaTurnosController
 )
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
+    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import QDate, Qt
 
@@ -105,6 +105,8 @@ class MainController(QMainWindow):
         ######################################################################
         # Llamadas para agregar tarjetas de servicios
         ######################################################################
+        
+        # Visualización tarjetas de servicios
         self.mostrar_servicios()
 
         # Visualización de clientes en tabla
@@ -144,6 +146,7 @@ class MainController(QMainWindow):
     def ventana_nuevo_turno(self):
         self.abrir_nuevo_turno = TurnoController(self)
         self.abrir_nuevo_turno.show()
+
 
 
     ##########################################################################
@@ -285,6 +288,7 @@ class MainController(QMainWindow):
         self.cargar_clientes()
 
 
+
     ##########################################################################
     #                            SERVICIOS                                   #
     ##########################################################################
@@ -370,6 +374,7 @@ class MainController(QMainWindow):
         ventana.show()
         # Se debe guardar la referencia para que no se destruya la ventana
         self.ventana_servicio = ventana
+
 
 
     ##########################################################################
@@ -458,6 +463,7 @@ class MainController(QMainWindow):
         )
 
         self.agregar_turnos(fecha)
+
 
 
     ##########################################################################

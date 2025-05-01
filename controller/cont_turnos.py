@@ -8,15 +8,11 @@ from view.interfaces.widget_tarjetaturno import WidgetTarjetaTurno
 from model.modelo_turnos import ModeloTurno
 from model.modelo_clientes import ModeloCliente
 from model.modelo_servicios import ModeloServicio
-from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import QDate, Qt
+from PySide6.QtWidgets import QMainWindow, QWidget, QMessageBox
 
 ##############################################################################
 # Controlador Widget - Tarjetas de Turnos
 ##############################################################################
-
 class TarjetaTurnosController(QWidget):
     def __init__(self):
         super().__init__()
@@ -26,7 +22,6 @@ class TarjetaTurnosController(QWidget):
 ##############################################################################
 # Controlador ventana nuevos turnos
 ##############################################################################
-
 class TurnoController(QMainWindow):
     
     def __init__(self, main_controller):
@@ -162,7 +157,7 @@ class TurnoController(QMainWindow):
 
         # Actualización de combobox pagina historial clientes
         self.main_controller.llenar_cmb_clientes()
-        
+
         QMessageBox.information(
             self,
             'Carga de turno',

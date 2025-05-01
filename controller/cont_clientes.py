@@ -4,15 +4,11 @@
 
 from view.interfaces.ventana_clientes import VentanaCliente
 from model.modelo_clientes import ModeloCliente
-from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QSpacerItem, QSizePolicy, QMessageBox)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import QDate, Qt
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 
 ##############################################################################
 # Controlador ventana nuevos clientes
 ##############################################################################
-
 class ClienteController(QMainWindow):
     
     def __init__(self, main_controller):
