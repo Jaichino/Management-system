@@ -160,6 +160,9 @@ class TurnoController(QMainWindow):
         self.main_controller.agregar_turnos(fecha_form)
         self.main_controller.main_ui.calendarWidget.setSelectedDate(fecha)
 
+        # Actualización de combobox pagina historial clientes
+        self.main_controller.llenar_cmb_clientes()
+        
         QMessageBox.information(
             self,
             'Carga de turno',
