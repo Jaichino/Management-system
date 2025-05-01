@@ -2,7 +2,7 @@
 # Importaciones
 ##############################################################################
 
-from controller.main_controller import MainController
+from controller.cont_principal import MainController
 from PySide6.QtWidgets import QApplication
 
 if __name__ == '__main__':
