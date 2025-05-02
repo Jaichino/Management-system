@@ -11,6 +11,9 @@ from sqlalchemy import event
 # Modelado de base de datos
 ##############################################################################
 
+##############################################################################
+# Creación tabla Cliente
+##############################################################################
 class Cliente(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
@@ -22,6 +25,15 @@ class Cliente(SQLModel, table=True):
         back_populates="cliente", cascade_delete=True
     )
 
+    ventas: list["Venta"] = Relationship(back_populates='cliente')
+
+    ccorrientes: list["CuentaCorriente"] = Relationship(
+        back_populates='cliente'
+    )
+
+##############################################################################
+# Creación tabla Servicio
+##############################################################################
 class Servicio(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
@@ -33,13 +45,15 @@ class Servicio(SQLModel, table=True):
         back_populates="servicio", cascade_delete=True
     )
 
+##############################################################################
+# Creación tabla Turno
+##############################################################################
 
 class EstadoTurno(str, Enum):
-    pendiente = "pendiente"
-    realizado = "realizado"
-    confirmado = "confirmado"
-    cancelado = "cancelado"
-
+    pendiente = "Pendiente"
+    realizado = "Realizado"
+    confirmado = "Confirmado"
+    cancelado = "Cancelado"
 
 class Turno(SQLModel, table=True):
 
@@ -56,10 +70,93 @@ class Turno(SQLModel, table=True):
 
 
 ##############################################################################
+# Creación tabla Producto
+##############################################################################
+class Producto(SQLModel, table=True):
+    
+    nro_producto: int | None = Field(default=None, primary_key=True)
+    codigo_producto: str = Field(index=True)
+    descripcion: str = Field(index=True)
+    precio_unitario: float
+    stock: int
+    vencimiento: date
+    estado: bool
+
+    det_productos: list['DetalleVenta'] = Relationship(
+        back_populates='producto'
+    )
+
+##############################################################################
+# Creación tabla Venta
+##############################################################################
+
+class ModoPago(str, Enum):
+    efectivo = 'Efectivo'
+    transferencia = 'Transferencia'
+    debito = 'Debito'
+    credito = 'Credito'
+    otro = 'Otro'
+
+class EstadoVenta(str, Enum):
+    pagado = 'Pagado'
+    pendiente = 'Pendiente'
+
+class Venta(SQLModel, table=True):
+
+    nro_venta: int | None = Field(default=None, primary_key=True)
+    fecha_venta: date = Field(default=date.today())
+    cliente_id: int =  Field(foreign_key="cliente.id")
+    monto_total: float
+    modo_pago: ModoPago
+    estado_venta: EstadoVenta
+    interes: float = 0
+
+    cliente: Cliente = Relationship(back_populates='ventas')
+
+    det_ventas: list['DetalleVenta'] = Relationship(back_populates='venta')
+
+##############################################################################
+# Creación tabla DetalleVenta
+##############################################################################
+
+class DetalleVenta(SQLModel, table=True):
+    
+    nro_venta: int = Field(foreign_key='venta.nro_venta', primary_key=True)
+    nro_producto: int = Field(
+                                foreign_key='producto.nro_producto',
+                                primary_key=True
+                            )
+    precio_unitario: float
+    cantidad: int
+
+    venta: Venta = Relationship(back_populates='detalles_ventas')
+    producto: Producto = Relationship(back_populates='detalles_productos')
+
+##############################################################################
+# Creación tabla CuentaCorriente
+##############################################################################
+
+class TipoOperacion(str, Enum):
+    deuda = 'Deuda'
+    pago = 'Pago'
+    actualizacion = 'Actualización'
+
+class CuentaCorriente(SQLModel, table=True):
+    
+    nro_operacion: int | None = Field(default=None, primary_key=True)
+    cliente_id: int = Field(foreign_key='cliente.id')
+    fecha_operacion: date
+    tipo_operacion: TipoOperacion
+    monto_operacion: float
+    monto_pendiente: float
+
+    cliente: Cliente = Relationship(back_populates='ccorrientes')
+
+##############################################################################
 # Creacion de engine y seleccion de base de datos
 ##############################################################################
 
-bd_name = "turnero_bla.db"
+bd_name = "bla_estetica.db"
 bd_url = f"sqlite:///{bd_name}"
 engine = create_engine(bd_url, echo=True)
 
@@ -79,6 +176,7 @@ def create_bd():
 # Ejecución solo para crear la base de datos
 ##############################################################################
 
+
 #if __name__ == "__main__":
-#    create_bd()
+#   create_bd()
 
