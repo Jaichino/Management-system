@@ -8,7 +8,7 @@ from sqlmodel import select, Session, join, distinct
 
 
 ##############################################################################
-# Modelo Servicio
+# Modelo Turno
 ##############################################################################
 
 class ModeloTurno:

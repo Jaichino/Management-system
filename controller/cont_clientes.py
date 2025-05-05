@@ -3,7 +3,7 @@
 ##############################################################################
 
 from view.interfaces.ventana_clientes import VentanaCliente
-from model.modelo_clientes import ModeloCliente
+from model.modelo_cliente import ModeloCliente
 from PySide6.QtWidgets import QMainWindow, QMessageBox
 
 ##############################################################################

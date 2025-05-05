@@ -4,7 +4,7 @@
 
 from view.interfaces.ventana_servicios import VentanaServicio
 from view.interfaces.widget_tarjetaservicio import WidgetTarjetaServicio
-from model.modelo_servicios import ModeloServicio
+from model.modelo_servicio import ModeloServicio
 from PySide6.QtWidgets import QMainWindow, QWidget, QMessageBox
 
 ##############################################################################

@@ -4,9 +4,9 @@
 
 from datetime import datetime, date, time, timedelta
 from view.interfaces.ventana_principal import VentanaPrincipal
-from model.modelo_clientes import ModeloCliente
-from model.modelo_servicios import ModeloServicio
-from model.modelo_turnos import ModeloTurno
+from model.modelo_cliente import ModeloCliente
+from model.modelo_servicio import ModeloServicio
+from model.modelo_turno import ModeloTurno
 from controller.cont_clientes import ClienteController
 from controller.cont_servicios import (
     ServicioController, TarjetaServiciosController)
