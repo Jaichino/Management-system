@@ -56,6 +56,8 @@ class TurnoController(QMainWindow):
 
         clientes = ModeloCliente.lista_clientes()
         for cliente in clientes:
+            if cliente.nombre == "CLIENTE NO REGISTRADO":
+                continue
             self.ui_turno.cmbCliente.addItem(cliente.nombre, cliente.id)
     
     def cargar_lista_servicios(self):

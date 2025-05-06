@@ -185,6 +185,8 @@ class MainController(QMainWindow):
         
         # Se crean filas y se cargan al modelo
         for cliente in clientes:
+                if cliente.nombre == 'CLIENTE NO REGISTRADO':
+                    continue
                 fila = [
                     QStandardItem(str(cliente.id)),
                     QStandardItem(cliente.nombre),

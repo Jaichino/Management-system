@@ -82,7 +82,7 @@ class Producto(SQLModel, table=True):
     vencimiento: date
     estado: bool
 
-    det_productos: list['DetalleVenta'] = Relationship(
+    detalles_productos: list['DetalleVenta'] = Relationship(
         back_populates='producto'
     )
 
@@ -113,7 +113,9 @@ class Venta(SQLModel, table=True):
 
     cliente: Cliente = Relationship(back_populates='ventas')
 
-    det_ventas: list['DetalleVenta'] = Relationship(back_populates='venta')
+    detalles_ventas: list['DetalleVenta'] = Relationship(
+        back_populates='venta'
+    )
 
 ##############################################################################
 # Creación tabla DetalleVenta
