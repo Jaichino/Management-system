@@ -5,7 +5,7 @@
 from datetime import date
 from sqlmodel import select, Session, between
 from sqlalchemy.orm import selectinload
-from database import engine, Venta, DetalleVenta
+from model.database import engine, Venta, DetalleVenta
 
 ##############################################################################
 # Modelo Ventas
