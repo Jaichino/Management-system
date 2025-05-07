@@ -12,7 +12,7 @@ from database import engine, Venta, DetalleVenta
 ##############################################################################
 
 class ModeloVentas:
-    
+
     @staticmethod
     def nueva_venta(
         fecha: date,
@@ -131,20 +131,4 @@ class ModeloVentas:
             return detalle_venta
 
 
-
-
-
-
-if __name__ == '__main__':
-
-    pass
-    #ModeloVentas.eliminar_venta(20)
-
-    #ventas = ModeloVentas.listado_ventas(date(2024,4,1), date(2025,4,26))
-    #for venta in ventas:
-    #    print(venta.estado_venta)
-#
-    #detalles = ModeloVentas.consulta_detalleventa(20)
-    #for det in detalles:
-    #    print(det.producto.descripcion, det.cantidad)
-    
+# if __name__ == '__main__':
