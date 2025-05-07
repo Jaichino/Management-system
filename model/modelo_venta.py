@@ -3,8 +3,9 @@
 ##############################################################################
 
 from datetime import date
-from sqlmodel import select, Session, join, distinct
-from model.database import engine, Venta, DetalleVenta
+from sqlmodel import select, Session, between
+from sqlalchemy.orm import selectinload
+from database import engine, Venta, DetalleVenta
 
 ##############################################################################
 # Modelo Ventas
@@ -18,7 +19,6 @@ class ModeloVentas:
         cliente: int,
         monto_total: float,
         modo_pago: str,
-        estado: str,
         interes: float
     ):
         ''' Método para generar una nueva venta
@@ -27,7 +27,6 @@ class ModeloVentas:
             :param int cliente: ID de cliente
             :param float monto_total: Monto total de venta
             :param str modo_pago: Modo de pago utilizado
-            :param str estado: Estado de venta (Pendiente/Pagado)
             :param float interes: Interes de la venta
         '''
         with Session(engine) as sesion:
@@ -36,7 +35,6 @@ class ModeloVentas:
                 cliente_id=cliente,
                 monto_total=monto_total,
                 modo_pago=modo_pago,
-                estado_venta=estado,
                 interes=interes
             )
             
@@ -92,4 +90,61 @@ class ModeloVentas:
             :param date desde: Fecha inicial de busqueda
             :param date hasta: Fecha final de busqueda
             :param int cliente: ID de cliente
+            :return: Lista de objetos Venta
         '''
+        with Session(engine) as sesion:
+            if cliente is not None:
+                query = (
+                    select(Venta)
+                    .options(selectinload(Venta.cliente))
+                    .where(
+                        between(Venta.fecha_venta, desde, hasta),
+                        Venta.cliente_id == cliente
+                    )
+                )
+
+            else:
+                query = (
+                    select(Venta)
+                    .options(selectinload(Venta.cliente))
+                    .where(between(Venta.fecha_venta, desde, hasta))
+                )
+            
+            listado_ventas = sesion.exec(query).all()
+            return listado_ventas
+
+
+    @staticmethod
+    def consulta_detalleventa(nro_venta: int):
+        ''' Método para obtener el detalle de una determinada venta
+
+            :param int nro_venta: Número de venta a consultar detalle
+            :return: Objeto DetalleVenta
+        '''
+        with Session(engine) as sesion:
+            detalle_venta = sesion.exec(
+                select(DetalleVenta)
+                .options(selectinload(DetalleVenta.producto))
+                .where(DetalleVenta.nro_venta == nro_venta)
+            ).all()
+            
+            return detalle_venta
+
+
+
+
+
+
+if __name__ == '__main__':
+
+    pass
+    #ModeloVentas.eliminar_venta(20)
+
+    #ventas = ModeloVentas.listado_ventas(date(2024,4,1), date(2025,4,26))
+    #for venta in ventas:
+    #    print(venta.estado_venta)
+#
+    #detalles = ModeloVentas.consulta_detalleventa(20)
+    #for det in detalles:
+    #    print(det.producto.descripcion, det.cantidad)
+    

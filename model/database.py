@@ -25,10 +25,12 @@ class Cliente(SQLModel, table=True):
         back_populates="cliente", cascade_delete=True
     )
 
-    ventas: list["Venta"] = Relationship(back_populates='cliente')
+    ventas: list["Venta"] = Relationship(
+        back_populates='cliente'
+    )
 
     ccorrientes: list["CuentaCorriente"] = Relationship(
-        back_populates='cliente'
+        back_populates='cliente', cascade_delete=True
     )
 
 ##############################################################################
@@ -90,31 +92,19 @@ class Producto(SQLModel, table=True):
 # Creación tabla Venta
 ##############################################################################
 
-class ModoPago(str, Enum):
-    efectivo = 'Efectivo'
-    transferencia = 'Transferencia'
-    debito = 'Debito'
-    credito = 'Credito'
-    otro = 'Otro'
-
-class EstadoVenta(str, Enum):
-    pagado = 'Pagado'
-    pendiente = 'Pendiente'
-
 class Venta(SQLModel, table=True):
 
     nro_venta: int | None = Field(default=None, primary_key=True)
     fecha_venta: date = Field(default=date.today())
-    cliente_id: int =  Field(foreign_key="cliente.id")
+    cliente_id: int | None =  Field(foreign_key="cliente.id", ondelete="SET NULL")
     monto_total: float
-    modo_pago: ModoPago
-    estado_venta: EstadoVenta
-    interes: float = 0
+    modo_pago: str
+    interes: float | None = None
 
     cliente: Cliente = Relationship(back_populates='ventas')
 
     detalles_ventas: list['DetalleVenta'] = Relationship(
-        back_populates='venta'
+        back_populates='venta', cascade_delete=True
     )
 
 ##############################################################################
@@ -123,7 +113,9 @@ class Venta(SQLModel, table=True):
 
 class DetalleVenta(SQLModel, table=True):
     
-    nro_venta: int = Field(foreign_key='venta.nro_venta', primary_key=True)
+    nro_venta: int = Field(
+        foreign_key='venta.nro_venta', primary_key=True, ondelete="CASCADE"
+    )
     nro_producto: int = Field(
                                 foreign_key='producto.nro_producto',
                                 primary_key=True
@@ -138,17 +130,12 @@ class DetalleVenta(SQLModel, table=True):
 # Creación tabla CuentaCorriente
 ##############################################################################
 
-class TipoOperacion(str, Enum):
-    deuda = 'Deuda'
-    pago = 'Pago'
-    actualizacion = 'Actualización'
-
 class CuentaCorriente(SQLModel, table=True):
     
     nro_operacion: int | None = Field(default=None, primary_key=True)
-    cliente_id: int = Field(foreign_key='cliente.id')
+    cliente_id: int = Field(foreign_key='cliente.id', ondelete="CASCADE")
     fecha_operacion: date
-    tipo_operacion: TipoOperacion
+    tipo_operacion: str
     monto_operacion: float
     monto_pendiente: float
 
@@ -179,6 +166,6 @@ def create_bd():
 ##############################################################################
 
 
-#if __name__ == "__main__":
-#   create_bd()
+if __name__ == "__main__":
+   create_bd()
 
