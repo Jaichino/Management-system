@@ -33,6 +33,10 @@ class Cliente(SQLModel, table=True):
         back_populates='cliente', cascade_delete=True
     )
 
+    fichas: list["FichaCosmetologica"] = Relationship(
+        back_populates="cliente", cascade_delete=True
+    )
+
 ##############################################################################
 # Creación tabla Servicio
 ##############################################################################
@@ -141,6 +145,18 @@ class CuentaCorriente(SQLModel, table=True):
 
     cliente: Cliente = Relationship(back_populates='ccorrientes')
 
+
+##############################################################################
+# Creación tabla FichaCosmetologica
+##############################################################################
+
+class FichaCosmetologica(SQLModel, table=True):
+
+    id_ficha: int | None = Field(default=None, primary_key=True)
+    id_cliente: int = Field(foreign_key="cliente.id", ondelete="CASCADE")
+    ficha: str
+
+    cliente: Cliente = Relationship(back_populates='fichas')
 ##############################################################################
 # Creacion de engine y seleccion de base de datos
 ##############################################################################

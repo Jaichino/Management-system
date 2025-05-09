@@ -3,6 +3,11 @@
 ##############################################################################
 
 from datetime import datetime, date, time, timedelta
+from PySide6.QtWidgets import (
+    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox)
+from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtCore import QDate, Qt
+
 from view.interfaces.ventana_principal import VentanaPrincipal
 from model.modelo_cliente import ModeloCliente
 from model.modelo_servicio import ModeloServicio
@@ -13,10 +18,7 @@ from controller.cont_servicios import (
 from controller.cont_turnos import (
     TurnoController, TarjetaTurnosController
 )
-from PySide6.QtWidgets import (
-    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import QDate, Qt
+from controller.cont_producto import NuevoProductoController
 
 ##############################################################################
 # Controlador Principal
@@ -34,13 +36,33 @@ class MainController(QMainWindow):
         ######################################################################
 
         # Seteo de la página principal StackedWidget
-        self.main_ui.StackedWidget.setCurrentIndex(3)
+        self.main_ui.StackedWidget.setCurrentIndex(6)
+        # Seteo de la pagina principal del stacked de ventas
+        self.main_ui.stackedVentas.setCurrentIndex(1)
 
-        self.main_ui.btn_clientes.clicked.connect(self.abrir_menu_clientes)
-        self.main_ui.btn_servicios.clicked.connect(self.abrir_menu_servicios)
-        self.main_ui.btn_turnos.clicked.connect(self.abrir_menu_turnos)
-        self.main_ui.btnHistoriaClientes.clicked.connect(
+        self.main_ui.btnMenu.clicked.connect(self.ir_menu_principal)
+        self.main_ui.btnMenuClientes.clicked.connect(self.abrir_menu_clientes)
+        self.main_ui.btnMenuServicios.clicked.connect(self.abrir_menu_servicios)
+        self.main_ui.btnMenuTurnos.clicked.connect(self.abrir_menu_turnos)
+        self.main_ui.btnMenuHistorial.clicked.connect(
             self.abrir_menu_historial
+        )
+        self.main_ui.btnMenuProductos.clicked.connect(
+            self.abrir_menu_productos
+        )
+        self.main_ui.btnMenuVentas.clicked.connect(
+            self.abrir_menu_ventas
+        )
+        self.main_ui.btnMenuCCorriente.clicked.connect(
+            self.abrir_menu_ccorriente
+        )
+
+        # Movimiento en stacked de ventas
+        self.main_ui.btnVolverAVenta.clicked.connect(
+            self.ir_nueva_venta
+        )
+        self.main_ui.btnConsultaVentas.clicked.connect(
+            self.ir_consulta_ventas
         )
 
         ######################################################################
@@ -62,6 +84,11 @@ class MainController(QMainWindow):
             self.ventana_nuevo_turno
         )
 
+        # Abrir ventana nuevo producto
+        self.main_ui.btnNuevoProducto.clicked.connect(
+            self.ventana_nuevoproducto
+        )
+
         # Asignación método eliminación de clientes
         self.main_ui.btnEliminarCliente.clicked.connect(
             self.eliminar_cliente
@@ -76,6 +103,8 @@ class MainController(QMainWindow):
         self.main_ui.btnBuscarHist.clicked.connect(
             self.carga_historial
         )
+
+
 
         ######################################################################
         # Llenado comboboxs
@@ -116,9 +145,13 @@ class MainController(QMainWindow):
     # Movimiento entre menú principal
     ##########################################################################
     
+    def ir_menu_principal(self):
+        self.main_ui.StackedWidget.setCurrentIndex(6)
+
     def abrir_menu_clientes(self):
-        self.main_ui.StackedWidget.setCurrentIndex(4)
-    
+        self.main_ui.StackedWidget.setCurrentIndex(7)
+        self.main_ui.lineEditCliente.setFocus()
+
     def abrir_menu_servicios(self):
         self.main_ui.StackedWidget.setCurrentIndex(0)
     
@@ -126,7 +159,24 @@ class MainController(QMainWindow):
         self.main_ui.StackedWidget.setCurrentIndex(1)
     
     def abrir_menu_historial(self):
+        self.main_ui.StackedWidget.setCurrentIndex(5)
+    
+    def abrir_menu_productos(self):
+        self.main_ui.StackedWidget.setCurrentIndex(4)
+        self.main_ui.txtCodigoProd.setFocus()
+    
+    def abrir_menu_ventas(self):
         self.main_ui.StackedWidget.setCurrentIndex(2)
+        self.main_ui.txtCodigoProdVenta.setFocus()
+
+    def abrir_menu_ccorriente(self):
+        self.main_ui.StackedWidget.setCurrentIndex(3)
+    
+    def ir_consulta_ventas(self):
+        self.main_ui.stackedVentas.setCurrentIndex(0)
+    
+    def ir_nueva_venta(self):
+        self.main_ui.stackedVentas.setCurrentIndex(1)
 
     ##########################################################################
     # Apertura de ventanas secundarias
@@ -146,6 +196,11 @@ class MainController(QMainWindow):
     def ventana_nuevo_turno(self):
         self.abrir_nuevo_turno = TurnoController(self)
         self.abrir_nuevo_turno.show()
+    
+    # Apertura ventana nuevo producto
+    def ventana_nuevoproducto(self):
+        self.abrir_nuevoproducto = NuevoProductoController()
+        self.abrir_nuevoproducto.exec()
 
 
 
