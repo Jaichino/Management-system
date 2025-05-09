@@ -30,7 +30,7 @@ class VentanaNuevoProducto(object):
         icon = QIcon()
         icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         Dialog.setWindowIcon(icon)
-        Dialog.setStyleSheet(u"background-color: white")
+        Dialog.setStyleSheet(u"")
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(5, 5, 5, 5)

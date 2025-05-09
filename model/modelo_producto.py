@@ -58,24 +58,32 @@ class ModeloProducto:
         with Session(engine) as sesion:
 
             if codigo == None and descripcion == None and stock == None:
-                query = select(Producto).where(Producto.estado == True)
+                query = (
+                    select(Producto)
+                    .where(Producto.estado == True)
+                    .order_by(Producto.vencimiento)
+                )
             
             elif codigo is not None:
                 query = (select(Producto)
                         .where( Producto.codigo_producto == codigo, 
                                 Producto.estado == True)
+                        .order_by(Producto.vencimiento)
                         )
+                
         
             elif descripcion is not None:
                 query= (select(Producto)
                         .where( Producto.descripcion.like(f"%{descripcion}%"),
                                 Producto.estado == True)
+                        .order_by(Producto.vencimiento)
                         )
             
             elif stock is not None:
                 query= (select(Producto)
                         .where( Producto.stock == stock,
                                 Producto.estado == True)
+                        .order_by(Producto.vencimiento)
                         )
             
             productos = sesion.exec(query).all()
@@ -117,7 +125,7 @@ class ModeloProducto:
 
 
     @staticmethod
-    def eliminar_producto(nro_producto):
+    def eliminar_producto(nro_producto: int, estado: bool = False):
         ''' Método para cambiar estado de producto a False indicando que el
             mismo ya no se encuentra disponible en el stock de productos.
             Sigue existiendo para no perder referencias de ventas.
@@ -129,7 +137,8 @@ class ModeloProducto:
                 select(Producto).where(Producto.nro_producto == nro_producto)
             ).one()
             
-            sesion.delete(producto_a_eliminar)
+            producto_a_eliminar.estado = estado
+            sesion.add(producto_a_eliminar)
             sesion.commit()
 
 
@@ -183,10 +192,11 @@ class ModeloProducto:
                 select(Producto.nro_producto)
                 .where(
                     Producto.codigo_producto == codigo, 
-                    Producto.vencimiento == vencimiento
+                    Producto.vencimiento == vencimiento,
+                    Producto.estado == True
                 )
             ).first()
 
             return nro_producto
 
-#if __name__ == '__main__':pass
+#if __name__ == '__main__':

@@ -2398,7 +2398,7 @@ class VentanaPrincipal(object):
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
-"	font: 12pt \"Century Gothic\";\n"
+"	font: 10pt \"Century Gothic\";\n"
 "	gridline-color: rgb(125, 57, 40);\n"
 "	selection-background-color: #D3B9B4;\n"
 "	selection-color: rgb(0, 0, 0);\n"
@@ -2434,6 +2434,13 @@ class VentanaPrincipal(object):
                         "	color: rgb(125, 57, 40);\n"
 "}\n"
 "")
+        self.tablaProductos.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.tablaProductos.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+        self.tablaProductos.setAlternatingRowColors(True)
+        self.tablaProductos.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tablaProductos.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tablaProductos.horizontalHeader().setStretchLastSection(True)
+        self.tablaProductos.verticalHeader().setVisible(False)
 
         self.gridLayout_6.addWidget(self.tablaProductos, 0, 0, 1, 1)
 
@@ -2967,7 +2974,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(7)
+        self.StackedWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
