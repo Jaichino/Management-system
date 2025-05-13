@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractSpinBox, QApplication
     QCheckBox, QComboBox, QDateEdit, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLayout, QLineEdit, QMainWindow, QPushButton,
-    QRadioButton, QScrollArea, QSizePolicy, QStackedWidget,
-    QTableView, QVBoxLayout, QWidget)
+    QRadioButton, QScrollArea, QSizePolicy, QSpinBox,
+    QStackedWidget, QTableView, QVBoxLayout, QWidget)
 from view import recursos_rc
 
 class VentanaPrincipal(object):
@@ -615,6 +615,7 @@ class VentanaPrincipal(object):
         font5.setFamilies([u"Century Gothic"])
         font5.setPointSize(10)
         self.btnVolverAVenta.setFont(font5)
+        self.btnVolverAVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnVolverAVenta.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
 "	border: 1px solid;\n"
@@ -726,6 +727,7 @@ class VentanaPrincipal(object):
         font7 = QFont()
         font7.setFamilies([u"Century Gothic"])
         self.cmbClienteConsulta.setFont(font7)
+        self.cmbClienteConsulta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.cmbClienteConsulta.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 12px;\n"
@@ -759,6 +761,8 @@ class VentanaPrincipal(object):
 "\n"
 "\n"
 "\\")
+        self.cmbClienteConsulta.setEditable(True)
+        self.cmbClienteConsulta.setMaxVisibleItems(5)
 
         self.verticalLayout_36.addWidget(self.cmbClienteConsulta)
 
@@ -776,6 +780,7 @@ class VentanaPrincipal(object):
         self.btnConsultarVenta.setMinimumSize(QSize(0, 35))
         self.btnConsultarVenta.setMaximumSize(QSize(150, 16777215))
         self.btnConsultarVenta.setFont(font3)
+        self.btnConsultarVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnConsultarVenta.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
 "	border: 1px solid;\n"
@@ -800,6 +805,7 @@ class VentanaPrincipal(object):
         self.btnEliminarVenta.setMinimumSize(QSize(0, 35))
         self.btnEliminarVenta.setMaximumSize(QSize(150, 16777215))
         self.btnEliminarVenta.setFont(font3)
+        self.btnEliminarVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnEliminarVenta.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
 "	border: 1px solid;\n"
@@ -987,7 +993,7 @@ class VentanaPrincipal(object):
         self.gridLayout_12.setContentsMargins(5, 0, 0, 0)
         self.label = QLabel(self.widget_7)
         self.label.setObjectName(u"label")
-        self.label.setMinimumSize(QSize(95, 0))
+        self.label.setMinimumSize(QSize(90, 0))
         self.label.setFont(font1)
         self.label.setStyleSheet(u"color: #7D3928;")
         self.label.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
@@ -1003,7 +1009,7 @@ class VentanaPrincipal(object):
         self.widget_8.setMaximumSize(QSize(150, 16777215))
         self.gridLayout_16 = QGridLayout(self.widget_8)
         self.gridLayout_16.setObjectName(u"gridLayout_16")
-        self.gridLayout_16.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_16.setContentsMargins(19, 0, 0, 0)
         self.txtCodigoProdVenta = QLineEdit(self.widget_8)
         self.txtCodigoProdVenta.setObjectName(u"txtCodigoProdVenta")
         self.txtCodigoProdVenta.setFont(font1)
@@ -1052,7 +1058,7 @@ class VentanaPrincipal(object):
         sizePolicy9.setVerticalStretch(0)
         sizePolicy9.setHeightForWidth(self.widget_10.sizePolicy().hasHeightForWidth())
         self.widget_10.setSizePolicy(sizePolicy9)
-        self.widget_10.setMinimumSize(QSize(250, 0))
+        self.widget_10.setMinimumSize(QSize(270, 0))
         self.widget_10.setMaximumSize(QSize(250, 16777215))
         self.horizontalLayout_14 = QHBoxLayout(self.widget_10)
         self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
@@ -1063,14 +1069,13 @@ class VentanaPrincipal(object):
         self.gridLayout_13 = QGridLayout(self.widget_13)
         self.gridLayout_13.setObjectName(u"gridLayout_13")
         self.gridLayout_13.setContentsMargins(5, 0, 0, 0)
-        self.label_2 = QLabel(self.widget_13)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setMinimumSize(QSize(95, 0))
-        self.label_2.setFont(font1)
-        self.label_2.setStyleSheet(u"color: #7D3928;")
-        self.label_2.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.label_3 = QLabel(self.widget_13)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setFont(font1)
+        self.label_3.setStyleSheet(u"color: #7D3928;")
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
-        self.gridLayout_13.addWidget(self.label_2, 0, 0, 1, 1)
+        self.gridLayout_13.addWidget(self.label_3, 0, 0, 1, 1)
 
 
         self.horizontalLayout_14.addWidget(self.widget_13)
@@ -1084,65 +1089,14 @@ class VentanaPrincipal(object):
         self.widget_14.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.gridLayout_18 = QGridLayout(self.widget_14)
         self.gridLayout_18.setObjectName(u"gridLayout_18")
-        self.gridLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.txtCantProdVenta = QLineEdit(self.widget_14)
-        self.txtCantProdVenta.setObjectName(u"txtCantProdVenta")
-        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
-        sizePolicy10.setHorizontalStretch(0)
-        sizePolicy10.setVerticalStretch(0)
-        sizePolicy10.setHeightForWidth(self.txtCantProdVenta.sizePolicy().hasHeightForWidth())
-        self.txtCantProdVenta.setSizePolicy(sizePolicy10)
-        self.txtCantProdVenta.setMinimumSize(QSize(150, 0))
-        self.txtCantProdVenta.setMaximumSize(QSize(150, 16777215))
-        self.txtCantProdVenta.setFont(font1)
-        self.txtCantProdVenta.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.txtCantProdVenta.setStyleSheet(u"color: rgb(125, 57, 40);\n"
-"border: 2px solid #C18484;\n"
-"background-color: white;\n"
-"border-radius: 5px;\n"
-"")
-
-        self.gridLayout_18.addWidget(self.txtCantProdVenta, 0, 0, 1, 1)
-
-
-        self.horizontalLayout_14.addWidget(self.widget_14)
-
-
-        self.horizontalLayout_13.addWidget(self.widget_10)
-
-        self.widget_11 = QWidget(self.widget_5)
-        self.widget_11.setObjectName(u"widget_11")
-        sizePolicy9.setHeightForWidth(self.widget_11.sizePolicy().hasHeightForWidth())
-        self.widget_11.setSizePolicy(sizePolicy9)
-        self.horizontalLayout_15 = QHBoxLayout(self.widget_11)
-        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.horizontalLayout_15.setContentsMargins(5, 0, 0, 0)
-        self.widget_15 = QWidget(self.widget_11)
-        self.widget_15.setObjectName(u"widget_15")
-        self.gridLayout_14 = QGridLayout(self.widget_15)
-        self.gridLayout_14.setObjectName(u"gridLayout_14")
-        self.gridLayout_14.setContentsMargins(0, 0, 0, 0)
-        self.label_3 = QLabel(self.widget_15)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setFont(font1)
-        self.label_3.setStyleSheet(u"color: #7D3928;")
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
-
-        self.gridLayout_14.addWidget(self.label_3, 0, 0, 1, 1)
-
-
-        self.horizontalLayout_15.addWidget(self.widget_15)
-
-        self.widget_16 = QWidget(self.widget_11)
-        self.widget_16.setObjectName(u"widget_16")
-        self.widget_16.setMinimumSize(QSize(180, 0))
-        self.gridLayout_20 = QGridLayout(self.widget_16)
-        self.gridLayout_20.setObjectName(u"gridLayout_20")
-        self.cmbVencVenta = QComboBox(self.widget_16)
+        self.gridLayout_18.setContentsMargins(0, 0, 17, 0)
+        self.cmbVencVenta = QComboBox(self.widget_14)
         self.cmbVencVenta.setObjectName(u"cmbVencVenta")
+        self.cmbVencVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.cmbVencVenta.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.cmbVencVenta.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
-"    font-size: 12px;\n"
+"    font-size: 14px;\n"
 "    color: #7D3928;\n"
 "	padding: 3px;\n"
 "	border: 2px solid #C18484;;\n"
@@ -1150,7 +1104,7 @@ class VentanaPrincipal(object):
 "\n"
 "QComboBox QAbstractItemView {\n"
 "    font-family: \"Century Gothic\";\n"
-"    font-size: 12px;\n"
+"    font-size: 14px;\n"
 "	color: #7D3928;\n"
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
@@ -1173,8 +1127,81 @@ class VentanaPrincipal(object):
 "\n"
 "\n"
 "")
+        self.cmbVencVenta.setMaxVisibleItems(5)
 
-        self.gridLayout_20.addWidget(self.cmbVencVenta, 0, 0, 1, 1)
+        self.gridLayout_18.addWidget(self.cmbVencVenta, 0, 0, 1, 1)
+
+
+        self.horizontalLayout_14.addWidget(self.widget_14)
+
+
+        self.horizontalLayout_13.addWidget(self.widget_10)
+
+        self.widget_11 = QWidget(self.widget_5)
+        self.widget_11.setObjectName(u"widget_11")
+        sizePolicy9.setHeightForWidth(self.widget_11.sizePolicy().hasHeightForWidth())
+        self.widget_11.setSizePolicy(sizePolicy9)
+        self.horizontalLayout_15 = QHBoxLayout(self.widget_11)
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.horizontalLayout_15.setContentsMargins(34, 0, 0, 0)
+        self.widget_15 = QWidget(self.widget_11)
+        self.widget_15.setObjectName(u"widget_15")
+        self.gridLayout_14 = QGridLayout(self.widget_15)
+        self.gridLayout_14.setObjectName(u"gridLayout_14")
+        self.gridLayout_14.setContentsMargins(0, 0, 0, 0)
+
+        self.horizontalLayout_15.addWidget(self.widget_15)
+
+        self.label_2 = QLabel(self.widget_11)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setMinimumSize(QSize(95, 0))
+        self.label_2.setFont(font1)
+        self.label_2.setStyleSheet(u"color: #7D3928;")
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+
+        self.horizontalLayout_15.addWidget(self.label_2)
+
+        self.widget_16 = QWidget(self.widget_11)
+        self.widget_16.setObjectName(u"widget_16")
+        self.widget_16.setMinimumSize(QSize(180, 0))
+        self.gridLayout_20 = QGridLayout(self.widget_16)
+        self.gridLayout_20.setObjectName(u"gridLayout_20")
+        self.gridLayout_20.setContentsMargins(0, 8, 100, 12)
+        self.spinBoxCantidadVenta = QSpinBox(self.widget_16)
+        self.spinBoxCantidadVenta.setObjectName(u"spinBoxCantidadVenta")
+        sizePolicy4.setHeightForWidth(self.spinBoxCantidadVenta.sizePolicy().hasHeightForWidth())
+        self.spinBoxCantidadVenta.setSizePolicy(sizePolicy4)
+        self.spinBoxCantidadVenta.setMinimumSize(QSize(0, 35))
+        self.spinBoxCantidadVenta.setMaximumSize(QSize(80, 16777215))
+        font8 = QFont()
+        font8.setFamilies([u"Century Gothic"])
+        font8.setPointSize(12)
+        font8.setBold(False)
+        font8.setItalic(False)
+        self.spinBoxCantidadVenta.setFont(font8)
+        self.spinBoxCantidadVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.spinBoxCantidadVenta.setStyleSheet(u" QSpinBox {\n"
+"	font: 12pt \"Century Gothic\";\n"
+"	color: rgb(125, 57, 40);\n"
+"}\n"
+"\n"
+"QSpinBox::up-button {\n"
+"	width: 19;\n"
+"	height:19;\n"
+"}\n"
+"\n"
+"\n"
+"QSpinBox::down-button {\n"
+"	width: 19;\n"
+"	height:19;\n"
+"}\n"
+"\n"
+"")
+        self.spinBoxCantidadVenta.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.spinBoxCantidadVenta.setReadOnly(False)
+        self.spinBoxCantidadVenta.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.PlusMinus)
+
+        self.gridLayout_20.addWidget(self.spinBoxCantidadVenta, 0, 0, 1, 1)
 
 
         self.horizontalLayout_15.addWidget(self.widget_16)
@@ -1332,6 +1359,12 @@ class VentanaPrincipal(object):
                         "	color: rgb(125, 57, 40);\n"
 "}\n"
 "")
+        self.tablaCarrito.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tablaCarrito.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+        self.tablaCarrito.setAlternatingRowColors(True)
+        self.tablaCarrito.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tablaCarrito.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tablaCarrito.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout_22.addWidget(self.tablaCarrito, 0, 0, 1, 1)
 
@@ -1411,11 +1444,11 @@ class VentanaPrincipal(object):
         self.gridLayout_23.setContentsMargins(17, -1, -1, -1)
         self.lblTotalEnCarrito = QLabel(self.widget_2)
         self.lblTotalEnCarrito.setObjectName(u"lblTotalEnCarrito")
-        font8 = QFont()
-        font8.setFamilies([u"Century Gothic"])
-        font8.setPointSize(12)
-        font8.setBold(True)
-        self.lblTotalEnCarrito.setFont(font8)
+        font9 = QFont()
+        font9.setFamilies([u"Century Gothic"])
+        font9.setPointSize(12)
+        font9.setBold(True)
+        self.lblTotalEnCarrito.setFont(font9)
         self.lblTotalEnCarrito.setStyleSheet(u"color: #7D3928;")
         self.lblTotalEnCarrito.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
         self.lblTotalEnCarrito.setWordWrap(True)
@@ -1451,11 +1484,11 @@ class VentanaPrincipal(object):
         self.verticalLayout_32.setContentsMargins(0, 0, 0, 0)
         self.label_6 = QLabel(self.widget_37)
         self.label_6.setObjectName(u"label_6")
-        font9 = QFont()
-        font9.setFamilies([u"Century Gothic"])
-        font9.setPointSize(14)
-        font9.setBold(True)
-        self.label_6.setFont(font9)
+        font10 = QFont()
+        font10.setFamilies([u"Century Gothic"])
+        font10.setPointSize(14)
+        font10.setBold(True)
+        self.label_6.setFont(font10)
         self.label_6.setStyleSheet(u"color: #7D3928;")
         self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -1503,9 +1536,10 @@ class VentanaPrincipal(object):
         self.cmbClienteVenta = QComboBox(self.widget_28)
         self.cmbClienteVenta.setObjectName(u"cmbClienteVenta")
         self.cmbClienteVenta.setMaximumSize(QSize(200, 16777215))
+        self.cmbClienteVenta.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.cmbClienteVenta.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
-"    font-size: 12px;\n"
+"    font-size: 14px;\n"
 "    color: #7D3928;\n"
 "	padding: 3px;\n"
 "	border: 2px solid #C18484;;\n"
@@ -1513,7 +1547,7 @@ class VentanaPrincipal(object):
 "\n"
 "QComboBox QAbstractItemView {\n"
 "    font-family: \"Century Gothic\";\n"
-"    font-size: 12px;\n"
+"    font-size: 14px;\n"
 "	color: #7D3928;\n"
 "    selection-background-color: #e0e0e0;\n"
 "    padding: 5px;\n"
@@ -1536,6 +1570,8 @@ class VentanaPrincipal(object):
 "\n"
 "\n"
 "")
+        self.cmbClienteVenta.setEditable(True)
+        self.cmbClienteVenta.setMaxVisibleItems(5)
 
         self.gridLayout_26.addWidget(self.cmbClienteVenta, 0, 0, 1, 1)
 
@@ -1589,7 +1625,7 @@ class VentanaPrincipal(object):
 "    }\n"
 "\n"
 "QRadioButton::indicator:checked {\n"
-"        background-color: #F7E7DB;\n"
+"        background-color: #C18484;\n"
 "        border: 2px solid #C18484;\n"
 "    }\n"
 "")
@@ -1613,7 +1649,7 @@ class VentanaPrincipal(object):
 "    }\n"
 "\n"
 "QRadioButton::indicator:checked {\n"
-"        background-color: #F7E7DB;\n"
+"        background-color: #C18484;\n"
 "        border: 2px solid #C18484;\n"
 "    }\n"
 "")
@@ -1639,7 +1675,7 @@ class VentanaPrincipal(object):
 "    }\n"
 "\n"
 "QRadioButton::indicator:checked {\n"
-"        background-color: #F7E7DB;\n"
+"        background-color: #C18484;\n"
 "        border: 2px solid #C18484;\n"
 "    }\n"
 "")
@@ -1720,7 +1756,7 @@ class VentanaPrincipal(object):
         self.widget_20.setMinimumSize(QSize(400, 0))
         self.widget_20.setStyleSheet(u"border: 0px;")
         self.verticalLayout_30 = QVBoxLayout(self.widget_20)
-        self.verticalLayout_30.setSpacing(8)
+        self.verticalLayout_30.setSpacing(13)
         self.verticalLayout_30.setObjectName(u"verticalLayout_30")
         self.verticalLayout_30.setContentsMargins(0, 0, 0, 0)
         self.widget_24 = QWidget(self.widget_20)
@@ -1742,7 +1778,7 @@ class VentanaPrincipal(object):
         self.lblTotalAbonar.setObjectName(u"lblTotalAbonar")
         sizePolicy1.setHeightForWidth(self.lblTotalAbonar.sizePolicy().hasHeightForWidth())
         self.lblTotalAbonar.setSizePolicy(sizePolicy1)
-        self.lblTotalAbonar.setFont(font9)
+        self.lblTotalAbonar.setFont(font10)
         self.lblTotalAbonar.setStyleSheet(u"color: #7D3928;")
         self.lblTotalAbonar.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -1753,9 +1789,10 @@ class VentanaPrincipal(object):
 
         self.widget_34 = QWidget(self.widget_24)
         self.widget_34.setObjectName(u"widget_34")
+        self.widget_34.setMinimumSize(QSize(0, 35))
         self.horizontalLayout_24 = QHBoxLayout(self.widget_34)
         self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
-        self.horizontalLayout_24.setContentsMargins(0, 6, 0, 0)
+        self.horizontalLayout_24.setContentsMargins(0, 0, 0, 0)
         self.widget_35 = QWidget(self.widget_34)
         self.widget_35.setObjectName(u"widget_35")
         self.gridLayout_32 = QGridLayout(self.widget_35)
@@ -1779,10 +1816,10 @@ class VentanaPrincipal(object):
         self.widget_36.setMaximumSize(QSize(16777215, 150))
         self.gridLayout_33 = QGridLayout(self.widget_36)
         self.gridLayout_33.setObjectName(u"gridLayout_33")
-        self.gridLayout_33.setContentsMargins(0, 0, 40, 0)
+        self.gridLayout_33.setContentsMargins(0, 0, 60, 0)
         self.txtEntrega = QLineEdit(self.widget_36)
         self.txtEntrega.setObjectName(u"txtEntrega")
-        self.txtEntrega.setMaximumSize(QSize(200, 16777215))
+        self.txtEntrega.setMaximumSize(QSize(150, 16777215))
         self.txtEntrega.setFont(font1)
         self.txtEntrega.setStyleSheet(u"color: rgb(125, 57, 40);\n"
 "border: 2px solid #C18484;\n"
@@ -1803,9 +1840,10 @@ class VentanaPrincipal(object):
 
         self.widget_25 = QWidget(self.widget_20)
         self.widget_25.setObjectName(u"widget_25")
-        self.widget_25.setMaximumSize(QSize(16777215, 50))
+        self.widget_25.setMaximumSize(QSize(16777215, 40))
         self.gridLayout_30 = QGridLayout(self.widget_25)
         self.gridLayout_30.setObjectName(u"gridLayout_30")
+        self.gridLayout_30.setContentsMargins(-1, 0, -1, -1)
         self.btnFinalizarVenta = QPushButton(self.widget_25)
         self.btnFinalizarVenta.setObjectName(u"btnFinalizarVenta")
         self.btnFinalizarVenta.setMinimumSize(QSize(0, 35))
@@ -2048,7 +2086,7 @@ class VentanaPrincipal(object):
         self.gridLayout_42.setObjectName(u"gridLayout_42")
         self.lblDeudaTotalCC = QLabel(self.widgetTotalCC)
         self.lblDeudaTotalCC.setObjectName(u"lblDeudaTotalCC")
-        self.lblDeudaTotalCC.setFont(font9)
+        self.lblDeudaTotalCC.setFont(font10)
         self.lblDeudaTotalCC.setStyleSheet(u"color: rgb(125, 57, 40);")
         self.lblDeudaTotalCC.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
@@ -2519,6 +2557,7 @@ class VentanaPrincipal(object):
         self.cmbClienteHist = QComboBox(self.widget_4)
         self.cmbClienteHist.setObjectName(u"cmbClienteHist")
         self.cmbClienteHist.setFont(font7)
+        self.cmbClienteHist.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.cmbClienteHist.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
@@ -2560,6 +2599,7 @@ class VentanaPrincipal(object):
         self.cmbServicioHist = QComboBox(self.widget_4)
         self.cmbServicioHist.setObjectName(u"cmbServicioHist")
         self.cmbServicioHist.setFont(font7)
+        self.cmbServicioHist.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.cmbServicioHist.setStyleSheet(u"QComboBox {\n"
 "    font-family: \"Century Gothic\";\n"
 "    font-size: 14px;\n"
@@ -2901,12 +2941,7 @@ class VentanaPrincipal(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.tablaClientes = QTableView(self.widgetTabla)
         self.tablaClientes.setObjectName(u"tablaClientes")
-        font10 = QFont()
-        font10.setFamilies([u"Century Gothic"])
-        font10.setPointSize(12)
-        font10.setBold(False)
-        font10.setItalic(False)
-        self.tablaClientes.setFont(font10)
+        self.tablaClientes.setFont(font8)
         self.tablaClientes.setStyleSheet(u"\n"
 "QTableView {\n"
 "	border: 2px solid #DEC4AE;\n"
@@ -2974,7 +3009,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(4)
+        self.StackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -3004,10 +3039,10 @@ class VentanaPrincipal(object):
         self.tituloNuevaVenta.setText(QCoreApplication.translate("MainWindow", u"NUEVA VENTA", None))
         self.btnConsultaVentas.setText(QCoreApplication.translate("MainWindow", u"Consulta de ventas", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"C\u00f3digo:", None))
-        self.lblDescripProdVenta.setText(QCoreApplication.translate("MainWindow", u"Producto: Descripci\u00f3n", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Cantidad:", None))
+        self.lblDescripProdVenta.setText(QCoreApplication.translate("MainWindow", u"Producto: ", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Vencimiento:", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Precio:", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Cantidad:", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Precio unitario:", None))
         self.btnAgregarCarrito.setText(QCoreApplication.translate("MainWindow", u"Agregar al carrito", None))
         self.btnQuitarCarrito.setText(QCoreApplication.translate("MainWindow", u"Quitar del carrito", None))
         self.btnVaciarCarrito.setText(QCoreApplication.translate("MainWindow", u"Vaciar carrito", None))

@@ -33,6 +33,28 @@ class MainController(QMainWindow):
         self.main_ui.setupUi(self)
 
         ######################################################################
+        # Variables iniciales
+        ######################################################################
+        self.monto_venta = 0
+
+
+        ######################################################################
+        # Configuraciones interfaz
+        ######################################################################
+        # Inicio de lineEdit Interes de venta -> False
+        self.main_ui.txtInteresVenta.setEnabled(False)
+
+        # Seteo del calendarWidget
+        self.main_ui.calendarWidget.setCurrentPage(
+            QDate.currentDate().year(),
+            QDate.currentDate().month()
+        )
+        self.main_ui.calendarWidget.setSelectedDate(datetime.now())
+
+        # Que siempre arranque mostrando los turnos del día actual
+        self.agregar_turnos(date.today())
+
+        ######################################################################
         # Seteo de botones para recorrer menú
         ######################################################################
 
@@ -69,25 +91,19 @@ class MainController(QMainWindow):
         ######################################################################
         # Asignaciones de métodos a botones
         ######################################################################
-
-        # Abrir ventana para agendar nuevo cliente
-        self.main_ui.btnNuevoCliente.clicked.connect(
-            self.ventana_nuevo_cliente
-        )
-
+        
+        # SERVICIOS
+        ######################################################################
         # Abrir ventana para agregar nuevo servicio
         self.main_ui.btnNuevoServicio.clicked.connect(
             self.ventana_nuevo_servicio
         )
 
-        # Abrir ventana para agregar nuevo turno
-        self.main_ui.btnNuevoTurno.clicked.connect(
-            self.ventana_nuevo_turno
-        )
-
-        # Abrir ventana nuevo producto
-        self.main_ui.btnNuevoProducto.clicked.connect(
-            self.ventana_nuevoproducto
+        # CLIENTES
+        ######################################################################
+        # Abrir ventana para agendar nuevo cliente
+        self.main_ui.btnNuevoCliente.clicked.connect(
+            self.ventana_nuevo_cliente
         )
 
         # Asignación método eliminación de clientes
@@ -100,6 +116,13 @@ class MainController(QMainWindow):
             self.cargar_clientes
         )
 
+        # PRODUCTOS
+        ######################################################################
+        # Abrir ventana nuevo producto
+        self.main_ui.btnNuevoProducto.clicked.connect(
+            self.ventana_nuevoproducto
+        )
+
         # Asignación método para filtrado de productos
         self.main_ui.btnFiltrarProductos.clicked.connect(
             self.cargar_productos
@@ -110,36 +133,77 @@ class MainController(QMainWindow):
             self.eliminar_producto
         )
 
+        # VENTAS
+        ######################################################################
+        # Asignación método para agregar producto a carrito
+        self.main_ui.btnAgregarCarrito.clicked.connect(
+            self.agregar_producto_carrito
+        )
+
+        # Asignación método para limpiar carrito
+        self.main_ui.btnVaciarCarrito.clicked.connect(
+            self.vaciar_carrito
+        )
+
+        # Asignación de método para eliminar una fila del carrito
+        self.main_ui.btnQuitarCarrito.clicked.connect(
+            self.remover_de_carrito
+        )
+
+        # TURNOS
+        ######################################################################
+        # Abrir ventana para agregar nuevo turno
+        self.main_ui.btnNuevoTurno.clicked.connect(
+            self.ventana_nuevo_turno
+        )
+
         # Asignación método para mostrar historial de turnos por cliente
         self.main_ui.btnBuscarHist.clicked.connect(
             self.carga_historial
         )
 
         ######################################################################
-        # Llenado comboboxs
+        # Configuración de eventos
         ######################################################################
-        
-        self.llenar_cmb_clientes()
-        self.llenar_cmb_servicios()
-
-        ######################################################################
-        # Configuraciones turnos
-        ######################################################################
-
-        # Seteo del calendarWidget
-        self.main_ui.calendarWidget.setCurrentPage(
-            QDate.currentDate().year(),
-            QDate.currentDate().month()
+        # Evento para autocompletar descripción y combobox vencimientos
+        self.main_ui.txtCodigoProdVenta.textChanged.connect(
+            self.set_descripcion_y_vencimientos
         )
-        self.main_ui.calendarWidget.setSelectedDate(datetime.now())
 
-        # Que siempre arranque mostrando los turnos del día actual
-        self.agregar_turnos(date.today())
+        # Evento para setear maximo valor en SpinBox cantidad a vender
+        self.main_ui.cmbVencVenta.currentTextChanged.connect(
+            self.set_cantidad_y_precio
+        )
 
         # Asignación de evento para mostrar tarjetas de turnos segun fecha
         self.main_ui.calendarWidget.selectionChanged.connect(
             self.actualizar_turnos
         )
+
+        ######################################################################
+        # Llenado comboboxs
+        ######################################################################
+        
+        # Modulo de turnos
+        self.llenar_cmb_clientes()
+        self.llenar_cmb_servicios()
+        
+        # Modulo de ventas
+        self.llenar_cmb_clientes_venta()
+
+        ######################################################################
+        # Configuracion de modelos
+        ######################################################################
+        
+        # Definición de modelo en tabla Carrito de venta
+        self.modelo_carrito = QStandardItemModel()
+        self.modelo_carrito.setHorizontalHeaderLabels(
+            ['id', 'Producto', 'Precio', 'Cant', 'Subtotal']
+        )
+        self.main_ui.tablaCarrito.setModel(self.modelo_carrito)
+        self.main_ui.tablaCarrito.setColumnHidden(0, True)
+        self.main_ui.tablaCarrito.setColumnWidth(1, 500)
+        self.main_ui.tablaCarrito.setColumnWidth(2, 150)
 
         ######################################################################
         # Llamadas para agregar tarjetas de servicios
@@ -219,8 +283,177 @@ class MainController(QMainWindow):
         self.abrir_nuevoproducto = NuevoProductoController(self)
         self.abrir_nuevoproducto.exec()
 
+
     ##########################################################################
-    #                             PRODUCTOS                                  #
+    #                            MODULO VENTAS                               #
+    ##########################################################################
+    ##########################################################################
+    # Métodos para seteo de ComboBoxs y lineEdits
+    ##########################################################################
+    # Método llenado ComboBox clientes venta
+    def llenar_cmb_clientes_venta(self):
+        ''' Método para llenar el comboBox de clientes en interfaz de ventas
+        '''
+        # Obtención de clientes
+        clientes = ModeloCliente.lista_clientes()
+
+        # Limpieza de cmb y seteo de primer valor
+        self.main_ui.cmbClienteVenta.clear()
+        self.main_ui.cmbClienteVenta.addItem("Seleccionar cliente", None)
+        self.main_ui.cmbClienteVenta.addItem("Cliente no registrado", 0)
+
+        # Carga de clientes al combobox
+        for cliente in clientes:
+            if cliente.nombre == "Cliente no registrado":
+                continue
+            self.main_ui.cmbClienteVenta.addItem(cliente.nombre, cliente.id)
+
+    # Método actualización lblDescripProdVenta según código
+    def set_descripcion_y_vencimientos(self):
+        ''' Método para actualizar automáticamente la descripción del producto
+            a vender y llenado automático de los vencimientos correspondientes
+            dependiendo del código ingresado. Se asignará a evento textChanged
+            en txtCodigoProdVenta.
+        '''
+        # Limpieza inicial de campos
+        self.main_ui.lblDescripProdVenta.setText("Producto: ")
+        self.main_ui.cmbVencVenta.clear()
+
+        # Obtención del código proporcionado
+        codigo = self.main_ui.txtCodigoProdVenta.text()
+
+        # Obtención de productos con código proporcionado
+        productos = ModeloProducto.listado_productos(codigo=codigo)
+
+        # Definición de variables para evitar errores
+        descripcion = ""
+
+        # Seteo del campo descripcion y llenado de comboBox
+        if productos:
+            descripcion = productos[0].descripcion
+            self.main_ui.lblDescripProdVenta.setText(
+                f"Producto: {descripcion}"
+            )
+            # Llenado de comboBox
+            for producto in productos:
+                venc = date.strftime(producto.vencimiento, "%d/%m/%Y")
+                self.main_ui.cmbVencVenta.addItem(venc, producto.nro_producto)
+
+
+    def set_cantidad_y_precio(self):
+        ''' Método para setear la cantidad máxima en el SpinBox y el precio del
+            producto de acuerdo con la selección
+        '''
+        # Seteo a 1 del spinbox
+        self.main_ui.spinBoxCantidadVenta.setValue(1)
+        
+        # Obtención del número de producto en función de vencimiento elegido
+        nro_producto = self.main_ui.cmbVencVenta.currentData()
+
+        # Obtención de stock disponible y precio del producto con nro_producto
+        producto = ModeloProducto.listado_productos(nro_producto=nro_producto)
+        stock_disponible = producto[0].stock
+        precio = producto[0].precio_unitario
+
+        #Seteo de valor máximo en SpinBox
+        self.main_ui.spinBoxCantidadVenta.setMaximum(stock_disponible)
+        # Seteo campo precio
+        self.main_ui.txtPrecioProdVenta.setText(f"{precio:.0f}")
+
+    ##########################################################################
+    # Métodos manejo del carrito de compra
+    ##########################################################################
+    def agregar_producto_carrito(self):
+        ''' Método para agregar un producto al carrito de la venta
+        '''
+        # Obtención de valores para agregar a carrito
+        codigo = self.main_ui.txtCodigoProdVenta.text()
+        nro_producto = self.main_ui.cmbVencVenta.currentData()
+        
+        if not nro_producto or codigo == "":
+            QMessageBox.warning(
+                self,
+                'Ventas',
+                'Se debe elegir un producto'
+            )
+            return
+        
+        producto = ModeloProducto.listado_productos(nro_producto=nro_producto)
+        descripcion = producto[0].descripcion
+
+        cantidad = self.main_ui.spinBoxCantidadVenta.value()
+        precio = self.main_ui.txtPrecioProdVenta.text()
+        
+        try:
+            # Verificación de formatos y calculo de subtotal
+            cantidad = int(cantidad)
+            precio = float(precio)
+
+            subtotal = cantidad * precio
+
+            # Armado de fila para agregar a modelo
+            fila_carrito = [
+                QStandardItem(str(nro_producto)),
+                QStandardItem(descripcion),
+                QStandardItem(str(precio)),
+                QStandardItem(str(cantidad)),
+                QStandardItem(str(subtotal))
+            ]
+            # Se agrega fila al carrito
+            self.modelo_carrito.appendRow(fila_carrito)
+
+            # Ajuste de monto total de venta y actualización de label
+            self.monto_venta += subtotal
+            self.main_ui.lblTotalEnCarrito.setText(f"Total en carrito: $ {self.monto_venta}")
+
+            # Limpieza de campos
+            self.main_ui.txtCodigoProdVenta.setText("")
+            self.main_ui.txtPrecioProdVenta.setText("")
+
+        except ValueError:
+            QMessageBox.critical(
+                self,
+                'Venta',
+                'Verificar campos de venta'
+            )
+
+
+    def vaciar_carrito(self):
+        ''' Método para eliminar todos los productos existentes dentro del
+            carrito
+        '''
+        self.modelo_carrito.removeRows(0, self.modelo_carrito.rowCount())
+        self.monto_venta = 0
+        self.main_ui.lblTotalEnCarrito.setText("Total en carrito: $ 0.0")
+    
+
+    def remover_de_carrito(self):
+        ''' Método para eliminar un producto determinado del carrito
+        '''
+        # Obtención de la fila a remover
+        fila = self.main_ui.tablaCarrito.currentIndex().row()
+
+        # Verificación de selección de fila
+        if fila == -1:
+            QMessageBox.warning(
+                self,
+                'Ventas',
+                'Tenes que seleccionar una fila del carrito'
+            )
+            return
+        
+        # Obtención del subtotal correspondiente a la fila eliminada
+        subtotal_fila = self.modelo_carrito.item(fila, 4).text()
+        self.monto_venta -= float(subtotal_fila)
+        self.main_ui.lblTotalEnCarrito.setText(
+            f"Total en carrito: $ {self.monto_venta}"
+        )
+        # Eliminación de la fila del carrito
+        self.modelo_carrito.removeRow(fila)
+
+
+    ##########################################################################
+    #                          MODULO PRODUCTOS                              #
     ##########################################################################
     ##########################################################################
     # Método para carga de productos en QTableView
@@ -352,6 +585,16 @@ class MainController(QMainWindow):
     def eliminar_producto(self):
         # Se busca fila seleccionada
         fila = self.main_ui.tablaProductos.currentIndex().row()
+
+        # Comprobación de selección
+        if fila == -1:
+            QMessageBox.warning(
+                self,
+                'Eliminación de producto',
+                'Tenes que seleccionar un producto!'
+            )
+            return
+        
         # Obtención del nro_producto en base a selección
         nro_producto = self.model_tproducto.item(fila, 0).text()
         descripcion = self.model_tproducto.item(fila, 2).text()
@@ -515,7 +758,7 @@ class MainController(QMainWindow):
 
 
     ##########################################################################
-    #                            SERVICIOS                                   #
+    #                          MODULO SERVICIOS                              #
     ##########################################################################
     ##########################################################################
     # Posicionamiento de tarjetas de Servicios

@@ -44,15 +44,19 @@ class ModeloProducto:
 
     @staticmethod
     def listado_productos(
-        codigo: str = None, descripcion: str = None, stock: int = None
+        codigo: str = None, 
+        descripcion: str = None, 
+        stock: int = None,
+        nro_producto: int = None
     ):
         ''' Método para devolver el listado de productos existentes, se puede
-            pasar codigo, descripcion o stock (para el caso que se quiera ver
-            productos con stock = 0)
+            pasar codigo, descripcion, stock (para el caso que se quiera ver
+            productos con stock = 0) o nro_producto
 
             :param str codigo: codigo del producto buscado
             :param str descripcion: descripcion del producto
             :param int stock: Stock de producto
+            :param int nro_producto: Número de producto
             :return: lista de objetos Producto
         '''
         with Session(engine) as sesion:
@@ -64,7 +68,7 @@ class ModeloProducto:
                     .order_by(Producto.vencimiento)
                 )
             
-            elif codigo is not None:
+            if codigo is not None:
                 query = (select(Producto)
                         .where( Producto.codigo_producto == codigo, 
                                 Producto.estado == True)
@@ -72,19 +76,26 @@ class ModeloProducto:
                         )
                 
         
-            elif descripcion is not None:
+            if descripcion is not None:
                 query= (select(Producto)
                         .where( Producto.descripcion.like(f"%{descripcion}%"),
                                 Producto.estado == True)
                         .order_by(Producto.vencimiento)
                         )
             
-            elif stock is not None:
+            if stock is not None:
                 query= (select(Producto)
                         .where( Producto.stock == stock,
                                 Producto.estado == True)
                         .order_by(Producto.vencimiento)
                         )
+            
+
+            if nro_producto is not None:
+                query = (
+                    select(Producto)
+                    .where( Producto.nro_producto == nro_producto)
+                )
             
             productos = sesion.exec(query).all()
             return(productos)
