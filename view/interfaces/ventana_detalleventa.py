@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QGridLayout,
-    QHeaderView, QLabel, QPushButton, QSizePolicy,
-    QTableView, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDialog, QFrame,
+    QGridLayout, QHeaderView, QLabel, QPushButton,
+    QSizePolicy, QTableView, QVBoxLayout, QWidget)
 from view import recursos_rc
 
 class VentanaDetalleVenta(object):
@@ -51,17 +51,17 @@ class VentanaDetalleVenta(object):
         self.widget_2.setStyleSheet(u"border: 0")
         self.gridLayout_2 = QGridLayout(self.widget_2)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label = QLabel(self.widget_2)
-        self.label.setObjectName(u"label")
+        self.lblTitulo = QLabel(self.widget_2)
+        self.lblTitulo.setObjectName(u"lblTitulo")
         font = QFont()
         font.setFamilies([u"Century Gothic"])
         font.setPointSize(18)
         font.setBold(True)
-        self.label.setFont(font)
-        self.label.setStyleSheet(u"color: #7D3928; ")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lblTitulo.setFont(font)
+        self.lblTitulo.setStyleSheet(u"color: #7D3928; ")
+        self.lblTitulo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.lblTitulo, 0, 0, 1, 1)
 
 
         self.verticalLayout.addWidget(self.widget_2)
@@ -80,7 +80,7 @@ class VentanaDetalleVenta(object):
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
-"	font: 12pt \"Century Gothic\";\n"
+"	font: 10pt \"Century Gothic\";\n"
 "	gridline-color: rgb(125, 57, 40);\n"
 "	selection-background-color: #D3B9B4;\n"
 "	selection-color: rgb(0, 0, 0);\n"
@@ -104,7 +104,7 @@ class VentanaDetalleVenta(object):
 "    background-color: #F7E0D3;\n"
 "    font-weight: bold;\n"
 "    font-family: century-gothic;\n"
-"    font-size: 12pt;\n"
+"    font-size: 10pt;\n"
 "    padding: 5px;\n"
 "    border: none;\n"
 "    border-right: 1px solid rgb(125, 57, 40); /* Esto simula el gridline */\n"
@@ -116,6 +116,10 @@ class VentanaDetalleVenta(object):
                         "	color: rgb(125, 57, 40);\n"
 "}\n"
 "")
+        self.tablaDetalleVenta.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tablaDetalleVenta.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tablaDetalleVenta.horizontalHeader().setStretchLastSection(True)
+        self.tablaDetalleVenta.verticalHeader().setVisible(False)
 
         self.gridLayout_3.addWidget(self.tablaDetalleVenta, 0, 0, 1, 1)
 
@@ -171,7 +175,7 @@ class VentanaDetalleVenta(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"BLA - Detalle de Venta", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Detalle de venta", None))
+        self.lblTitulo.setText(QCoreApplication.translate("Dialog", u"Detalle de venta", None))
         self.btnGenFactura.setText(QCoreApplication.translate("Dialog", u"Generar Factura", None))
     # retranslateUi
 

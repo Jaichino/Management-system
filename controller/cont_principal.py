@@ -4,7 +4,9 @@
 
 from datetime import datetime, date, time, timedelta
 from PySide6.QtWidgets import (
-    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox)
+    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox, QTableWidgetItem,
+    QPushButton
+)
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtCore import QDate, Qt
 
@@ -22,6 +24,7 @@ from controller.cont_turnos import (
     TurnoController, TarjetaTurnosController
 )
 from controller.cont_producto import NuevoProductoController
+from controller.cont_venta import DetalleVentaController
 
 ##############################################################################
 # Controlador Principal
@@ -161,6 +164,11 @@ class MainController(QMainWindow):
             self.finalizar_venta
         )
 
+        # Asignación método consulta de ventas
+        self.main_ui.btnConsultarVenta.clicked.connect(
+            self.cargar_ventas
+        )
+
 
         # TURNOS
         ######################################################################
@@ -225,6 +233,27 @@ class MainController(QMainWindow):
         self.main_ui.tablaCarrito.setColumnHidden(0, True)
         self.main_ui.tablaCarrito.setColumnWidth(1, 500)
         self.main_ui.tablaCarrito.setColumnWidth(2, 150)
+
+        # Definición de tabla consulta de ventas
+        self.tabla_cventa = self.main_ui.tablaConsultaVentas
+        self.tabla_cventa.setColumnCount(8)
+        self.tabla_cventa.setHorizontalHeaderLabels(
+            [   'id',
+                'Fecha',
+                'Cliente',
+                'Modo Pago',
+                'Monto', 
+                'Interes',
+                'Total',
+                'Detalle' ]
+        )
+        self.tabla_cventa.setColumnHidden(0,True)
+        self.tabla_cventa.setColumnWidth(1,100)
+        self.tabla_cventa.setColumnWidth(2,250)
+        self.tabla_cventa.setColumnWidth(3,130)
+        self.tabla_cventa.setColumnWidth(4,100)
+        self.tabla_cventa.setColumnWidth(5,80)
+        self.tabla_cventa.setColumnWidth(6,100)
 
         ######################################################################
         # Llamadas para agregar tarjetas de servicios
@@ -303,6 +332,11 @@ class MainController(QMainWindow):
     def ventana_nuevoproducto(self):
         self.abrir_nuevoproducto = NuevoProductoController(self)
         self.abrir_nuevoproducto.exec()
+    
+    # Apertura ventana detalle venta
+    def ventana_detalleventa(self, nro_venta: int):
+        self.abrir_detalleventa = DetalleVentaController(self, nro_venta)
+        self.abrir_detalleventa.exec()
 
 
     ##########################################################################
@@ -314,6 +348,7 @@ class MainController(QMainWindow):
     # Método llenado ComboBox clientes venta
     def llenar_cmb_clientes_venta(self):
         ''' Método para llenar el comboBox de clientes en interfaz de ventas
+            y consulta de ventas
         '''
         # Obtención de clientes
         clientes = ModeloCliente.lista_clientes()
@@ -323,11 +358,18 @@ class MainController(QMainWindow):
         self.main_ui.cmbClienteVenta.addItem("Seleccionar cliente", None)
         self.main_ui.cmbClienteVenta.addItem("CLIENTE NO REGISTRADO", 0)
 
+        self.main_ui.cmbClienteConsulta.clear()
+        self.main_ui.cmbClienteConsulta.addItem("Seleccionar cliente", None)
+        self.main_ui.cmbClienteConsulta.addItem("CLIENTE NO REGISTRADO", 0)
+
         # Carga de clientes al combobox
         for cliente in clientes:
             if cliente.nombre == "CLIENTE NO REGISTRADO":
                 continue
             self.main_ui.cmbClienteVenta.addItem(cliente.nombre, cliente.id)
+            self.main_ui.cmbClienteConsulta.addItem(
+                cliente.nombre, cliente.id
+            )
 
     # Método actualización lblDescripProdVenta según código
     def set_descripcion_y_vencimientos(self):
@@ -668,6 +710,75 @@ class MainController(QMainWindow):
         self.main_ui.checkInteres.setChecked(False)
         # Actualización listado productos
         self.cargar_productos()
+    
+    ##########################################################################
+    # Métodos para manejo de interfaz consulta de ventas
+    ##########################################################################
+    
+    # Método para cargar ventas en tablaConsultaVenta
+    def cargar_ventas(self):
+        # Obtención de fechas y/o cliente
+        fecha_desde_qt = self.main_ui.consultaVentaDesde.date()
+        fecha_hasta_qt = self.main_ui.ConsultaVentaHasta.date()
+        cliente = self.main_ui.cmbClienteConsulta.currentData()
+
+        # Formateo de fechasQt a date()
+        fecha_desde = date(
+            year=fecha_desde_qt.year(),
+            month=fecha_desde_qt.month(),
+            day=fecha_desde_qt.day()
+        )
+        fecha_hasta = date(
+            year=fecha_hasta_qt.year(),
+            month=fecha_hasta_qt.month(),
+            day=fecha_hasta_qt.day()
+        )
+
+        # Obtención de ventas
+        ventas = ModeloVentas.listado_ventas(
+            desde=fecha_desde, hasta=fecha_hasta, cliente=cliente
+        )
+
+        # Carga de ventas en la tabla
+        self.tabla_cventa.setRowCount(len(ventas))
+
+        for i, venta in enumerate(ventas):
+            fecha = date.strftime(venta.fecha_venta, "%d/%m/%Y")
+            total_venta = venta.monto_total + venta.interes
+
+            if venta.cliente == None:
+                cliente_venta = 'CLIENTE NO REGISTRADO'
+            else:
+                cliente_venta = venta.cliente.nombre
+
+            self.tabla_cventa.setItem(i, 0, QTableWidgetItem(str(venta.nro_venta)))
+            self.tabla_cventa.setItem(i, 1, QTableWidgetItem(fecha))
+            self.tabla_cventa.setItem(i, 2, QTableWidgetItem(cliente_venta))
+            self.tabla_cventa.setItem(i, 3, QTableWidgetItem(venta.modo_pago))
+            self.tabla_cventa.setItem(i, 4, QTableWidgetItem(f'$ {venta.monto_total:.0f}'))
+            self.tabla_cventa.setItem(i, 5, QTableWidgetItem(f'$ {venta.interes:.0f}'))
+            self.tabla_cventa.setItem(i, 6, QTableWidgetItem(f'$ {total_venta:.0f}'))
+
+            btn = QPushButton("Ver")
+            btn.setStyleSheet(
+                ''' QPushButton {
+                                color: #7D3928;
+                                font-size: 12pt
+                                }
+                    QPushButton:hover {
+                                font-weight: bold;
+                                color: #7D3928;
+                                background-color: #F7E0D3;
+                                }
+                '''
+            )
+            btn.setCursor(Qt.PointingHandCursor)
+            btn.clicked.connect(
+                lambda _, 
+                nro_venta=venta.nro_venta:self.ventana_detalleventa(nro_venta)
+            )
+            self.tabla_cventa.setCellWidget(i, 7, btn)
+
 
     ##########################################################################
     #                          MODULO PRODUCTOS                              #

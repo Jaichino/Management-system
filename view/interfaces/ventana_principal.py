@@ -20,7 +20,8 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractSpinBox, QApplication
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLayout, QLineEdit, QMainWindow, QPushButton,
     QRadioButton, QScrollArea, QSizePolicy, QSpinBox,
-    QStackedWidget, QTableView, QVBoxLayout, QWidget)
+    QStackedWidget, QTableView, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 from view import recursos_rc
 
 class VentanaPrincipal(object):
@@ -402,7 +403,7 @@ class VentanaPrincipal(object):
         self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.contenedorServicios = QWidget()
         self.contenedorServicios.setObjectName(u"contenedorServicios")
-        self.contenedorServicios.setGeometry(QRect(0, 0, 879, 482))
+        self.contenedorServicios.setGeometry(QRect(0, 0, 82, 16))
         self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
@@ -561,7 +562,7 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos.setWidgetResizable(True)
         self.contenedorTurnos = QWidget()
         self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setGeometry(QRect(0, 0, 879, 462))
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 98, 28))
         self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -840,10 +841,9 @@ class VentanaPrincipal(object):
         self.gridLayout_37 = QGridLayout(self.contenedorTablaConsulta)
         self.gridLayout_37.setObjectName(u"gridLayout_37")
         self.gridLayout_37.setContentsMargins(0, 0, 0, 0)
-        self.tablaConsultaVenta = QTableView(self.contenedorTablaConsulta)
-        self.tablaConsultaVenta.setObjectName(u"tablaConsultaVenta")
-        self.tablaConsultaVenta.setStyleSheet(u"\n"
-"QTableView {\n"
+        self.tablaConsultaVentas = QTableWidget(self.contenedorTablaConsulta)
+        self.tablaConsultaVentas.setObjectName(u"tablaConsultaVentas")
+        self.tablaConsultaVentas.setStyleSheet(u"QTableWidget {\n"
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
@@ -881,10 +881,13 @@ class VentanaPrincipal(object):
 "QLineEdit {\n"
 ""
                         "	color: rgb(125, 57, 40);\n"
-"}\n"
-"")
+"}")
+        self.tablaConsultaVentas.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.tablaConsultaVentas.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tablaConsultaVentas.horizontalHeader().setStretchLastSection(True)
+        self.tablaConsultaVentas.verticalHeader().setVisible(False)
 
-        self.gridLayout_37.addWidget(self.tablaConsultaVenta, 0, 0, 1, 1)
+        self.gridLayout_37.addWidget(self.tablaConsultaVentas, 0, 0, 1, 1)
 
 
         self.verticalLayout_33.addWidget(self.contenedorTablaConsulta)
@@ -3000,7 +3003,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(5)
+        self.StackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
