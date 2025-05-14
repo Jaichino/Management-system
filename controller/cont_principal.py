@@ -13,6 +13,8 @@ from model.modelo_cliente import ModeloCliente
 from model.modelo_servicio import ModeloServicio
 from model.modelo_turno import ModeloTurno
 from model.modelo_producto import ModeloProducto
+from model.modelo_venta import ModeloVentas
+from model.modelo_ccorriente import ModeloCuentaCorriente
 from controller.cont_clientes import ClienteController
 from controller.cont_servicios import (
     ServicioController, TarjetaServiciosController)
@@ -35,8 +37,12 @@ class MainController(QMainWindow):
         ######################################################################
         # Variables iniciales
         ######################################################################
+    
+        self.modo_pago = 'Efectivo'
         self.monto_venta = 0
-
+        self.interes = 0
+        self.total_abonar = 0
+        self.productos_vendidos = []
 
         ######################################################################
         # Configuraciones interfaz
@@ -150,6 +156,12 @@ class MainController(QMainWindow):
             self.remover_de_carrito
         )
 
+        # Asignación método finalización de venta
+        self.main_ui.btnFinalizarVenta.clicked.connect(
+            self.finalizar_venta
+        )
+
+
         # TURNOS
         ######################################################################
         # Abrir ventana para agregar nuevo turno
@@ -178,6 +190,15 @@ class MainController(QMainWindow):
         # Asignación de evento para mostrar tarjetas de turnos segun fecha
         self.main_ui.calendarWidget.selectionChanged.connect(
             self.actualizar_turnos
+        )
+
+        # Asignación de evento para habilitar caja de interes
+        self.main_ui.checkInteres.checkStateChanged.connect(
+            self.habilitar_interes
+        )
+
+        self.main_ui.txtInteresVenta.textChanged.connect(
+            self.actualizar_monto_con_interes
         )
 
         ######################################################################
@@ -300,11 +321,11 @@ class MainController(QMainWindow):
         # Limpieza de cmb y seteo de primer valor
         self.main_ui.cmbClienteVenta.clear()
         self.main_ui.cmbClienteVenta.addItem("Seleccionar cliente", None)
-        self.main_ui.cmbClienteVenta.addItem("Cliente no registrado", 0)
+        self.main_ui.cmbClienteVenta.addItem("CLIENTE NO REGISTRADO", 0)
 
         # Carga de clientes al combobox
         for cliente in clientes:
-            if cliente.nombre == "Cliente no registrado":
+            if cliente.nombre == "CLIENTE NO REGISTRADO":
                 continue
             self.main_ui.cmbClienteVenta.addItem(cliente.nombre, cliente.id)
 
@@ -404,7 +425,9 @@ class MainController(QMainWindow):
 
             # Ajuste de monto total de venta y actualización de label
             self.monto_venta += subtotal
+            self.total_abonar = self.monto_venta
             self.main_ui.lblTotalEnCarrito.setText(f"Total en carrito: $ {self.monto_venta}")
+            self.main_ui.lblTotalAbonar.setText(f"Total a abonar: $ {self.monto_venta}")
 
             # Limpieza de campos
             self.main_ui.txtCodigoProdVenta.setText("")
@@ -424,7 +447,10 @@ class MainController(QMainWindow):
         '''
         self.modelo_carrito.removeRows(0, self.modelo_carrito.rowCount())
         self.monto_venta = 0
+        self.total_abonar = 0
         self.main_ui.lblTotalEnCarrito.setText("Total en carrito: $ 0.0")
+        self.main_ui.lblTotalAbonar.setText("Total a abonar: $ 0.0")
+        self.main_ui.txtInteresVenta.setText("")
     
 
     def remover_de_carrito(self):
@@ -445,12 +471,203 @@ class MainController(QMainWindow):
         # Obtención del subtotal correspondiente a la fila eliminada
         subtotal_fila = self.modelo_carrito.item(fila, 4).text()
         self.monto_venta -= float(subtotal_fila)
+        self.total_abonar -= float(subtotal_fila)
+        
+        # Seteo de labels
         self.main_ui.lblTotalEnCarrito.setText(
             f"Total en carrito: $ {self.monto_venta}"
         )
+        self.main_ui.lblTotalAbonar.setText(
+            f"Total a abonar: $ {self.monto_venta}"
+        )
+
         # Eliminación de la fila del carrito
         self.modelo_carrito.removeRow(fila)
 
+    ##########################################################################
+    # Métodos para finalización de venta
+    ##########################################################################
+    # Método para habilitar casilla de interes
+    def habilitar_interes(self):
+        ''' Método para habilitar o deshabilitar caja para ingreso de interés
+            de venta
+        '''
+        if self.main_ui.checkInteres.isChecked():
+            self.main_ui.txtInteresVenta.setEnabled(True)
+        else:
+            self.main_ui.txtInteresVenta.setEnabled(False)
+            self.main_ui.txtInteresVenta.setText('')
+
+
+    # Método para actualizar el monto total de la venta si se agrega interés
+    def actualizar_monto_con_interes(self):
+        ''' Método para actualizar el monto total a abonar en caso de que se
+            agregue un interés de venta.
+        '''
+        # Se obtiene interes ingresado
+        interes = self.main_ui.txtInteresVenta.text().strip()
+        if interes == "":
+            interes = 0
+
+        try:
+            # Se aplica interes a total de venta y se obtiene total a abonar
+            self.interes = float(interes)
+            self.total_abonar = self.monto_venta + self.interes
+
+            # Seteo de label
+            self.main_ui.lblTotalAbonar.setText(
+                f"Total a abonar: $ {self.total_abonar}"
+            )
+        
+        except ValueError:
+            QMessageBox.warning(
+                self,
+                'Venta',
+                'Revisar campo interés'
+            )
+    
+    # Método para determinar el modo de pago seleccionado
+    def modo_pago_elegido(self):
+        ''' Método para devolver el texto de la selección en los radiobutton
+            de modo de pago
+        '''
+        if self.main_ui.rbtnEfectivo.isChecked():
+            self.modo_pago = self.main_ui.rbtnEfectivo.text()
+        if self.main_ui.rbtnTransf.isChecked():
+            self.modo_pago = self.main_ui.rbtnTransf.text()
+        if self.main_ui.rbtnTarjeta.isChecked():
+            self.modo_pago = self.main_ui.rbtnTarjeta.text()
+        
+        return self.modo_pago
+
+
+    # Método para finalizar la venta
+    def finalizar_venta(self):
+        ''' Método para finalizar una venta determinada.
+            Se obtienen las entradas de usuario, se recuperan los productos
+            agregados al carrito y se procede a cargar la venta, el detalle
+            de venta, descontar del stock de productos aquellos que fueron
+            vendidos y, en caso de que no se pague la totalidad del monto de
+            venta, se carga deuda en cuenta corriente
+        '''
+        # Obtención información de venta
+        fecha_venta = date.today()
+        cliente = self.main_ui.cmbClienteVenta.currentData()
+        monto_venta = self.total_abonar
+        modo_pago = self.modo_pago_elegido()
+        interes = self.interes
+        monto_entregado = self.main_ui.txtEntrega.text()
+
+        # Verificación formato de monto_entregado
+        try:
+            monto_entregado = float(monto_entregado)
+        except ValueError:
+            QMessageBox.warning(
+                self,
+                'Venta',
+                'Revisar campos de venta'
+            )
+            return
+
+        # Verificación selección de cliente
+        if cliente is None:
+            QMessageBox.warning(
+                self,
+                'Ventas',
+                'Se debe seleccionar un cliente'
+            )
+            return
+
+        # Obtención de productos vendidos de la tabla de carrito
+        filas = self.modelo_carrito.rowCount()
+
+        # Verificación de que hay productos en el carrito
+        if filas == 0:
+            QMessageBox.warning(
+                self,
+                'Ventas',
+                'No hay productos en el carrito'
+            )
+            return
+
+        for fila in range(filas):
+            nro_producto = self.modelo_carrito.index(fila, 0).data()
+            cantidad = self.modelo_carrito.index(fila, 3).data()
+            precio = self.modelo_carrito.index(fila, 2).data()
+
+            self.productos_vendidos.append({
+                'nro_producto':int(nro_producto),
+                'cantidad': int(cantidad),
+                'precio_unitario': float(precio)
+            })
+
+        # Verificación monto entregado
+        if monto_entregado > monto_venta:
+            QMessageBox.information(
+                self,
+                'Venta',
+                'El monto abonado es mayor al monto de venta'
+            )
+            return
+        
+        try:
+            # Generación de la venta
+            ModeloVentas.nueva_venta(
+                fecha=fecha_venta,
+                cliente=cliente,
+                monto_total=monto_venta,
+                modo_pago=modo_pago,
+                interes=interes,
+                productos=self.productos_vendidos
+            )
+
+            # Si el monto abonado es menor al monto de venta, se carga CC
+            if monto_entregado < self.total_abonar:
+                cc_cliente = ModeloCuentaCorriente.lista_cuentacorriente(cliente)
+
+                if cc_cliente:
+                    deuda_anterior = cc_cliente[-1].monto_pendiente
+                else:
+                    deuda_anterior = 0
+
+                deuda_venta = monto_venta - monto_entregado
+
+                ModeloCuentaCorriente.nueva_cuentacorriente(
+                    cliente=cliente,
+                    fecha=fecha_venta,
+                    tipo_operacion='Adeuda',
+                    monto_operacion=monto_entregado,
+                    monto_pendiente= deuda_anterior + deuda_venta
+                )
+
+            # Mensaje de confirmación de venta generada
+            if monto_entregado < self.total_abonar:
+                mensaje = 'Venta y deuda cargadas !'
+            else:
+                mensaje = 'Venta cargada!'
+            QMessageBox.information(
+                self,
+                'Ventas',
+                f'{mensaje}'
+            )
+        except Exception:
+            QMessageBox.critical(
+                self,
+                'Ventas',
+                'No se pudo cargar la venta, intenta nuevamente'
+            )
+            self.productos_vendidos = []
+            return
+
+        # Seteo de valores a su estado inicial
+        self.vaciar_carrito()
+        self.interes = 0
+        self.productos_vendidos = []
+        self.main_ui.cmbClienteVenta.setCurrentIndex(0)
+        self.main_ui.txtEntrega.setText("")
+        self.main_ui.checkInteres.setChecked(False)
+        # Actualización listado productos
+        self.cargar_productos()
 
     ##########################################################################
     #                          MODULO PRODUCTOS                              #
@@ -708,6 +925,8 @@ class MainController(QMainWindow):
             # Se llama a metodo de edición de cliente
             ModeloCliente.editar_cliente(id_cliente, nombre, telefono, email)
             self.cargar_clientes()
+
+            self.llenar_cmb_clientes_venta()
 
         except ValueError:
             QMessageBox.critical(
@@ -1012,5 +1231,3 @@ class MainController(QMainWindow):
         self.main_ui.tablaHistorial.setColumnWidth(0,80)
         self.main_ui.tablaHistorial.setColumnWidth(1,120)
         self.main_ui.tablaHistorial.setColumnWidth(2,250)
-        
-

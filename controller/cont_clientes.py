@@ -54,6 +54,9 @@ class ClienteController(QMainWindow):
             # Mensaje de confirmación
             QMessageBox.information(self, "Nuevo Cliente", "Cliente Creado!")
 
+            # Actualización de combobox de clientes interfaz de ventas
+            self.main_controller.llenar_cmb_clientes_venta()
+            
         except ValueError:
             QMessageBox.critical(
                 self,

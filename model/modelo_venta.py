@@ -5,7 +5,10 @@
 from datetime import date
 from sqlmodel import select, Session, between
 from sqlalchemy.orm import selectinload
-from model.database import engine, Venta, DetalleVenta
+from sqlalchemy.exc import IntegrityError
+from model.database import (
+    engine, Venta, DetalleVenta, Producto, CuentaCorriente
+)
 
 ##############################################################################
 # Modelo Ventas
@@ -19,7 +22,8 @@ class ModeloVentas:
         cliente: int,
         monto_total: float,
         modo_pago: str,
-        interes: float
+        interes: float,
+        productos: list
     ):
         ''' Método para generar una nueva venta
 
@@ -28,44 +32,44 @@ class ModeloVentas:
             :param float monto_total: Monto total de venta
             :param str modo_pago: Modo de pago utilizado
             :param float interes: Interes de la venta
+            :param list productos: Listado de productos vendidos
         '''
         with Session(engine) as sesion:
-            venta = Venta(
-                fecha_venta=fecha,
-                cliente_id=cliente,
-                monto_total=monto_total,
-                modo_pago=modo_pago,
-                interes=interes
-            )
-            
-            sesion.add(venta)
-            sesion.commit()
+            try:
+                # Agregado de venta
+                venta = Venta(
+                    fecha_venta=fecha,
+                    cliente_id=cliente,
+                    monto_total=monto_total,
+                    modo_pago=modo_pago,
+                    interes=interes
+                )
+                sesion.add(venta)
+                sesion.flush()
 
+                # Agregado de detalles de venta
+                for producto in productos:
+                    detalle = DetalleVenta(
+                        nro_venta=venta.nro_venta,
+                        nro_producto=producto['nro_producto'],
+                        precio_unitario=producto['precio_unitario'],
+                        cantidad=producto['cantidad']
+                    )
+                    sesion.add(detalle)
 
-    @staticmethod
-    def nuevo_detalle_venta(
-        nro_venta: int,
-        nro_producto: int,
-        precio: float,
-        cantidad: int
-    ):
-        ''' Método para ingresar un nuevo detalle de venta
+                    # Descuento de unidades vendidas del producto
+                    producto_vendido = sesion.get(
+                        Producto, producto['nro_producto']
+                    )
+                    producto_vendido.stock -= producto['cantidad']
+                    sesion.add(producto_vendido)
 
-            :param int nro_venta: Número de venta
-            :param int nro_producto: Número de producto vendido
-            :param float precio: Precio unitario del producto
-            :param int cantidad: Cantidad vendida del producto nro_producto
-        '''
-        with Session(engine) as sesion:
-            detalle_venta = DetalleVenta(
-                nro_venta=nro_venta,
-                nro_producto=nro_producto,
-                precio_unitario=precio,
-                cantidad=cantidad
-            )
-            sesion.add(detalle_venta)
-            sesion.commit()
-    
+                sesion.commit()
+
+            except Exception as e:
+                sesion.rollback()
+                raise e
+
 
     @staticmethod
     def eliminar_venta(nro_venta: int):
