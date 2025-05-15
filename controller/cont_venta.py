@@ -26,9 +26,9 @@ class DetalleVentaController(QDialog):
         )
         self.ui_detalleventa.tablaDetalleVenta.setModel(self.modelo_dventa)
         self.ui_detalleventa.tablaDetalleVenta.setColumnHidden(0, True)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(1, 450)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(2,90)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(3,70)
+        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(1, 490)
+        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(2,100)
+        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(3,80)
 
         self.cargar_detalle_venta(nro_venta=nro_venta)
 
@@ -37,6 +37,21 @@ class DetalleVentaController(QDialog):
     def cargar_detalle_venta(self, nro_venta: int):
         # Se busca el detalle de venta segun nro_venta
         detalle = ModeloVentas.consulta_detalleventa(nro_venta=nro_venta)
+
+        # Se pone número de venta en título
+        self.ui_detalleventa.lblTitulo.setText(f"Detalle de venta #{nro_venta}")
+
+        # Completado de información de venta en lables
+        total_prod = detalle[0].venta.monto_total
+        interes = detalle[0].venta.interes
+        tot_abonar = total_prod + interes
+        self.ui_detalleventa.lblTotalProductos.setText(
+            f"Total productos: $ {total_prod}"
+        )
+        self.ui_detalleventa.lblTotalInteres.setText(f'Interes: $ {interes}')
+        self.ui_detalleventa.lblTotalAbonar.setText(
+            f"Total a abonar: $ {tot_abonar}"
+        )
 
         # Se carga información a la tabla de detalle venta
         for det in detalle:

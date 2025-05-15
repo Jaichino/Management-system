@@ -47,6 +47,7 @@ class MainController(QMainWindow):
         self.total_abonar = 0
         self.productos_vendidos = []
 
+
         ######################################################################
         # Configuraciones interfaz
         ######################################################################
@@ -62,6 +63,7 @@ class MainController(QMainWindow):
 
         # Que siempre arranque mostrando los turnos del día actual
         self.agregar_turnos(date.today())
+
 
         ######################################################################
         # Seteo de botones para recorrer menú
@@ -96,6 +98,7 @@ class MainController(QMainWindow):
         self.main_ui.btnConsultaVentas.clicked.connect(
             self.ir_consulta_ventas
         )
+
 
         ######################################################################
         # Asignaciones de métodos a botones
@@ -169,6 +172,11 @@ class MainController(QMainWindow):
             self.cargar_ventas
         )
 
+        # Asignación método eliminación de ventas
+        self.main_ui.btnEliminarVenta.clicked.connect(
+            self.eliminar_venta
+        )
+
 
         # TURNOS
         ######################################################################
@@ -181,6 +189,7 @@ class MainController(QMainWindow):
         self.main_ui.btnBuscarHist.clicked.connect(
             self.carga_historial
         )
+
 
         ######################################################################
         # Configuración de eventos
@@ -209,6 +218,7 @@ class MainController(QMainWindow):
             self.actualizar_monto_con_interes
         )
 
+
         ######################################################################
         # Llenado comboboxs
         ######################################################################
@@ -219,6 +229,7 @@ class MainController(QMainWindow):
         
         # Modulo de ventas
         self.llenar_cmb_clientes_venta()
+
 
         ######################################################################
         # Configuracion de modelos
@@ -255,27 +266,27 @@ class MainController(QMainWindow):
         self.tabla_cventa.setColumnWidth(5,80)
         self.tabla_cventa.setColumnWidth(6,100)
 
+
         ######################################################################
         # Llamadas para agregar tarjetas de servicios
         ######################################################################
-        
         # Visualización tarjetas de servicios
         self.mostrar_servicios()
+
 
         ######################################################################
         # Llamadas para completado de tablas
         ######################################################################
-
         # Visualización de clientes en tabla
         self.cargar_clientes()
-
         # Visualizacion de productos en tabla
         self.cargar_productos()
+
 
     ##########################################################################
     # Movimiento entre menú principal
     ##########################################################################
-    
+
     def ir_menu_principal(self):
         self.main_ui.StackedWidget.setCurrentIndex(6)
 
@@ -309,10 +320,10 @@ class MainController(QMainWindow):
     def ir_nueva_venta(self):
         self.main_ui.stackedVentas.setCurrentIndex(1)
 
+
     ##########################################################################
     # Apertura de ventanas secundarias
     ##########################################################################
-    
     # Apertura ventana nuevo cliente
     def ventana_nuevo_cliente(self):
         self.abrir_nuevo_cliente = ClienteController(self)
@@ -371,6 +382,7 @@ class MainController(QMainWindow):
                 cliente.nombre, cliente.id
             )
 
+
     # Método actualización lblDescripProdVenta según código
     def set_descripcion_y_vencimientos(self):
         ''' Método para actualizar automáticamente la descripción del producto
@@ -422,6 +434,7 @@ class MainController(QMainWindow):
         self.main_ui.spinBoxCantidadVenta.setMaximum(stock_disponible)
         # Seteo campo precio
         self.main_ui.txtPrecioProdVenta.setText(f"{precio:.0f}")
+
 
     ##########################################################################
     # Métodos manejo del carrito de compra
@@ -493,7 +506,7 @@ class MainController(QMainWindow):
         self.main_ui.lblTotalEnCarrito.setText("Total en carrito: $ 0.0")
         self.main_ui.lblTotalAbonar.setText("Total a abonar: $ 0.0")
         self.main_ui.txtInteresVenta.setText("")
-    
+
 
     def remover_de_carrito(self):
         ''' Método para eliminar un producto determinado del carrito
@@ -509,7 +522,7 @@ class MainController(QMainWindow):
                 'Tenes que seleccionar una fila del carrito'
             )
             return
-        
+
         # Obtención del subtotal correspondiente a la fila eliminada
         subtotal_fila = self.modelo_carrito.item(fila, 4).text()
         self.monto_venta -= float(subtotal_fila)
@@ -525,6 +538,7 @@ class MainController(QMainWindow):
 
         # Eliminación de la fila del carrito
         self.modelo_carrito.removeRow(fila)
+
 
     ##########################################################################
     # Métodos para finalización de venta
@@ -568,6 +582,7 @@ class MainController(QMainWindow):
                 'Revisar campo interés'
             )
     
+
     # Método para determinar el modo de pago seleccionado
     def modo_pago_elegido(self):
         ''' Método para devolver el texto de la selección en los radiobutton
@@ -595,7 +610,7 @@ class MainController(QMainWindow):
         # Obtención información de venta
         fecha_venta = date.today()
         cliente = self.main_ui.cmbClienteVenta.currentData()
-        monto_venta = self.total_abonar
+        monto_venta = self.monto_venta
         modo_pago = self.modo_pago_elegido()
         interes = self.interes
         monto_entregado = self.main_ui.txtEntrega.text()
@@ -619,6 +634,19 @@ class MainController(QMainWindow):
                 'Se debe seleccionar un cliente'
             )
             return
+        
+        print(self.monto_venta)
+        print(self.interes)
+        print(self.total_abonar)
+
+        # Verificación monto entregado
+        if monto_entregado > self.total_abonar:
+            QMessageBox.information(
+                self,
+                'Venta',
+                'El monto abonado es mayor al monto de venta'
+            )
+            return
 
         # Obtención de productos vendidos de la tabla de carrito
         filas = self.modelo_carrito.rowCount()
@@ -631,7 +659,8 @@ class MainController(QMainWindow):
                 'No hay productos en el carrito'
             )
             return
-
+        
+        # Guardado de productos del carrito en lista
         for fila in range(filas):
             nro_producto = self.modelo_carrito.index(fila, 0).data()
             cantidad = self.modelo_carrito.index(fila, 3).data()
@@ -643,15 +672,6 @@ class MainController(QMainWindow):
                 'precio_unitario': float(precio)
             })
 
-        # Verificación monto entregado
-        if monto_entregado > monto_venta:
-            QMessageBox.information(
-                self,
-                'Venta',
-                'El monto abonado es mayor al monto de venta'
-            )
-            return
-        
         try:
             # Generación de la venta
             ModeloVentas.nueva_venta(
@@ -672,7 +692,7 @@ class MainController(QMainWindow):
                 else:
                     deuda_anterior = 0
 
-                deuda_venta = monto_venta - monto_entregado
+                deuda_venta = self.total_abonar - monto_entregado
 
                 ModeloCuentaCorriente.nueva_cuentacorriente(
                     cliente=cliente,
@@ -711,12 +731,18 @@ class MainController(QMainWindow):
         # Actualización listado productos
         self.cargar_productos()
     
+
     ##########################################################################
     # Métodos para manejo de interfaz consulta de ventas
     ##########################################################################
-    
     # Método para cargar ventas en tablaConsultaVenta
     def cargar_ventas(self):
+        ''' Método para cargar las ventas en la tabla de consulta de ventas,
+            se obtienen entradas de usuario para fechas y cliente para obtener
+            las ventas correspondientes.
+            Se recorren dichas ventas con un bucle para cargar los valores en
+            la tabla.
+        '''
         # Obtención de fechas y/o cliente
         fecha_desde_qt = self.main_ui.consultaVentaDesde.date()
         fecha_hasta_qt = self.main_ui.ConsultaVentaHasta.date()
@@ -742,6 +768,7 @@ class MainController(QMainWindow):
         # Carga de ventas en la tabla
         self.tabla_cventa.setRowCount(len(ventas))
 
+        # Bucle para recorrer ventas y cargar en tabla
         for i, venta in enumerate(ventas):
             fecha = date.strftime(venta.fecha_venta, "%d/%m/%Y")
             total_venta = venta.monto_total + venta.interes
@@ -751,14 +778,24 @@ class MainController(QMainWindow):
             else:
                 cliente_venta = venta.cliente.nombre
 
-            self.tabla_cventa.setItem(i, 0, QTableWidgetItem(str(venta.nro_venta)))
+            # Posicionamiento de valores en filas y columnas
+            self.tabla_cventa.setItem(
+                i, 0, QTableWidgetItem(str(venta.nro_venta))
+            )
             self.tabla_cventa.setItem(i, 1, QTableWidgetItem(fecha))
             self.tabla_cventa.setItem(i, 2, QTableWidgetItem(cliente_venta))
             self.tabla_cventa.setItem(i, 3, QTableWidgetItem(venta.modo_pago))
-            self.tabla_cventa.setItem(i, 4, QTableWidgetItem(f'$ {venta.monto_total:.0f}'))
-            self.tabla_cventa.setItem(i, 5, QTableWidgetItem(f'$ {venta.interes:.0f}'))
-            self.tabla_cventa.setItem(i, 6, QTableWidgetItem(f'$ {total_venta:.0f}'))
+            self.tabla_cventa.setItem(
+                i, 4, QTableWidgetItem(f'$ {venta.monto_total:.0f}')
+            )
+            self.tabla_cventa.setItem(
+                i, 5, QTableWidgetItem(f'$ {venta.interes:.0f}')
+            )
+            self.tabla_cventa.setItem(
+                i, 6, QTableWidgetItem(f'$ {total_venta:.0f}')
+            )
 
+            # Creación de botón en ultima columna
             btn = QPushButton("Ver")
             btn.setStyleSheet(
                 ''' QPushButton {
@@ -773,11 +810,47 @@ class MainController(QMainWindow):
                 '''
             )
             btn.setCursor(Qt.PointingHandCursor)
+            # Se conecta boton a método para mostrar detalle de ventas
             btn.clicked.connect(
                 lambda _, 
                 nro_venta=venta.nro_venta:self.ventana_detalleventa(nro_venta)
             )
             self.tabla_cventa.setCellWidget(i, 7, btn)
+
+
+    # Método para eliminar ventas
+    def eliminar_venta(self):
+        ''' Método para eliminar una determinada venta seleccionada en la
+            tabla de consulta de ventas.
+            Se obtiene aquella fila seleccionada, se obtiene el nro_venta
+            y se elimina dicho registro de la base de datos y se actualiza la
+            tabla.
+        '''
+        # Obtención de la fila seleccionada
+        fila = self.tabla_cventa.currentIndex().row()
+
+        # Obtención del número de venta y cliente
+        nro_venta = int(self.tabla_cventa.item(fila, 0).text())
+        cliente = self.tabla_cventa.item(fila, 2).text()
+
+        # Consulta de eliminación
+        eliminacion = QMessageBox.question(
+            self,
+            'Eliminar Venta',
+            f'Eliminar venta de {cliente}?'
+        )
+        if eliminacion == QMessageBox.Yes:
+            # Eliminación de registro en base de datos
+            ModeloVentas.eliminar_venta(nro_venta=nro_venta)
+
+            # Actualización de tabla de consulta de ventas
+            self.cargar_ventas()
+
+            QMessageBox.information(
+                self,
+                'Ventas',
+                'Venta eliminada!'
+            )
 
 
     ##########################################################################

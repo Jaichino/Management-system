@@ -129,6 +129,7 @@ class ModeloVentas:
             detalle_venta = sesion.exec(
                 select(DetalleVenta)
                 .options(selectinload(DetalleVenta.producto))
+                .options(selectinload(DetalleVenta.venta))
                 .where(DetalleVenta.nro_venta == nro_venta)
             ).all()
             
