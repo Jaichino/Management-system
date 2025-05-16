@@ -26,6 +26,8 @@ from controller.cont_turnos import (
 from controller.cont_producto import NuevoProductoController
 from controller.cont_venta import DetalleVentaController
 
+from utils.generador_facturas import generar_factura_pdf
+
 ##############################################################################
 # Controlador Principal
 ##############################################################################
@@ -712,6 +714,7 @@ class MainController(QMainWindow):
                 'Ventas',
                 f'{mensaje}'
             )
+
         except Exception:
             QMessageBox.critical(
                 self,
