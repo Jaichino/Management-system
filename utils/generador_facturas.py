@@ -82,8 +82,8 @@ def generar_factura_pdf(
     c.setFont("Helvetica-Bold", 15)
     c.drawString(50, height - 395, "Detalle de la venta")
 
-    data = [["Producto", "Precio Unit.", "Cant", "Subtotal"]] + productos
-    table = Table(data, colWidths=[300, 80, 50, 80])
+    data = [["Producto", "Precio", "Cant", "Subtotal"]] + productos
+    table = Table(data, colWidths=[350, 60, 50, 60])
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),

@@ -136,4 +136,21 @@ class ModeloVentas:
             return detalle_venta
 
 
+    @staticmethod
+    def obtener_venta(nro_venta: int):
+        ''' Método para obtener una venta determinada por su nro_venta
+
+            :param int nro_venta: ID de venta a consultar
+            :return: Object Venta
+            :rtype: object
+        '''
+        with Session(engine) as sesion:
+            venta = sesion.exec(
+                select(Venta)
+                .options(selectinload(Venta.cliente))
+                .where(Venta.nro_venta == nro_venta)
+            ).first()
+
+            return venta
+
 # if __name__ == '__main__':

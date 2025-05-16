@@ -2,6 +2,7 @@ __pycache__
 turnero_bla.db
 .venv/
 images/
+facturas/
 *.ui
 *.qrc
 __init__.py
