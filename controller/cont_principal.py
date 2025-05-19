@@ -843,12 +843,27 @@ class MainController(QMainWindow):
             f'Eliminar venta de {cliente}?'
         )
         if eliminacion == QMessageBox.Yes:
-            # Eliminación de registro en base de datos
-            ModeloVentas.eliminar_venta(nro_venta=nro_venta)
+            # Consulta devolución de stock
+            devolucion = QMessageBox.question(
+                self,
+                'Eliminar Venta',
+                f'Devolver productos vendidos al stock?'
+            )
+
+            if devolucion == QMessageBox.Yes:
+                # Eliminación y devolución de productos
+                ModeloVentas.eliminar_venta(
+                    nro_venta=nro_venta, dev_stock=True
+            )
+            
+            else:
+                # Eliminación de registro en base de datos
+                ModeloVentas.eliminar_venta(
+                    nro_venta=nro_venta, dev_stock=False
+                )
 
             # Actualización de tabla de consulta de ventas
             self.cargar_ventas()
-
             QMessageBox.information(
                 self,
                 'Ventas',

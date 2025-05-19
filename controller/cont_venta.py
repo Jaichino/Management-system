@@ -119,3 +119,6 @@ class DetalleVentaController(QDialog):
             fecha=fecha,
             interes=interes
         )
+
+        # Bloqueo de botón
+        self.ui_detalleventa.btnGenFactura.setEnabled(False)

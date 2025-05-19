@@ -72,16 +72,37 @@ class ModeloVentas:
 
 
     @staticmethod
-    def eliminar_venta(nro_venta: int):
-        ''' Método para eliminar una venta determinada por su nro_venta
+    def eliminar_venta(nro_venta: int, dev_stock: bool = False):
+        ''' Método para eliminar una venta determinada por su nro_venta y
+            devolver a stock los productos vendidos en caso de que dev_stock
+            sea True
 
             :param int nro_venta: Número de venta a eliminar
+            :param bool dev_stock: Indica si se devuelven productos a stock
         '''
         with Session(engine) as sesion:
+            # Obtención de venta a eliminar
             venta_a_eliminar = sesion.exec(
                 select(Venta).where(Venta.nro_venta == nro_venta)
             ).one()
 
+            # Obtención del detalle de venta
+            detalle_venta = sesion.exec(
+                select(DetalleVenta)
+                .options(selectinload(DetalleVenta.producto))
+                .where(DetalleVenta.nro_venta == nro_venta)
+            ).all()
+
+            # Si dev_stock == True, se devuelven productos a stock
+            if dev_stock:
+                for det in detalle_venta:
+                    producto = det.producto
+                    cantidad_vendida = det.cantidad
+
+                    producto.stock += cantidad_vendida 
+                    sesion.add(producto)
+            
+            # Eliminación de venta
             sesion.delete(venta_a_eliminar)
             sesion.commit()
 
