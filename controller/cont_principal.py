@@ -48,11 +48,14 @@ class MainController(QMainWindow):
         self.interes = 0
         self.total_abonar = 0
         self.productos_vendidos = []
+        
+        self.deuda = 0
 
 
         ######################################################################
         # Configuraciones interfaz
         ######################################################################
+
         # Inicio de lineEdit Interes de venta -> False
         self.main_ui.txtInteresVenta.setEnabled(False)
 
@@ -65,7 +68,6 @@ class MainController(QMainWindow):
 
         # Que siempre arranque mostrando los turnos del día actual
         self.agregar_turnos(date.today())
-
 
         ######################################################################
         # Seteo de botones para recorrer menú
@@ -100,6 +102,63 @@ class MainController(QMainWindow):
         self.main_ui.btnConsultaVentas.clicked.connect(
             self.ir_consulta_ventas
         )
+
+
+        ######################################################################
+        # Configuracion de modelos
+        ######################################################################
+        
+        # Definición de modelo en tabla Carrito de venta
+        self.modelo_carrito = QStandardItemModel()
+        self.modelo_carrito.setHorizontalHeaderLabels(
+            ['id', 'Producto', 'Precio', 'Cant', 'Subtotal']
+        )
+        self.main_ui.tablaCarrito.setModel(self.modelo_carrito)
+        self.main_ui.tablaCarrito.setColumnHidden(0, True)
+        self.main_ui.tablaCarrito.setColumnWidth(1, 500)
+        self.main_ui.tablaCarrito.setColumnWidth(2, 150)
+
+
+        # Definición de tabla consulta de ventas
+        self.tabla_cventa = self.main_ui.tablaConsultaVentas
+        self.tabla_cventa.setColumnCount(8)
+        self.tabla_cventa.setHorizontalHeaderLabels(
+            [   'id',
+                'Fecha',
+                'Cliente',
+                'Modo Pago',
+                'Monto', 
+                'Interes',
+                'Total',
+                'Detalle' ]
+        )
+        self.tabla_cventa.setColumnHidden(0,True)
+        self.tabla_cventa.setColumnWidth(1,100)
+        self.tabla_cventa.setColumnWidth(2,250)
+        self.tabla_cventa.setColumnWidth(3,130)
+        self.tabla_cventa.setColumnWidth(4,100)
+        self.tabla_cventa.setColumnWidth(5,80)
+        self.tabla_cventa.setColumnWidth(6,100)
+
+
+        # Definición tabla cuenta corriente
+        self.model_cc = QStandardItemModel()
+        self.model_cc.setHorizontalHeaderLabels(
+            [
+                'id', 
+                'Cliente', 
+                'Fecha', 
+                'Operación', 
+                'Monto Operación', 
+                'Deuda pendiente'
+            ]
+        )
+        self.main_ui.tablaCuentaCorriente.setModel(self.model_cc)
+        self.main_ui.tablaCuentaCorriente.setColumnHidden(0, True)
+        self.main_ui.tablaCuentaCorriente.setColumnWidth(1, 260)
+        self.main_ui.tablaCuentaCorriente.setColumnWidth(2, 120)
+        self.main_ui.tablaCuentaCorriente.setColumnWidth(3, 200)
+        self.main_ui.tablaCuentaCorriente.setColumnWidth(4, 150)
 
 
         ######################################################################
@@ -179,6 +238,17 @@ class MainController(QMainWindow):
             self.eliminar_venta
         )
 
+        # CUENTAS CORRIENTES
+        ######################################################################
+        # Asignación método carga de operación cuenta corriente
+        self.main_ui.btnCargarCC.clicked.connect(
+            self.cargar_operacion_cc
+        )
+
+        self.main_ui.btnEliminarUltimaCC.clicked.connect(
+            self.eliminar_registro_cc
+        )
+
 
         # TURNOS
         ######################################################################
@@ -216,10 +286,15 @@ class MainController(QMainWindow):
             self.habilitar_interes
         )
 
+        # Asignación de evento para actualizar monto total con interés
         self.main_ui.txtInteresVenta.textChanged.connect(
             self.actualizar_monto_con_interes
         )
 
+        # Asignación de evento para mostrar cuentas corrientes segun cliente
+        self.main_ui.cmbClienteCC.currentTextChanged.connect(
+            self.cargar_cuentacorriente
+        )
 
         ######################################################################
         # Llenado comboboxs
@@ -232,41 +307,8 @@ class MainController(QMainWindow):
         # Modulo de ventas
         self.llenar_cmb_clientes_venta()
 
-
-        ######################################################################
-        # Configuracion de modelos
-        ######################################################################
-        
-        # Definición de modelo en tabla Carrito de venta
-        self.modelo_carrito = QStandardItemModel()
-        self.modelo_carrito.setHorizontalHeaderLabels(
-            ['id', 'Producto', 'Precio', 'Cant', 'Subtotal']
-        )
-        self.main_ui.tablaCarrito.setModel(self.modelo_carrito)
-        self.main_ui.tablaCarrito.setColumnHidden(0, True)
-        self.main_ui.tablaCarrito.setColumnWidth(1, 500)
-        self.main_ui.tablaCarrito.setColumnWidth(2, 150)
-
-        # Definición de tabla consulta de ventas
-        self.tabla_cventa = self.main_ui.tablaConsultaVentas
-        self.tabla_cventa.setColumnCount(8)
-        self.tabla_cventa.setHorizontalHeaderLabels(
-            [   'id',
-                'Fecha',
-                'Cliente',
-                'Modo Pago',
-                'Monto', 
-                'Interes',
-                'Total',
-                'Detalle' ]
-        )
-        self.tabla_cventa.setColumnHidden(0,True)
-        self.tabla_cventa.setColumnWidth(1,100)
-        self.tabla_cventa.setColumnWidth(2,250)
-        self.tabla_cventa.setColumnWidth(3,130)
-        self.tabla_cventa.setColumnWidth(4,100)
-        self.tabla_cventa.setColumnWidth(5,80)
-        self.tabla_cventa.setColumnWidth(6,100)
+        # Modulo de cuenta corriente
+        self.llenar_cmb_clientescc()
 
 
         ######################################################################
@@ -687,7 +729,9 @@ class MainController(QMainWindow):
 
             # Si el monto abonado es menor al monto de venta, se carga CC
             if monto_entregado < self.total_abonar:
-                cc_cliente = ModeloCuentaCorriente.lista_cuentacorriente(cliente)
+                cc_cliente = ModeloCuentaCorriente.lista_cuentacorriente(
+                    cliente
+                )
 
                 if cc_cliente:
                     deuda_anterior = cc_cliente[-1].monto_pendiente
@@ -703,6 +747,9 @@ class MainController(QMainWindow):
                     monto_operacion=monto_entregado,
                     monto_pendiente= deuda_anterior + deuda_venta
                 )
+
+                # Actualización cmb clientes cc
+                self.llenar_cmb_clientescc()
 
             # Mensaje de confirmación de venta generada
             if monto_entregado < self.total_abonar:
@@ -869,6 +916,210 @@ class MainController(QMainWindow):
                 'Ventas',
                 'Venta eliminada!'
             )
+
+
+
+    ##########################################################################
+    #                       MODULO CUENTA CORRIENTE                          #
+    ##########################################################################
+    ##########################################################################
+    # Métodos configuración de ventana
+    ##########################################################################
+    def llenar_cmb_clientescc(self):
+        ''' Método para llenar combobox de clientes en ventana de cuenta
+            corriente.
+        '''
+        # Limpieza cmb inicial
+        self.main_ui.cmbClienteCC.clear()
+        
+        # Seteo primer elemento del combobox
+        self.main_ui.cmbClienteCC.addItem('Seleccionar cliente', None)
+        # Obtención de clientes y carga en combobox
+        clientes_cc = ModeloCuentaCorriente.clientes_cuentacorriente()
+        if clientes_cc:
+            for cliente in clientes_cc:
+                self.main_ui.cmbClienteCC.addItem(cliente[1], cliente[0])
+    
+    ##########################################################################
+    # Método carga de cuentas corriente en tabla
+    ##########################################################################
+    def cargar_cuentacorriente(self):
+        ''' Método para cargar cuenta corriente de un determinado cliente en
+            tabla.
+        '''
+        # Limpieza inicial de tabla
+        self.model_cc.removeRows(0, self.model_cc.rowCount())
+
+        # Seteo de self.deuda a 0 para reiniciar
+        self.deuda = 0
+
+        # Obtención de cliente seleccionado en el combobox
+        cliente = self.main_ui.cmbClienteCC.currentData()
+
+        # Obtención historial cuenta corriente de dicho cliente
+        cuenta_corriente = ModeloCuentaCorriente.lista_cuentacorriente(
+            cliente=cliente
+        )
+
+        # Carga de historial en tabla
+        for operacion in cuenta_corriente:
+            fecha = date.strftime(operacion.fecha_operacion, "%d/%m/%Y")
+            fila = [
+                QStandardItem(str(operacion.nro_operacion)),
+                QStandardItem(operacion.cliente.nombre),
+                QStandardItem(fecha),
+                QStandardItem(operacion.tipo_operacion),
+                QStandardItem(f'$ {operacion.monto_operacion:.0f}'),
+                QStandardItem(f'$ {operacion.monto_pendiente:.0f}')
+            ]
+            # Alineado de valores
+            for item in fila:
+                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            self.model_cc.appendRow(fila)
+        
+        # Actualización de self.deuda y visualización en label deuda total
+        if cliente is not None:
+            ult_fila = self.model_cc.rowCount() - 1
+            self.deuda = float(self.model_cc.item(ult_fila, 5).text()[2:])
+            self.main_ui.lblDeudaTotalCC.setText(
+                f"Deuda total: $ {self.deuda:.0f}"
+            )
+        else:
+            self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
+    
+    ##########################################################################
+    # Método carga operación de cuenta corriente
+    ##########################################################################
+    def cargar_operacion_cc(self):
+        ''' Método para cargar operación de cuenta corriente. Se recupera
+            cliente seleccionado, selección del tipo de operación de acuerdo a
+            radiobuttons y en función del tipo de operación y monto, se carga
+            el registro en base de datos y se actualiza tabla.
+            Si la deuda se salda completamente, se elimina la cuenta corriente
+            del cliente en cuestión.
+        '''
+        # Obtención cliente seleccionado en combobox
+        cliente = self.main_ui.cmbClienteCC.currentData()
+
+        # Verificación de selección de cliente
+        if not cliente:
+            QMessageBox.warning(
+                self,
+                'Cuenta Corriente',
+                'Seleccionar un cliente'
+            )
+            return
+        
+        # Obtención tipo de operación de radiobuttons
+        tipo_operacion = None
+
+        if self.main_ui.rbtnSaldarCC.isChecked():
+            tipo_operacion = "Abona"
+        
+        if self.main_ui.rbtnActualizarCC.isChecked():
+            tipo_operacion = "Actualización"
+        
+        # Verificación de selección de tipo de operación
+        if tipo_operacion is None:
+            QMessageBox.warning(
+                self,
+                'Cuenta Corriente',
+                'Seleccionar tipo de operación'
+            )
+            return
+
+        # Obtención de monto de operación
+        try:
+            monto_operacion = float(self.main_ui.txtMontoCC.text())
+        except ValueError:
+            QMessageBox.warning(
+                self,
+                'Cuenta Corriente',
+                'Revisar monto de operación'
+            )
+            return
+        
+        # Carga de operación en base de datos
+        monto_adeudado = self.deuda
+
+        if tipo_operacion == "Abona":
+            deuda_total = monto_adeudado - monto_operacion
+        
+        if tipo_operacion == "Actualización":
+            deuda_total = monto_adeudado + monto_operacion
+
+        ModeloCuentaCorriente.nueva_cuentacorriente(
+            cliente=cliente,
+            fecha=date.today(),
+            tipo_operacion=tipo_operacion,
+            monto_operacion=monto_operacion,
+            monto_pendiente=deuda_total
+        )
+
+        # Mensaje de confirmación
+        QMessageBox.information(
+                self,
+                'Cuenta Corriente',
+                'Operación cargada!'
+            )
+        
+        # Eliminación de cuenta corriente si deuda es saldada completamente
+        if deuda_total <= 0:
+            ModeloCuentaCorriente.eliminar_cuentacorriente(cliente=cliente)
+            self.llenar_cmb_clientescc()
+            self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
+            self.main_ui.txtMontoCC.setText("")
+        
+        self.main_ui.txtMontoCC.setText("")
+        self.cargar_cuentacorriente()
+
+
+    ##########################################################################
+    # Método eliminación registro cuenta corriente
+    ##########################################################################
+    def eliminar_registro_cc(self):
+        ''' Método para eliminar último registro realizado en una determinada
+            cuenta corriente. Se obtiene ultimo número de operación y se
+            elimina.
+        '''
+        # Obtención última fila tabla cuenta corriente
+        ultima_fila = self.model_cc.rowCount() - 1
+        
+        # Verificación ultima_fila > 0 (hay cuenta corriente)
+        if ultima_fila < 0:
+            QMessageBox.warning(
+                self,
+                'Cuentas Corrientes',
+                'Se debe seleccionar una cuenta corriente'
+            )
+            return
+        
+        # Obtención del número de operación
+        nro_operacion = self.model_cc.item(ultima_fila, 0).text()
+
+        # Consulta y eliminación de registro
+        eliminar = QMessageBox.question(
+            self,
+            'Cuentas corrientes',
+            'Eliminar último registro?'
+        )
+
+        if eliminar == QMessageBox.Yes:
+            ModeloCuentaCorriente.eliminar_operacion(nro_operacion)
+            if ultima_fila == 0:
+                self.llenar_cmb_clientescc()
+                self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
+                self.main_ui.txtMontoCC.setText("")
+
+            QMessageBox.information(
+                self,
+                'Cuentas Corrientes',
+                'Registro de cuenta corriente eliminado!'
+            )
+
+        # Carga de tabla
+        self.cargar_cuentacorriente()
 
 
     ##########################################################################

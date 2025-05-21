@@ -2005,7 +2005,7 @@ class VentanaPrincipal(object):
 "\n"
 "\n"
 "")
-        self.cmbClienteCC.setEditable(True)
+        self.cmbClienteCC.setEditable(False)
         self.cmbClienteCC.setMaxVisibleItems(5)
 
         self.gridLayout_39.addWidget(self.cmbClienteCC, 0, 0, 1, 1)
@@ -2074,6 +2074,8 @@ class VentanaPrincipal(object):
                         "	color: rgb(125, 57, 40);\n"
 "}\n"
 "")
+        self.tablaCuentaCorriente.horizontalHeader().setStretchLastSection(True)
+        self.tablaCuentaCorriente.verticalHeader().setVisible(False)
 
         self.gridLayout_41.addWidget(self.tablaCuentaCorriente, 0, 0, 1, 1)
 
@@ -2083,15 +2085,42 @@ class VentanaPrincipal(object):
         self.widgetTotalCC = QWidget(self.MenuCuentaCorriente)
         self.widgetTotalCC.setObjectName(u"widgetTotalCC")
         self.widgetTotalCC.setMaximumSize(QSize(16777215, 50))
-        self.gridLayout_42 = QGridLayout(self.widgetTotalCC)
-        self.gridLayout_42.setObjectName(u"gridLayout_42")
+        self.horizontalLayout_27 = QHBoxLayout(self.widgetTotalCC)
+        self.horizontalLayout_27.setSpacing(4)
+        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
+        self.horizontalLayout_27.setContentsMargins(2, 0, -1, -1)
+        self.btnEliminarUltimaCC = QPushButton(self.widgetTotalCC)
+        self.btnEliminarUltimaCC.setObjectName(u"btnEliminarUltimaCC")
+        self.btnEliminarUltimaCC.setMinimumSize(QSize(0, 30))
+        self.btnEliminarUltimaCC.setMaximumSize(QSize(200, 16777215))
+        self.btnEliminarUltimaCC.setFont(font1)
+        self.btnEliminarUltimaCC.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btnEliminarUltimaCC.setStyleSheet(u"QPushButton {\n"
+"	color: #7D3928;\n"
+"	border: 1px solid;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"	font-weight: bold;\n"
+"	color: #7D3928;\n"
+"	border-radius: 5px;\n"
+"	border-color: #DFAA98;\n"
+"	background-color: #F7E0D3;\n"
+"	\n"
+"}")
+
+        self.horizontalLayout_27.addWidget(self.btnEliminarUltimaCC)
+
         self.lblDeudaTotalCC = QLabel(self.widgetTotalCC)
         self.lblDeudaTotalCC.setObjectName(u"lblDeudaTotalCC")
         self.lblDeudaTotalCC.setFont(font10)
         self.lblDeudaTotalCC.setStyleSheet(u"color: rgb(125, 57, 40);")
         self.lblDeudaTotalCC.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
-        self.gridLayout_42.addWidget(self.lblDeudaTotalCC, 0, 0, 1, 1)
+        self.horizontalLayout_27.addWidget(self.lblDeudaTotalCC)
 
 
         self.verticalLayout_38.addWidget(self.widgetTotalCC)
@@ -3011,7 +3040,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(2)
+        self.StackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -3061,6 +3090,8 @@ class VentanaPrincipal(object):
         self.btnFinalizarVenta.setText(QCoreApplication.translate("MainWindow", u"Finalizar venta", None))
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"CUENTAS CORRIENTES", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Cliente", None))
+        self.cmbClienteCC.setPlaceholderText("")
+        self.btnEliminarUltimaCC.setText(QCoreApplication.translate("MainWindow", u"Eliminar \u00faltimo registro", None))
         self.lblDeudaTotalCC.setText(QCoreApplication.translate("MainWindow", u"Deuda total: $ x", None))
         self.rbtnSaldarCC.setText(QCoreApplication.translate("MainWindow", u"Saldar deuda", None))
         self.rbtnActualizarCC.setText(QCoreApplication.translate("MainWindow", u"Actualizar deuda", None))

@@ -103,7 +103,7 @@ class ModeloCuentaCorriente:
         '''
         with Session(engine) as sesion:
             clientes = sesion.exec(
-                select(distinct(Cliente.nombre))
+                select(distinct(Cliente.id), Cliente.nombre)
                 .join(
                     CuentaCorriente, CuentaCorriente.cliente_id == Cliente.id
                 )
