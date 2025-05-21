@@ -28,6 +28,7 @@ from controller.cont_venta import DetalleVentaController
 
 from utils.generador_facturas import generar_factura_pdf
 
+from controller.cont_producto import ProductoController
 ##############################################################################
 # Controlador Principal
 ##############################################################################
@@ -38,6 +39,8 @@ class MainController(QMainWindow):
         super().__init__()
         self.main_ui = VentanaPrincipal()
         self.main_ui.setupUi(self)
+
+        self.producto_controller = ProductoController(self)
 
         ######################################################################
         # Variables iniciales
@@ -190,21 +193,11 @@ class MainController(QMainWindow):
         )
 
         # PRODUCTOS
-        ######################################################################
         # Abrir ventana nuevo producto
         self.main_ui.btnNuevoProducto.clicked.connect(
             self.ventana_nuevoproducto
         )
 
-        # Asignación método para filtrado de productos
-        self.main_ui.btnFiltrarProductos.clicked.connect(
-            self.cargar_productos
-        )
-
-        # Asignación método para eliminación de productos
-        self.main_ui.btnEliminarProducto.clicked.connect(
-            self.eliminar_producto
-        )
 
         # VENTAS
         ######################################################################
@@ -324,7 +317,7 @@ class MainController(QMainWindow):
         # Visualización de clientes en tabla
         self.cargar_clientes()
         # Visualizacion de productos en tabla
-        self.cargar_productos()
+        #self.cargar_productos()
 
 
     ##########################################################################
@@ -1121,169 +1114,6 @@ class MainController(QMainWindow):
         # Carga de tabla
         self.cargar_cuentacorriente()
 
-
-    ##########################################################################
-    #                          MODULO PRODUCTOS                              #
-    ##########################################################################
-    ##########################################################################
-    # Método para carga de productos en QTableView
-    ##########################################################################
-
-    def cargar_productos(self):
-        # Se establece modelo y headers del modelo
-        self.model_tproducto = QStandardItemModel()
-        self.model_tproducto.setHorizontalHeaderLabels(
-            ["id", "Código", "Producto", "Precio", "Stock", "Vencimiento"]
-        )
-
-        # Limpieza de modelo
-        self.model_tproducto.removeRows(0, self.model_tproducto.rowCount())
-
-        # Verificación de codigo o descripcion y recuperacion productos
-        codigo = self.main_ui.txtCodigoProd.text()
-        descripcion = self.main_ui.txtDescripcionProd.text()
-
-        codigo = None if codigo == '' else codigo
-        descripcion = None if descripcion == '' else descripcion
-
-        if codigo is None and descripcion is None:
-            productos = ModeloProducto.listado_productos(
-                codigo=None, descripcion=None
-            )
-
-        else:
-            productos = ModeloProducto.listado_productos(
-                codigo=codigo, descripcion=descripcion
-            )
-            if not productos:
-                QMessageBox.information(
-                    self,
-                    "Busqueda de productos",
-                    "No se encontraron productos!"
-                )
-                return
-        
-        # Ingreso de productos en tabla
-        for producto in productos:
-            venc = date.strftime(producto.vencimiento, "%d/%m/%Y")
-            fila = [
-                QStandardItem(str(producto.nro_producto)),
-                QStandardItem(producto.codigo_producto),
-                QStandardItem(producto.descripcion),
-                QStandardItem(f'$ {str(producto.precio_unitario)}'),
-                QStandardItem(str(producto.stock)),
-                QStandardItem(venc)
-            ]
-            # Alineado de valores
-            for item in fila:
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            
-            # Agregado de fila a modelo
-            self.model_tproducto.appendRow(fila)
-        
-        # Seteo de modelo
-        self.main_ui.tablaProductos.setModel(self.model_tproducto)
-
-        # Conexión evento para edición de productos
-        self.model_tproducto.itemChanged.connect(self.editar_producto)
-
-        # Se oculta columna "id" que guarda el nro_producto
-        self.main_ui.tablaProductos.setColumnHidden(0, True)
-
-        self.main_ui.tablaProductos.setColumnWidth(1, 150)
-        self.main_ui.tablaProductos.setColumnWidth(2, 400)
-    
-    ##########################################################################
-    # Método para edición de productos
-    ##########################################################################
-    def editar_producto(self):
-        # Se busca fila seleccionada
-        fila = self.main_ui.tablaProductos.currentIndex().row()
-
-        # Obtención del nro_producto en base a selección
-        nro_producto = self.model_tproducto.item(fila, 0).text()
-
-        # Recuperación campos a modificar
-        descripcion = self.model_tproducto.item(fila,2).text()
-        precio = self.model_tproducto.item(fila,3).text()
-        stock = self.model_tproducto.item(fila,4).text()
-        vencimiento = self.model_tproducto.item(fila,5).text()
-
-        try:
-            if not precio.startswith("$ "):
-                precio = float(precio)
-            else:
-                precio = float(precio[2:])
-            stock = int(stock)
-            vencimiento = datetime.strptime(vencimiento, "%d/%m/%Y").date()
-
-            # Llamado de método para editar producto
-            ModeloProducto.actualizar_producto(
-                nro_producto=nro_producto,
-                descripcion=descripcion,
-                precio=precio,
-                stock=stock,
-                vencimiento=vencimiento
-            )
-            # Mensaje de confirmación
-            QMessageBox.information(
-                self,
-                'Edición de Producto',
-                'Producto modificado!'            
-            )
-            self.cargar_productos()
-
-        except ValueError:
-            QMessageBox.critical(
-                self,
-                'Edición de Producto',
-                'Verificar campos !'            
-            )
-            self.cargar_productos()
-
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                'Nuevo Producto',
-                f'Error inesperado - {e}'            
-            )
-    
-
-    #########################################################################
-    # Método para eliminación de productos
-    ##########################################################################
-    def eliminar_producto(self):
-        # Se busca fila seleccionada
-        fila = self.main_ui.tablaProductos.currentIndex().row()
-
-        # Comprobación de selección
-        if fila == -1:
-            QMessageBox.warning(
-                self,
-                'Eliminación de producto',
-                'Tenes que seleccionar un producto!'
-            )
-            return
-        
-        # Obtención del nro_producto en base a selección
-        nro_producto = self.model_tproducto.item(fila, 0).text()
-        descripcion = self.model_tproducto.item(fila, 2).text()
-
-        # Consulta de eliminación
-        eliminar = QMessageBox.question(
-            self,
-            'Eliminación de producto',
-            f'Eliminar el producto {descripcion}?'
-        )
-        if eliminar == QMessageBox.Yes:
-            ModeloProducto.eliminar_producto(nro_producto)
-            # Mensaje de confirmación
-            QMessageBox.information(
-                self,
-                'Eliminación de Producto',
-                f'Producto{descripcion} eliminado!'            
-            )
-            self.cargar_productos()
 
     ##########################################################################
     #                             CLIENTES                                   #
