@@ -20,7 +20,7 @@ from model.modelo_ccorriente import ModeloCuentaCorriente
 
 from controller.cont_clientes import ClienteController, NuevoClienteController
 from controller.cont_servicios import (
-    ServicioController, TarjetaServiciosController
+    NuevoServicioController, ServiciosController
 )
 from controller.cont_turnos import (
     TurnoController, TarjetaTurnosController
@@ -29,8 +29,6 @@ from controller.cont_producto import (
     ProductoController, NuevoProductoController
 )
 from controller.cont_venta import DetalleVentaController
-
-from utils.generador_facturas import generar_factura_pdf
 
 
 ##############################################################################
@@ -48,6 +46,7 @@ class MainController(QMainWindow):
 
         self.producto_controller = ProductoController(self)
         self.cliente_controller = ClienteController(self)
+        self.servicio_controller = ServiciosController(self)
 
         ######################################################################
         # Variables iniciales
@@ -172,7 +171,7 @@ class MainController(QMainWindow):
 
 
         ######################################################################
-        # Asignaciones de métodos a botones
+        # Apertura ventanas secundarias
         ######################################################################
         
         # SERVICIOS
@@ -189,11 +188,8 @@ class MainController(QMainWindow):
             self.ventana_nuevo_cliente
         )
 
-        
-
-        
-
         # PRODUCTOS
+        ######################################################################
         # Abrir ventana nuevo producto
         self.main_ui.btnNuevoProducto.clicked.connect(
             self.ventana_nuevoproducto
@@ -305,13 +301,6 @@ class MainController(QMainWindow):
         self.llenar_cmb_clientescc()
 
 
-        ######################################################################
-        # Llamadas para agregar tarjetas de servicios
-        ######################################################################
-        # Visualización tarjetas de servicios
-        self.mostrar_servicios()
-
-
     ##########################################################################
     # Movimiento entre menú principal
     ##########################################################################
@@ -360,7 +349,7 @@ class MainController(QMainWindow):
     
     # Apertura ventana nuevo servicio
     def ventana_nuevo_servicio(self):
-        self.abrir_nuevo_servicio = ServicioController(self)
+        self.abrir_nuevo_servicio = NuevoServicioController(self)
         self.abrir_nuevo_servicio.show()
 
     # Apertura ventana nuevo turno
@@ -1106,94 +1095,6 @@ class MainController(QMainWindow):
 
         # Carga de tabla
         self.cargar_cuentacorriente()
-
-
-    ##########################################################################
-    #                          MODULO SERVICIOS                              #
-    ##########################################################################
-    ##########################################################################
-    # Posicionamiento de tarjetas de Servicios
-    ##########################################################################
-
-    def mostrar_servicios(self):
-
-        # Definición del contenedor de las tarjetas
-        contenedor = self.main_ui.contenedorServicios.layout()
-        contenedor.setContentsMargins(10,10,10,10)
-        contenedor.setSpacing(5)
-
-        # Limpieza previa del contenedor
-        while contenedor.count():
-            item = contenedor.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-        # Obtención de servicios de base de datos
-        servicios = ModeloServicio.lista_servicios()
-        if servicios:
-            for serv in servicios:
-                tarjeta = TarjetaServiciosController()
-                tarjeta.widget_tserv.lblServicio.setText(
-                    serv.nombre
-                )
-                tarjeta.widget_tserv.lblDuracion.setText(
-                    f'{serv.duracion} minutos'
-                )
-                tarjeta.widget_tserv.lblPrecio.setText(
-                    f'$ {serv.precio}'
-                )
-                # Asignación de método eliminar servicio
-                tarjeta.widget_tserv.btnEliminarServicio.clicked.connect(
-                    lambda _,id_servicio=serv.id : self.eliminar_servicio(
-                        id_servicio
-                    )
-                )
-
-                # Método que guarda el id asociado de cada tarjeta de servicio
-                tarjeta.widget_tserv.btnEditarServicio.clicked.connect(
-                    lambda _, servicio_id = serv.id : self.servicio_editar(
-                        servicio_id
-                    )
-                )
-                contenedor.addWidget(tarjeta)
-
-            contenedor.addSpacerItem(
-                QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-            )
-    
-    
-    def eliminar_servicio(self, id_servicio):
-
-        # Consulta de eliminación
-        eliminar = QMessageBox.question(
-            self,
-            "Servicios",
-            "Eliminar el servicio?"
-        )
-        if eliminar == QMessageBox.Yes:
-            # Eliminación del servicio
-            ModeloServicio.eliminar_servicio(id_servicio)
-            QMessageBox.information(
-                self,
-                'Servicios',
-                'Servicio Eliminado'
-            )
-
-            # Actualización del listado
-            self.mostrar_servicios()
-    
-
-    def servicio_editar(self, servicio_id):
-        # Se obtiene el objeto Servicio a partir del id guardado en boton
-        servicio = ModeloServicio.info_servicio(servicio_id)
-        # Se inicializa ventana con metodo cargar_datos
-        ventana = ServicioController(self)
-        ventana.cargar_datos(servicio)
-        ventana.show()
-        # Se debe guardar la referencia para que no se destruya la ventana
-        self.ventana_servicio = ventana
-
 
 
     ##########################################################################

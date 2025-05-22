@@ -3,12 +3,13 @@
 ##############################################################################
 
 from typing import TYPE_CHECKING
-from view.interfaces.ventana_clientes import VentanaCliente
-from model.modelo_cliente import ModeloCliente
+
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtWidgets import QMainWindow, QMessageBox
 
+from view.interfaces.ventana_clientes import VentanaCliente
+from model.modelo_cliente import ModeloCliente
 if TYPE_CHECKING:
     from controller.cont_principal import MainController
 
