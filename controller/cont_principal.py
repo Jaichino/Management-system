@@ -17,20 +17,26 @@ from model.modelo_turno import ModeloTurno
 from model.modelo_producto import ModeloProducto
 from model.modelo_venta import ModeloVentas
 from model.modelo_ccorriente import ModeloCuentaCorriente
-from controller.cont_clientes import ClienteController
+
+from controller.cont_clientes import ClienteController, NuevoClienteController
 from controller.cont_servicios import (
-    ServicioController, TarjetaServiciosController)
+    ServicioController, TarjetaServiciosController
+)
 from controller.cont_turnos import (
     TurnoController, TarjetaTurnosController
 )
-from controller.cont_producto import NuevoProductoController
+from controller.cont_producto import (
+    ProductoController, NuevoProductoController
+)
 from controller.cont_venta import DetalleVentaController
 
 from utils.generador_facturas import generar_factura_pdf
 
-from controller.cont_producto import ProductoController
+
 ##############################################################################
-# Controlador Principal
+##############################################################################
+#                CONTROLADOR PRINCIPAL DE LA APLICACIÓN                      #
+##############################################################################
 ##############################################################################
 
 class MainController(QMainWindow):
@@ -41,6 +47,7 @@ class MainController(QMainWindow):
         self.main_ui.setupUi(self)
 
         self.producto_controller = ProductoController(self)
+        self.cliente_controller = ClienteController(self)
 
         ######################################################################
         # Variables iniciales
@@ -182,15 +189,9 @@ class MainController(QMainWindow):
             self.ventana_nuevo_cliente
         )
 
-        # Asignación método eliminación de clientes
-        self.main_ui.btnEliminarCliente.clicked.connect(
-            self.eliminar_cliente
-        )
+        
 
-        # Asignación método para filtrado de clientes
-        self.main_ui.btnFiltrarCliente.clicked.connect(
-            self.cargar_clientes
-        )
+        
 
         # PRODUCTOS
         # Abrir ventana nuevo producto
@@ -311,15 +312,6 @@ class MainController(QMainWindow):
         self.mostrar_servicios()
 
 
-        ######################################################################
-        # Llamadas para completado de tablas
-        ######################################################################
-        # Visualización de clientes en tabla
-        self.cargar_clientes()
-        # Visualizacion de productos en tabla
-        #self.cargar_productos()
-
-
     ##########################################################################
     # Movimiento entre menú principal
     ##########################################################################
@@ -363,7 +355,7 @@ class MainController(QMainWindow):
     ##########################################################################
     # Apertura ventana nuevo cliente
     def ventana_nuevo_cliente(self):
-        self.abrir_nuevo_cliente = ClienteController(self)
+        self.abrir_nuevo_cliente = NuevoClienteController(self)
         self.abrir_nuevo_cliente.show()
     
     # Apertura ventana nuevo servicio
@@ -385,6 +377,7 @@ class MainController(QMainWindow):
     def ventana_detalleventa(self, nro_venta: int):
         self.abrir_detalleventa = DetalleVentaController(self, nro_venta)
         self.abrir_detalleventa.exec()
+
 
 
     ##########################################################################
@@ -1113,150 +1106,6 @@ class MainController(QMainWindow):
 
         # Carga de tabla
         self.cargar_cuentacorriente()
-
-
-    ##########################################################################
-    #                             CLIENTES                                   #
-    ##########################################################################
-    ##########################################################################
-    # Método para carga de clientes en QTableView
-    ##########################################################################
-
-    def cargar_clientes(self):
-        # Se establece modelo y headers del modelo
-        self.modelo_tcliente = QStandardItemModel()
-        self.modelo_tcliente.setHorizontalHeaderLabels(
-            ["ID","Nombre", "Teléfono", "Email"]
-        )
-
-        # Se limpia el modelo antes de cargar clientes
-        self.modelo_tcliente.removeRows(0, self.modelo_tcliente.rowCount())
-
-        # Se verifica si hay algún filtro de nombre de cliente aplicado
-        filtro = self.main_ui.lineEditCliente.text()
-        if filtro == '':
-            # Se recuperan clientes de la base de datos
-            clientes = ModeloCliente.lista_clientes()
-
-        else:
-            # Se recuperan clientes con el filtro de nombre aplicado
-            clientes = ModeloCliente.filtrar_cliente(filtro)
-            if not clientes:
-                QMessageBox.information(
-                    self,
-                    "Clientes",
-                    "No se encontraron clientes"
-                )
-                return
-        
-        # Se crean filas y se cargan al modelo
-        for cliente in clientes:
-                if cliente.nombre == 'CLIENTE NO REGISTRADO':
-                    continue
-                fila = [
-                    QStandardItem(str(cliente.id)),
-                    QStandardItem(cliente.nombre),
-                    QStandardItem(str(cliente.telefono)),
-                    QStandardItem(cliente.email)
-                ]
-                # Alineado de valores
-                for item in fila:
-                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                
-                self.modelo_tcliente.appendRow(fila)
-
-        self.main_ui.tablaClientes.setModel(self.modelo_tcliente)
-
-        # Se conecta evento itemChanged para cuando se modifica algún campo
-        self.modelo_tcliente.itemChanged.connect(self.edicion_cliente)
-        
-        # Se oculta la columna de id de cliente
-        self.main_ui.tablaClientes.setColumnHidden(0, True)
-
-        # Seteo de dimensiones fijas de columnas
-        self.main_ui.tablaClientes.setColumnWidth(1,200)
-        self.main_ui.tablaClientes.setColumnWidth(2,300)
-    
-    ##########################################################################
-    # Método para edición de clientes
-    ##########################################################################
-
-    def edicion_cliente(self):
-
-        # Obtención de fila seleccionada
-        fila = self.main_ui.tablaClientes.currentIndex().row()
-        
-        # Verificación de fila seleccionada
-        if fila == -1:
-            QMessageBox.warning(
-                self,
-                "Edición de cliente",
-                "Se debe seleccionar un cliente"
-            )
-            return
-        
-        # Obtención del id del cliente (columna 0)
-        id_cliente = self.modelo_tcliente.item(fila, 0).text()
-
-        # Se recuperan valores de campos
-        nombre = self.modelo_tcliente.item(fila, 1).text().upper()
-        email = self.modelo_tcliente.item(fila, 3).text().lower()
-        try:
-            telefono = self.modelo_tcliente.item(fila, 2).text()
-            if telefono != "":
-                telefono = int(telefono)
-            # Se llama a metodo de edición de cliente
-            ModeloCliente.editar_cliente(id_cliente, nombre, telefono, email)
-            self.cargar_clientes()
-
-            self.llenar_cmb_clientes_venta()
-
-        except ValueError:
-            QMessageBox.critical(
-                self,
-                "Edición de cliente",
-                "Revisar el campo teléfono"
-            )
-            self.cargar_clientes()
-    
-    ##########################################################################
-    # Método para eliminación de clientes
-    ##########################################################################
-    def eliminar_cliente(self):
-
-        # Obtención de fila seleccionada
-        fila = self.main_ui.tablaClientes.currentIndex().row()
-        
-        # Verificación de fila seleccionada
-        if fila == -1:
-            QMessageBox.warning(
-                self,
-                "Edición de cliente",
-                "Se debe seleccionar un cliente"
-            )
-            return
-        
-        # Obtención del id del cliente (columna 0)
-        id_cliente = self.modelo_tcliente.item(fila, 0).text()
-        nombre_cliente = ModeloCliente.info_cliente(id_cliente).nombre
-
-        # Consulta de eliminación
-        eliminar = QMessageBox.question(
-            self,
-            'Eliminar Cliente',
-            f"Desea eliminar al cliente ({nombre_cliente})?"
-        )
-
-        if eliminar == QMessageBox.Yes:
-            ModeloCliente.eliminar_cliente(id_cliente)
-            QMessageBox.information(
-                self,
-                "Cliente Eliminado",
-                f"Se eliminó a {nombre_cliente}"
-            )
-        
-        self.cargar_clientes()
-
 
 
     ##########################################################################

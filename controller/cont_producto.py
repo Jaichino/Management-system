@@ -242,7 +242,6 @@ class NuevoProductoController(QDialog):
         self.ventana_nuevoprod.setupUi(self)
         self.modelo_producto = ModeloProducto()
         self.main_controller = main_controller
-        self.producto_controller = ProductoController(self.main_controller)
 
         ######################################################################
         # Configuraciones iniciales de interfaz
@@ -327,7 +326,7 @@ class NuevoProductoController(QDialog):
             self.ventana_nuevoprod.txtPrecio.setFocus()
 
             # Actualización de tabla
-            self.producto_controller.cargar_productos()
+            self.main_controller.producto_controller.cargar_productos()
 
         # Manejo de excepciones
         except ValueError:
