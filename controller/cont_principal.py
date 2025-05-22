@@ -2,9 +2,9 @@
 # Importaciones
 ##############################################################################
 
-from datetime import datetime, date, time, timedelta
+from datetime import date
 from PySide6.QtWidgets import (
-    QMainWindow, QSpacerItem, QSizePolicy, QMessageBox, QTableWidgetItem,
+    QMainWindow, QMessageBox, QTableWidgetItem,
     QPushButton
 )
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -22,9 +22,7 @@ from controller.cont_clientes import ClienteController, NuevoClienteController
 from controller.cont_servicios import (
     NuevoServicioController, ServiciosController
 )
-from controller.cont_turnos import (
-    TurnoController, TarjetaTurnosController
-)
+from controller.cont_turnos import NuevoTurnoController, TurnoController
 from controller.cont_producto import (
     ProductoController, NuevoProductoController
 )
@@ -47,6 +45,7 @@ class MainController(QMainWindow):
         self.producto_controller = ProductoController(self)
         self.cliente_controller = ClienteController(self)
         self.servicio_controller = ServiciosController(self)
+        self.turno_controller = TurnoController(self)
 
         ######################################################################
         # Variables iniciales
@@ -68,15 +67,7 @@ class MainController(QMainWindow):
         # Inicio de lineEdit Interes de venta -> False
         self.main_ui.txtInteresVenta.setEnabled(False)
 
-        # Seteo del calendarWidget
-        self.main_ui.calendarWidget.setCurrentPage(
-            QDate.currentDate().year(),
-            QDate.currentDate().month()
-        )
-        self.main_ui.calendarWidget.setSelectedDate(datetime.now())
-
-        # Que siempre arranque mostrando los turnos del día actual
-        self.agregar_turnos(date.today())
+        
 
         ######################################################################
         # Seteo de botones para recorrer menú
@@ -247,12 +238,6 @@ class MainController(QMainWindow):
             self.ventana_nuevo_turno
         )
 
-        # Asignación método para mostrar historial de turnos por cliente
-        self.main_ui.btnBuscarHist.clicked.connect(
-            self.carga_historial
-        )
-
-
         ######################################################################
         # Configuración de eventos
         ######################################################################
@@ -266,10 +251,7 @@ class MainController(QMainWindow):
             self.set_cantidad_y_precio
         )
 
-        # Asignación de evento para mostrar tarjetas de turnos segun fecha
-        self.main_ui.calendarWidget.selectionChanged.connect(
-            self.actualizar_turnos
-        )
+        
 
         # Asignación de evento para habilitar caja de interes
         self.main_ui.checkInteres.checkStateChanged.connect(
@@ -289,10 +271,6 @@ class MainController(QMainWindow):
         ######################################################################
         # Llenado comboboxs
         ######################################################################
-        
-        # Modulo de turnos
-        self.llenar_cmb_clientes()
-        self.llenar_cmb_servicios()
         
         # Modulo de ventas
         self.llenar_cmb_clientes_venta()
@@ -354,7 +332,7 @@ class MainController(QMainWindow):
 
     # Apertura ventana nuevo turno
     def ventana_nuevo_turno(self):
-        self.abrir_nuevo_turno = TurnoController(self)
+        self.abrir_nuevo_turno = NuevoTurnoController(self)
         self.abrir_nuevo_turno.show()
     
     # Apertura ventana nuevo producto
@@ -1095,172 +1073,3 @@ class MainController(QMainWindow):
 
         # Carga de tabla
         self.cargar_cuentacorriente()
-
-
-    ##########################################################################
-    #                               TURNOS                                   #
-    ##########################################################################
-    # Posicionamiento de tarjetas de Turnos
-    ##########################################################################
-
-    def agregar_turnos(self, fecha: date):
-        # Se define el contenedor donde irán las tarjetas
-        contenedor = self.main_ui.contenedorTurnos.layout()
-        contenedor.setContentsMargins(10,10,10,10)
-        contenedor.setSpacing(5)
-
-        # Se borran widgets del layout
-        while contenedor.count():
-            item = contenedor.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-        # Se recuperan turnos para fecha elegida
-        turnos = ModeloTurno.turnos_fecha(fecha)
-
-        for turno in turnos:
-            tarjeta = TarjetaTurnosController()
-            
-            # Se obtiene hora de finalización
-            hora_inicio = datetime.combine(datetime.today(), turno[1])
-            hora_fin = hora_inicio + timedelta(minutes=turno[6])
-            hora_fin_format = hora_fin.strftime("%H:%M")
-
-            # Carga de valores en widget
-            tarjeta.widget_tarjetaturno.lblCliente.setText(turno[2])
-            tarjeta.widget_tarjetaturno.lblServicio.setText(turno[3])
-            tarjeta.widget_tarjetaturno.lblObservacion.setText(turno[4])
-            tarjeta.widget_tarjetaturno.lblHoraTurno.setText(time.strftime(turno[1],"%H:%M"))
-            tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno[5]}')
-            tarjeta.widget_tarjetaturno.lblDuracion.setText(hora_fin_format)
-
-            # Se captura id en botón
-            tarjeta.widget_tarjetaturno.btnCancelarTurno.clicked.connect(
-                lambda _, turno_id=turno[7]: self.eliminar_turno(turno_id))
-
-            # Carga de tarjeta en contenedor
-            contenedor.addWidget(tarjeta)
-
-        contenedor.addSpacerItem(
-            QSpacerItem(20,40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        )
-
-
-    # Método para asignar al evento de cambio de fecha en calendarWidget
-    def actualizar_turnos(self):
-        fecha_qdate = self.main_ui.calendarWidget.selectedDate()
-        fecha = date(
-            year=fecha_qdate.year(),
-            month=fecha_qdate.month(),
-            day=fecha_qdate.day()
-        )
-        self.agregar_turnos(fecha)
-    
-    
-    # Método para eliminar turnos agendados
-    def eliminar_turno(self, turno_id):
-        # Se consulta si se quiere eliminar un turno
-        eliminar = QMessageBox.question(
-            self,
-            'Turnos',
-            'Queres eliminar este turno?'
-        )
-        if eliminar == QMessageBox.Yes:
-            ModeloTurno.eliminar_turno(turno_id)
-            QMessageBox.information(
-            self,
-            'Turnos',
-            'Turno eliminado!'
-            )
-
-        # Se busca fecha seleccionada en calendario y se actualiza vista
-        fecha_qt = self.main_ui.calendarWidget.selectedDate()
-        fecha = date(
-            year=fecha_qt.year(),
-            month=fecha_qt.month(),
-            day=fecha_qt.day()
-        )
-
-        self.agregar_turnos(fecha)
-
-
-
-    ##########################################################################
-    #                          HISTORIAL TURNOS                              #
-    ##########################################################################
-    
-    ##########################################################################
-    # Carga de ComboBoxs de cliente y servicios
-    ##########################################################################
-    def llenar_cmb_clientes(self):
-        # Obtención de clientes
-        clientes = ModeloTurno.clientes_con_turnos()
-        # Asignación primer valor del combobox
-        self.main_ui.cmbClienteHist.clear()
-        self.main_ui.cmbClienteHist.addItem("Seleccionar cliente", None)
-        # Asignación a combobox
-        for cliente in clientes:
-            self.main_ui.cmbClienteHist.addItem(cliente.nombre, cliente.id)
-
-    def llenar_cmb_servicios(self):
-        # Obtención de servicios
-        servicios = ModeloServicio.lista_servicios()
-        # Asignación primer valor del combobox
-        self.main_ui.cmbServicioHist.clear()
-        self.main_ui.cmbServicioHist.addItem("Seleccionar servicio", None)
-        # Asignación a combobox
-        for servicio in servicios:
-            self.main_ui.cmbServicioHist.addItem(servicio.nombre, servicio.id)
-
-    ##########################################################################
-    # Carga de Historiales de tratamientos a clientes en Tabla
-    ##########################################################################
-    def carga_historial(self):
-        # Obtención de entradas de usuario
-        cliente = self.main_ui.cmbClienteHist.currentData()
-        servicio = self.main_ui.cmbServicioHist.currentData()
-        fecha = date.today()
-
-        # Verificación de que cliente no es None
-        if cliente == None:
-            QMessageBox.critical(
-                self,
-                'Historial Clientes - Error',
-                'Tenes que elegir un cliente !'
-            )
-            return
-        
-        # Definición del modelo para insertar datos
-        self.model_thist = QStandardItemModel()
-        self.model_thist.setHorizontalHeaderLabels(
-            ["Turno", "Fecha Turno", "Tratamiento", "Observación"]
-        )
-
-        # Se limpia el modelo antes de cargar clientes
-        self.model_thist.removeRows(0, self.model_thist.rowCount())
-
-        # Obtención de historial
-        turnos = ModeloTurno.historial_turnos(cliente=cliente, fecha=fecha, servicio=servicio)
-
-        # Carga de datos en tabla
-        for i, turno in enumerate(turnos, start=1):
-            fecha_format = date.strftime(turno[0], '%d/%m/%Y')
-            fila = [
-                QStandardItem(str(i)),
-                QStandardItem(fecha_format),
-                QStandardItem(turno[2]),
-                QStandardItem(turno[3])
-            ]
-            # Alineado de valores
-            for item in fila:
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-
-            self.model_thist.appendRow(fila)
-        
-        # Seteo del modelo a tabla y dimensiones de columnas
-        self.main_ui.tablaHistorial.setModel(self.model_thist)
-
-        self.main_ui.tablaHistorial.setColumnWidth(0,80)
-        self.main_ui.tablaHistorial.setColumnWidth(1,120)
-        self.main_ui.tablaHistorial.setColumnWidth(2,250)
