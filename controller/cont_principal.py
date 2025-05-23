@@ -4,18 +4,13 @@
 
 from datetime import date
 from PySide6.QtWidgets import (
-    QMainWindow, QMessageBox, QTableWidgetItem,
-    QPushButton
+    QMainWindow, QMessageBox
 )
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import QDate, Qt
+from PySide6.QtCore import Qt
 
 from view.interfaces.ventana_principal import VentanaPrincipal
-from model.modelo_cliente import ModeloCliente
-from model.modelo_servicio import ModeloServicio
-from model.modelo_turno import ModeloTurno
-from model.modelo_producto import ModeloProducto
-from model.modelo_venta import ModeloVentas
+
 from model.modelo_ccorriente import ModeloCuentaCorriente
 
 from controller.cont_clientes import ClienteController, NuevoClienteController
@@ -26,7 +21,7 @@ from controller.cont_turnos import NuevoTurnoController, TurnoController
 from controller.cont_producto import (
     ProductoController, NuevoProductoController
 )
-from controller.cont_venta import DetalleVentaController
+from controller.cont_venta import DetalleVentaController, VentasController
 
 
 ##############################################################################
@@ -42,32 +37,21 @@ class MainController(QMainWindow):
         self.main_ui = VentanaPrincipal()
         self.main_ui.setupUi(self)
 
+        # Referencia a controladores
         self.producto_controller = ProductoController(self)
         self.cliente_controller = ClienteController(self)
         self.servicio_controller = ServiciosController(self)
         self.turno_controller = TurnoController(self)
+        self.venta_controller = VentasController(self)
 
         ######################################################################
         # Variables iniciales
         ######################################################################
     
-        self.modo_pago = 'Efectivo'
-        self.monto_venta = 0
-        self.interes = 0
-        self.total_abonar = 0
-        self.productos_vendidos = []
+        
         
         self.deuda = 0
 
-
-        ######################################################################
-        # Configuraciones interfaz
-        ######################################################################
-
-        # Inicio de lineEdit Interes de venta -> False
-        self.main_ui.txtInteresVenta.setEnabled(False)
-
-        
 
         ######################################################################
         # Seteo de botones para recorrer menú
@@ -107,40 +91,6 @@ class MainController(QMainWindow):
         ######################################################################
         # Configuracion de modelos
         ######################################################################
-        
-        # Definición de modelo en tabla Carrito de venta
-        self.modelo_carrito = QStandardItemModel()
-        self.modelo_carrito.setHorizontalHeaderLabels(
-            ['id', 'Producto', 'Precio', 'Cant', 'Subtotal']
-        )
-        self.main_ui.tablaCarrito.setModel(self.modelo_carrito)
-        self.main_ui.tablaCarrito.setColumnHidden(0, True)
-        self.main_ui.tablaCarrito.setColumnWidth(1, 500)
-        self.main_ui.tablaCarrito.setColumnWidth(2, 150)
-
-
-        # Definición de tabla consulta de ventas
-        self.tabla_cventa = self.main_ui.tablaConsultaVentas
-        self.tabla_cventa.setColumnCount(8)
-        self.tabla_cventa.setHorizontalHeaderLabels(
-            [   'id',
-                'Fecha',
-                'Cliente',
-                'Modo Pago',
-                'Monto', 
-                'Interes',
-                'Total',
-                'Detalle' ]
-        )
-        self.tabla_cventa.setColumnHidden(0,True)
-        self.tabla_cventa.setColumnWidth(1,100)
-        self.tabla_cventa.setColumnWidth(2,250)
-        self.tabla_cventa.setColumnWidth(3,130)
-        self.tabla_cventa.setColumnWidth(4,100)
-        self.tabla_cventa.setColumnWidth(5,80)
-        self.tabla_cventa.setColumnWidth(6,100)
-
-
         # Definición tabla cuenta corriente
         self.model_cc = QStandardItemModel()
         self.model_cc.setHorizontalHeaderLabels(
@@ -187,38 +137,6 @@ class MainController(QMainWindow):
         )
 
 
-        # VENTAS
-        ######################################################################
-        # Asignación método para agregar producto a carrito
-        self.main_ui.btnAgregarCarrito.clicked.connect(
-            self.agregar_producto_carrito
-        )
-
-        # Asignación método para limpiar carrito
-        self.main_ui.btnVaciarCarrito.clicked.connect(
-            self.vaciar_carrito
-        )
-
-        # Asignación de método para eliminar una fila del carrito
-        self.main_ui.btnQuitarCarrito.clicked.connect(
-            self.remover_de_carrito
-        )
-
-        # Asignación método finalización de venta
-        self.main_ui.btnFinalizarVenta.clicked.connect(
-            self.finalizar_venta
-        )
-
-        # Asignación método consulta de ventas
-        self.main_ui.btnConsultarVenta.clicked.connect(
-            self.cargar_ventas
-        )
-
-        # Asignación método eliminación de ventas
-        self.main_ui.btnEliminarVenta.clicked.connect(
-            self.eliminar_venta
-        )
-
         # CUENTAS CORRIENTES
         ######################################################################
         # Asignación método carga de operación cuenta corriente
@@ -241,28 +159,7 @@ class MainController(QMainWindow):
         ######################################################################
         # Configuración de eventos
         ######################################################################
-        # Evento para autocompletar descripción y combobox vencimientos
-        self.main_ui.txtCodigoProdVenta.textChanged.connect(
-            self.set_descripcion_y_vencimientos
-        )
-
-        # Evento para setear maximo valor en SpinBox cantidad a vender
-        self.main_ui.cmbVencVenta.currentTextChanged.connect(
-            self.set_cantidad_y_precio
-        )
-
         
-
-        # Asignación de evento para habilitar caja de interes
-        self.main_ui.checkInteres.checkStateChanged.connect(
-            self.habilitar_interes
-        )
-
-        # Asignación de evento para actualizar monto total con interés
-        self.main_ui.txtInteresVenta.textChanged.connect(
-            self.actualizar_monto_con_interes
-        )
-
         # Asignación de evento para mostrar cuentas corrientes segun cliente
         self.main_ui.cmbClienteCC.currentTextChanged.connect(
             self.cargar_cuentacorriente
@@ -272,9 +169,6 @@ class MainController(QMainWindow):
         # Llenado comboboxs
         ######################################################################
         
-        # Modulo de ventas
-        self.llenar_cmb_clientes_venta()
-
         # Modulo de cuenta corriente
         self.llenar_cmb_clientescc()
 
@@ -344,531 +238,6 @@ class MainController(QMainWindow):
     def ventana_detalleventa(self, nro_venta: int):
         self.abrir_detalleventa = DetalleVentaController(self, nro_venta)
         self.abrir_detalleventa.exec()
-
-
-
-    ##########################################################################
-    #                            MODULO VENTAS                               #
-    ##########################################################################
-    ##########################################################################
-    # Métodos para seteo de ComboBoxs y lineEdits
-    ##########################################################################
-    # Método llenado ComboBox clientes venta
-    def llenar_cmb_clientes_venta(self):
-        ''' Método para llenar el comboBox de clientes en interfaz de ventas
-            y consulta de ventas
-        '''
-        # Obtención de clientes
-        clientes = ModeloCliente.lista_clientes()
-
-        # Limpieza de cmb y seteo de primer valor
-        self.main_ui.cmbClienteVenta.clear()
-        self.main_ui.cmbClienteVenta.addItem("Seleccionar cliente", None)
-        self.main_ui.cmbClienteVenta.addItem("CLIENTE NO REGISTRADO", 0)
-
-        self.main_ui.cmbClienteConsulta.clear()
-        self.main_ui.cmbClienteConsulta.addItem("Seleccionar cliente", None)
-        self.main_ui.cmbClienteConsulta.addItem("CLIENTE NO REGISTRADO", 0)
-
-        # Carga de clientes al combobox
-        for cliente in clientes:
-            if cliente.nombre == "CLIENTE NO REGISTRADO":
-                continue
-            self.main_ui.cmbClienteVenta.addItem(cliente.nombre, cliente.id)
-            self.main_ui.cmbClienteConsulta.addItem(
-                cliente.nombre, cliente.id
-            )
-
-
-    # Método actualización lblDescripProdVenta según código
-    def set_descripcion_y_vencimientos(self):
-        ''' Método para actualizar automáticamente la descripción del producto
-            a vender y llenado automático de los vencimientos correspondientes
-            dependiendo del código ingresado. Se asignará a evento textChanged
-            en txtCodigoProdVenta.
-        '''
-        # Limpieza inicial de campos
-        self.main_ui.lblDescripProdVenta.setText("Producto: ")
-        self.main_ui.cmbVencVenta.clear()
-
-        # Obtención del código proporcionado
-        codigo = self.main_ui.txtCodigoProdVenta.text()
-
-        # Obtención de productos con código proporcionado
-        productos = ModeloProducto.listado_productos(codigo=codigo)
-
-        # Definición de variables para evitar errores
-        descripcion = ""
-
-        # Seteo del campo descripcion y llenado de comboBox
-        if productos:
-            descripcion = productos[0].descripcion
-            self.main_ui.lblDescripProdVenta.setText(
-                f"Producto: {descripcion}"
-            )
-            # Llenado de comboBox
-            for producto in productos:
-                venc = date.strftime(producto.vencimiento, "%d/%m/%Y")
-                self.main_ui.cmbVencVenta.addItem(venc, producto.nro_producto)
-
-
-    def set_cantidad_y_precio(self):
-        ''' Método para setear la cantidad máxima en el SpinBox y el precio del
-            producto de acuerdo con la selección
-        '''
-        # Seteo a 1 del spinbox
-        self.main_ui.spinBoxCantidadVenta.setValue(1)
-        
-        # Obtención del número de producto en función de vencimiento elegido
-        nro_producto = self.main_ui.cmbVencVenta.currentData()
-
-        # Obtención de stock disponible y precio del producto con nro_producto
-        producto = ModeloProducto.listado_productos(nro_producto=nro_producto)
-        stock_disponible = producto[0].stock
-        precio = producto[0].precio_unitario
-
-        #Seteo de valor máximo en SpinBox
-        self.main_ui.spinBoxCantidadVenta.setMaximum(stock_disponible)
-        # Seteo campo precio
-        self.main_ui.txtPrecioProdVenta.setText(f"{precio:.0f}")
-
-
-    ##########################################################################
-    # Métodos manejo del carrito de compra
-    ##########################################################################
-    def agregar_producto_carrito(self):
-        ''' Método para agregar un producto al carrito de la venta
-        '''
-        # Obtención de valores para agregar a carrito
-        codigo = self.main_ui.txtCodigoProdVenta.text()
-        nro_producto = self.main_ui.cmbVencVenta.currentData()
-        
-        if not nro_producto or codigo == "":
-            QMessageBox.warning(
-                self,
-                'Ventas',
-                'Se debe elegir un producto'
-            )
-            return
-        
-        producto = ModeloProducto.listado_productos(nro_producto=nro_producto)
-        descripcion = producto[0].descripcion
-
-        cantidad = self.main_ui.spinBoxCantidadVenta.value()
-        precio = self.main_ui.txtPrecioProdVenta.text()
-        
-        try:
-            # Verificación de formatos y calculo de subtotal
-            cantidad = int(cantidad)
-            precio = float(precio)
-
-            subtotal = cantidad * precio
-
-            # Armado de fila para agregar a modelo
-            fila_carrito = [
-                QStandardItem(str(nro_producto)),
-                QStandardItem(descripcion),
-                QStandardItem(str(precio)),
-                QStandardItem(str(cantidad)),
-                QStandardItem(str(subtotal))
-            ]
-            # Se agrega fila al carrito
-            self.modelo_carrito.appendRow(fila_carrito)
-
-            # Ajuste de monto total de venta y actualización de label
-            self.monto_venta += subtotal
-            self.total_abonar = self.monto_venta
-            self.main_ui.lblTotalEnCarrito.setText(f"Total en carrito: $ {self.monto_venta}")
-            self.main_ui.lblTotalAbonar.setText(f"Total a abonar: $ {self.monto_venta}")
-
-            # Limpieza de campos
-            self.main_ui.txtCodigoProdVenta.setText("")
-            self.main_ui.txtPrecioProdVenta.setText("")
-
-        except ValueError:
-            QMessageBox.critical(
-                self,
-                'Venta',
-                'Verificar campos de venta'
-            )
-
-
-    def vaciar_carrito(self):
-        ''' Método para eliminar todos los productos existentes dentro del
-            carrito
-        '''
-        self.modelo_carrito.removeRows(0, self.modelo_carrito.rowCount())
-        self.monto_venta = 0
-        self.total_abonar = 0
-        self.main_ui.lblTotalEnCarrito.setText("Total en carrito: $ 0.0")
-        self.main_ui.lblTotalAbonar.setText("Total a abonar: $ 0.0")
-        self.main_ui.txtInteresVenta.setText("")
-
-
-    def remover_de_carrito(self):
-        ''' Método para eliminar un producto determinado del carrito
-        '''
-        # Obtención de la fila a remover
-        fila = self.main_ui.tablaCarrito.currentIndex().row()
-
-        # Verificación de selección de fila
-        if fila == -1:
-            QMessageBox.warning(
-                self,
-                'Ventas',
-                'Tenes que seleccionar una fila del carrito'
-            )
-            return
-
-        # Obtención del subtotal correspondiente a la fila eliminada
-        subtotal_fila = self.modelo_carrito.item(fila, 4).text()
-        self.monto_venta -= float(subtotal_fila)
-        self.total_abonar -= float(subtotal_fila)
-        
-        # Seteo de labels
-        self.main_ui.lblTotalEnCarrito.setText(
-            f"Total en carrito: $ {self.monto_venta}"
-        )
-        self.main_ui.lblTotalAbonar.setText(
-            f"Total a abonar: $ {self.monto_venta}"
-        )
-
-        # Eliminación de la fila del carrito
-        self.modelo_carrito.removeRow(fila)
-
-
-    ##########################################################################
-    # Métodos para finalización de venta
-    ##########################################################################
-    # Método para habilitar casilla de interes
-    def habilitar_interes(self):
-        ''' Método para habilitar o deshabilitar caja para ingreso de interés
-            de venta
-        '''
-        if self.main_ui.checkInteres.isChecked():
-            self.main_ui.txtInteresVenta.setEnabled(True)
-        else:
-            self.main_ui.txtInteresVenta.setEnabled(False)
-            self.main_ui.txtInteresVenta.setText('')
-
-
-    # Método para actualizar el monto total de la venta si se agrega interés
-    def actualizar_monto_con_interes(self):
-        ''' Método para actualizar el monto total a abonar en caso de que se
-            agregue un interés de venta.
-        '''
-        # Se obtiene interes ingresado
-        interes = self.main_ui.txtInteresVenta.text().strip()
-        if interes == "":
-            interes = 0
-
-        try:
-            # Se aplica interes a total de venta y se obtiene total a abonar
-            self.interes = float(interes)
-            self.total_abonar = self.monto_venta + self.interes
-
-            # Seteo de label
-            self.main_ui.lblTotalAbonar.setText(
-                f"Total a abonar: $ {self.total_abonar}"
-            )
-        
-        except ValueError:
-            QMessageBox.warning(
-                self,
-                'Venta',
-                'Revisar campo interés'
-            )
-    
-
-    # Método para determinar el modo de pago seleccionado
-    def modo_pago_elegido(self):
-        ''' Método para devolver el texto de la selección en los radiobutton
-            de modo de pago
-        '''
-        if self.main_ui.rbtnEfectivo.isChecked():
-            self.modo_pago = self.main_ui.rbtnEfectivo.text()
-        if self.main_ui.rbtnTransf.isChecked():
-            self.modo_pago = self.main_ui.rbtnTransf.text()
-        if self.main_ui.rbtnTarjeta.isChecked():
-            self.modo_pago = self.main_ui.rbtnTarjeta.text()
-        
-        return self.modo_pago
-
-
-    # Método para finalizar la venta
-    def finalizar_venta(self):
-        ''' Método para finalizar una venta determinada.
-            Se obtienen las entradas de usuario, se recuperan los productos
-            agregados al carrito y se procede a cargar la venta, el detalle
-            de venta, descontar del stock de productos aquellos que fueron
-            vendidos y, en caso de que no se pague la totalidad del monto de
-            venta, se carga deuda en cuenta corriente
-        '''
-        # Obtención información de venta
-        fecha_venta = date.today()
-        cliente = self.main_ui.cmbClienteVenta.currentData()
-        monto_venta = self.monto_venta
-        modo_pago = self.modo_pago_elegido()
-        interes = self.interes
-        monto_entregado = self.main_ui.txtEntrega.text()
-
-        # Verificación formato de monto_entregado
-        try:
-            monto_entregado = float(monto_entregado)
-        except ValueError:
-            QMessageBox.warning(
-                self,
-                'Venta',
-                'Revisar campos de venta'
-            )
-            return
-
-        # Verificación selección de cliente
-        if cliente is None:
-            QMessageBox.warning(
-                self,
-                'Ventas',
-                'Se debe seleccionar un cliente'
-            )
-            return
-        
-        print(self.monto_venta)
-        print(self.interes)
-        print(self.total_abonar)
-
-        # Verificación monto entregado
-        if monto_entregado > self.total_abonar:
-            QMessageBox.information(
-                self,
-                'Venta',
-                'El monto abonado es mayor al monto de venta'
-            )
-            return
-
-        # Obtención de productos vendidos de la tabla de carrito
-        filas = self.modelo_carrito.rowCount()
-
-        # Verificación de que hay productos en el carrito
-        if filas == 0:
-            QMessageBox.warning(
-                self,
-                'Ventas',
-                'No hay productos en el carrito'
-            )
-            return
-        
-        # Guardado de productos del carrito en lista
-        for fila in range(filas):
-            nro_producto = self.modelo_carrito.index(fila, 0).data()
-            cantidad = self.modelo_carrito.index(fila, 3).data()
-            precio = self.modelo_carrito.index(fila, 2).data()
-
-            self.productos_vendidos.append({
-                'nro_producto':int(nro_producto),
-                'cantidad': int(cantidad),
-                'precio_unitario': float(precio)
-            })
-
-        try:
-            # Generación de la venta
-            ModeloVentas.nueva_venta(
-                fecha=fecha_venta,
-                cliente=cliente,
-                monto_total=monto_venta,
-                modo_pago=modo_pago,
-                interes=interes,
-                productos=self.productos_vendidos
-            )
-
-            # Si el monto abonado es menor al monto de venta, se carga CC
-            if monto_entregado < self.total_abonar:
-                cc_cliente = ModeloCuentaCorriente.lista_cuentacorriente(
-                    cliente
-                )
-
-                if cc_cliente:
-                    deuda_anterior = cc_cliente[-1].monto_pendiente
-                else:
-                    deuda_anterior = 0
-
-                deuda_venta = self.total_abonar - monto_entregado
-
-                ModeloCuentaCorriente.nueva_cuentacorriente(
-                    cliente=cliente,
-                    fecha=fecha_venta,
-                    tipo_operacion='Adeuda',
-                    monto_operacion=monto_entregado,
-                    monto_pendiente= deuda_anterior + deuda_venta
-                )
-
-                # Actualización cmb clientes cc
-                self.llenar_cmb_clientescc()
-
-            # Mensaje de confirmación de venta generada
-            if monto_entregado < self.total_abonar:
-                mensaje = 'Venta y deuda cargadas !'
-            else:
-                mensaje = 'Venta cargada!'
-            QMessageBox.information(
-                self,
-                'Ventas',
-                f'{mensaje}'
-            )
-
-        except Exception:
-            QMessageBox.critical(
-                self,
-                'Ventas',
-                'No se pudo cargar la venta, intenta nuevamente'
-            )
-            self.productos_vendidos = []
-            return
-
-        # Seteo de valores a su estado inicial
-        self.vaciar_carrito()
-        self.interes = 0
-        self.productos_vendidos = []
-        self.main_ui.cmbClienteVenta.setCurrentIndex(0)
-        self.main_ui.txtEntrega.setText("")
-        self.main_ui.checkInteres.setChecked(False)
-        # Actualización listado productos
-        self.cargar_productos()
-    
-
-    ##########################################################################
-    # Métodos para manejo de interfaz consulta de ventas
-    ##########################################################################
-    # Método para cargar ventas en tablaConsultaVenta
-    def cargar_ventas(self):
-        ''' Método para cargar las ventas en la tabla de consulta de ventas,
-            se obtienen entradas de usuario para fechas y cliente para obtener
-            las ventas correspondientes.
-            Se recorren dichas ventas con un bucle para cargar los valores en
-            la tabla.
-        '''
-        # Obtención de fechas y/o cliente
-        fecha_desde_qt = self.main_ui.consultaVentaDesde.date()
-        fecha_hasta_qt = self.main_ui.ConsultaVentaHasta.date()
-        cliente = self.main_ui.cmbClienteConsulta.currentData()
-
-        # Formateo de fechasQt a date()
-        fecha_desde = date(
-            year=fecha_desde_qt.year(),
-            month=fecha_desde_qt.month(),
-            day=fecha_desde_qt.day()
-        )
-        fecha_hasta = date(
-            year=fecha_hasta_qt.year(),
-            month=fecha_hasta_qt.month(),
-            day=fecha_hasta_qt.day()
-        )
-
-        # Obtención de ventas
-        ventas = ModeloVentas.listado_ventas(
-            desde=fecha_desde, hasta=fecha_hasta, cliente=cliente
-        )
-
-        # Carga de ventas en la tabla
-        self.tabla_cventa.setRowCount(len(ventas))
-
-        # Bucle para recorrer ventas y cargar en tabla
-        for i, venta in enumerate(ventas):
-            fecha = date.strftime(venta.fecha_venta, "%d/%m/%Y")
-            total_venta = venta.monto_total + venta.interes
-
-            if venta.cliente == None:
-                cliente_venta = 'CLIENTE NO REGISTRADO'
-            else:
-                cliente_venta = venta.cliente.nombre
-
-            # Posicionamiento de valores en filas y columnas
-            self.tabla_cventa.setItem(
-                i, 0, QTableWidgetItem(str(venta.nro_venta))
-            )
-            self.tabla_cventa.setItem(i, 1, QTableWidgetItem(fecha))
-            self.tabla_cventa.setItem(i, 2, QTableWidgetItem(cliente_venta))
-            self.tabla_cventa.setItem(i, 3, QTableWidgetItem(venta.modo_pago))
-            self.tabla_cventa.setItem(
-                i, 4, QTableWidgetItem(f'$ {venta.monto_total:.0f}')
-            )
-            self.tabla_cventa.setItem(
-                i, 5, QTableWidgetItem(f'$ {venta.interes:.0f}')
-            )
-            self.tabla_cventa.setItem(
-                i, 6, QTableWidgetItem(f'$ {total_venta:.0f}')
-            )
-
-            # Creación de botón en ultima columna
-            btn = QPushButton("Ver")
-            btn.setStyleSheet(
-                ''' QPushButton {
-                                color: #7D3928;
-                                font-size: 12pt
-                                }
-                    QPushButton:hover {
-                                font-weight: bold;
-                                color: #7D3928;
-                                background-color: #F7E0D3;
-                                }
-                '''
-            )
-            btn.setCursor(Qt.PointingHandCursor)
-            # Se conecta boton a método para mostrar detalle de ventas
-            btn.clicked.connect(
-                lambda _, 
-                nro_venta=venta.nro_venta:self.ventana_detalleventa(nro_venta)
-            )
-            self.tabla_cventa.setCellWidget(i, 7, btn)
-
-
-    # Método para eliminar ventas
-    def eliminar_venta(self):
-        ''' Método para eliminar una determinada venta seleccionada en la
-            tabla de consulta de ventas.
-            Se obtiene aquella fila seleccionada, se obtiene el nro_venta
-            y se elimina dicho registro de la base de datos y se actualiza la
-            tabla.
-        '''
-        # Obtención de la fila seleccionada
-        fila = self.tabla_cventa.currentIndex().row()
-
-        # Obtención del número de venta y cliente
-        nro_venta = int(self.tabla_cventa.item(fila, 0).text())
-        cliente = self.tabla_cventa.item(fila, 2).text()
-
-        # Consulta de eliminación
-        eliminacion = QMessageBox.question(
-            self,
-            'Eliminar Venta',
-            f'Eliminar venta de {cliente}?'
-        )
-        if eliminacion == QMessageBox.Yes:
-            # Consulta devolución de stock
-            devolucion = QMessageBox.question(
-                self,
-                'Eliminar Venta',
-                f'Devolver productos vendidos al stock?'
-            )
-
-            if devolucion == QMessageBox.Yes:
-                # Eliminación y devolución de productos
-                ModeloVentas.eliminar_venta(
-                    nro_venta=nro_venta, dev_stock=True
-            )
-            
-            else:
-                # Eliminación de registro en base de datos
-                ModeloVentas.eliminar_venta(
-                    nro_venta=nro_venta, dev_stock=False
-                )
-
-            # Actualización de tabla de consulta de ventas
-            self.cargar_ventas()
-            QMessageBox.information(
-                self,
-                'Ventas',
-                'Venta eliminada!'
-            )
 
 
 

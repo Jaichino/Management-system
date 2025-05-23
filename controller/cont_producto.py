@@ -60,6 +60,11 @@ class ProductoController(QObject):
             self.eliminar_producto
         )
 
+        ######################################################################
+        # Configuración de eventos
+        ######################################################################
+        # Conexión evento para edición de productos
+        self.model_tproducto.itemChanged.connect(self.editar_producto)
 
     ##########################################################################
     # Método para configuración de modelo en tabla de productos
@@ -131,9 +136,6 @@ class ProductoController(QObject):
             
             # Agregado de fila a modelo
             self.model_tproducto.appendRow(fila)
-        
-        # Conexión evento para edición de productos
-        self.model_tproducto.itemChanged.connect(self.editar_producto)
 
 
     ##########################################################################
