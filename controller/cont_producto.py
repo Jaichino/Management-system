@@ -4,15 +4,15 @@
 
 from typing import TYPE_CHECKING
 from datetime import date, datetime
+
 from PySide6.QtWidgets import QDialog, QMessageBox
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
+
 from view.interfaces.ventana_nuevoproducto import VentanaNuevoProducto
 from model.modelo_producto import ModeloProducto
-
 if TYPE_CHECKING:
     from controller.cont_principal import MainController
-
 
 ##############################################################################
 ##############################################################################
@@ -66,6 +66,10 @@ class ProductoController(QObject):
         # Conexión evento para edición de productos
         self.model_tproducto.itemChanged.connect(self.editar_producto)
 
+
+    # MÉTODOS PARA INICIALIZACIÓN DE INTERFAZ Y CONFIGURACIÓN DE MODELOS
+    ##########################################################################
+
     ##########################################################################
     # Método para configuración de modelo en tabla de productos
     ##########################################################################
@@ -84,10 +88,14 @@ class ProductoController(QObject):
         # Se oculta columna "id" que guarda el nro_producto
         self.tabla_productos.setColumnHidden(0, True)
 
+        # Configuración anchos de columnas
         self.tabla_productos.setColumnWidth(1, 150)
         self.tabla_productos.setColumnWidth(2, 400)
 
 
+    # MÉTODOS PARA REALIZAR ACCIONES EN MODELO
+    ##########################################################################
+    
     ##########################################################################
     # Método para carga de productos en tabla
     ##########################################################################
@@ -234,7 +242,7 @@ class ProductoController(QObject):
 
 ##############################################################################
 ##############################################################################
-#                   Controlador ventana NuevoProducto                        #
+#                   CONTROLADOR VENTANA NUEVO PRODUCTO                       #
 ##############################################################################
 ##############################################################################
 class NuevoProductoController(QDialog):
@@ -246,31 +254,33 @@ class NuevoProductoController(QDialog):
         self.main_controller = main_controller
 
         ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        self.txt_codigo = self.ventana_nuevoprod.txtCodigo
+        self.txt_descripcion = self.ventana_nuevoprod.txtDescripcion
+        self.txt_precio = self.ventana_nuevoprod.txtPrecio
+        self.txt_stock = self.ventana_nuevoprod.txtStock
+        self.date_vencimiento = self.ventana_nuevoprod.dateEditVencimiento
+
+        self.btn_guardar_producto = self.ventana_nuevoprod.btnGuardarProducto
+
+        ######################################################################
         # Configuraciones iniciales de interfaz
         ######################################################################
-
         # Hacer foco en campo de código
-        self.ventana_nuevoprod.txtCodigo.setFocus()
-
+        self.txt_codigo.setFocus()
 
         ######################################################################
         # Asignación de métodos a botones
-        ######################################################################
-        
+        ######################################################################\
         # Asignación método guardar nuevo producto
-        self.ventana_nuevoprod.btnGuardarProducto.clicked.connect(
-            self.crear_producto
-        )
-
+        self.btn_guardar_producto.clicked.connect(self.crear_producto)
 
         ######################################################################
         # Asignación de eventos
         ######################################################################
-
         # Evento autocompletado de código
-        self.ventana_nuevoprod.txtCodigo.textChanged.connect(
-            self.autocompletar_descripcion
-        )
+        self.txt_codigo.textChanged.connect(self.autocompletar_descripcion)
 
 
     ##########################################################################
@@ -278,11 +288,11 @@ class NuevoProductoController(QDialog):
     ##########################################################################
     def crear_producto(self):
         # Recuperación de valores de campos
-        codigo = self.ventana_nuevoprod.txtCodigo.text()
-        desc = self.ventana_nuevoprod.txtDescripcion.text()
-        precio = self.ventana_nuevoprod.txtPrecio.text()
-        stock = self.ventana_nuevoprod.txtStock.text()
-        venc_qt = self.ventana_nuevoprod.dateEditVencimiento.date()
+        codigo = self.txt_codigo.text()
+        desc = self.txt_descripcion.text()
+        precio = self.txt_precio.text()
+        stock = self.txt_stock.text()
+        venc_qt = self.date_vencimiento.date()
         
         # Verificación de completado de campos
         if codigo == '' or desc == '' or precio == '' or stock == '':
@@ -323,9 +333,9 @@ class NuevoProductoController(QDialog):
                 'Nuevo Producto',
                 f'Producto ({desc}) agregado a stock!'
             )
-            self.ventana_nuevoprod.txtPrecio.setText("")
-            self.ventana_nuevoprod.txtStock.setText("")
-            self.ventana_nuevoprod.txtPrecio.setFocus()
+            self.txt_precio.setText("")
+            self.txt_stock.setText("")
+            self.txt_precio.setFocus()
 
             # Actualización de tabla
             self.main_controller.producto_controller.cargar_productos()
@@ -350,10 +360,10 @@ class NuevoProductoController(QDialog):
     ##########################################################################
     def autocompletar_descripcion(self):
         # Limpieza de campo al inicio
-        self.ventana_nuevoprod.txtDescripcion.setText("")
+        self.txt_descripcion.setText("")
 
         # Obtención código campo
-        codigo = self.ventana_nuevoprod.txtCodigo.text()
+        codigo = self.txt_codigo.text()
         
         # Busca de productos con ese codigo
         producto = self.modelo_producto.listado_productos(codigo=codigo)
@@ -365,6 +375,6 @@ class NuevoProductoController(QDialog):
         if producto:
             descripcion = producto[0].descripcion
             # Seteo de campo descripción
-            self.ventana_nuevoprod.txtDescripcion.setText(descripcion)
+            self.txt_descripcion.setText(descripcion)
             # Foco en campo precio
-            self.ventana_nuevoprod.txtPrecio.setFocus()
+            self.txt_precio.setFocus()

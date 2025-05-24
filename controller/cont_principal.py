@@ -2,17 +2,9 @@
 # Importaciones
 ##############################################################################
 
-from datetime import date
-from PySide6.QtWidgets import (
-    QMainWindow, QMessageBox
-)
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMainWindow
 
 from view.interfaces.ventana_principal import VentanaPrincipal
-
-from model.modelo_ccorriente import ModeloCuentaCorriente
-
 from controller.cont_clientes import ClienteController, NuevoClienteController
 from controller.cont_servicios import (
     NuevoServicioController, ServiciosController
@@ -22,7 +14,7 @@ from controller.cont_producto import (
     ProductoController, NuevoProductoController
 )
 from controller.cont_venta import DetalleVentaController, VentasController
-
+from controller.cont_ccorriente import CuentaCorrienteController
 
 ##############################################################################
 ##############################################################################
@@ -43,172 +35,133 @@ class MainController(QMainWindow):
         self.servicio_controller = ServiciosController(self)
         self.turno_controller = TurnoController(self)
         self.venta_controller = VentasController(self)
+        self.cc_controller = CuentaCorrienteController(self)
 
         ######################################################################
-        # Variables iniciales
+        # Llamada widgets necesarios
         ######################################################################
-    
+        # Stacked widgets
+        self.stacked_principal = self.main_ui.StackedWidget
+        self.stacked_ventas = self.main_ui.stackedVentas
         
-        
-        self.deuda = 0
+        # Buttons Principales
+        self.btn_menu_principal = self.main_ui.btnMenu
+        self.btn_menu_cliente = self.main_ui.btnMenuClientes
+        self.btn_menu_servicios = self.main_ui.btnMenuServicios
+        self.btn_menu_turnos = self.main_ui.btnMenuTurnos
+        self.btn_menu_historial = self.main_ui.btnMenuHistorial
+        self.btn_menu_productos = self.main_ui.btnMenuProductos
+        self.btn_menu_ventas = self.main_ui.btnMenuVentas
+        self.btn_menu_ccorriente = self.main_ui.btnMenuCCorriente
 
+        self.btn_volver_venta = self.main_ui.btnVolverAVenta
+        self.btn_consulta_venta = self.main_ui.btnConsultaVentas
+
+        self.btn_nuevo_servicio = self.main_ui.btnNuevoServicio
+        self.btn_nuevo_turno = self.main_ui.btnNuevoTurno
+        self.btn_nuevo_producto = self.main_ui.btnNuevoProducto
+        self.btn_nuevo_cliente = self.main_ui.btnNuevoCliente
+
+        # Txts
+        self.txt_cliente = self.main_ui.lineEditCliente
+        self.txt_codigo_producto = self.main_ui.txtCodigoProd
+        self.txt_codigo_prodventa = self.main_ui.txtCodigoProdVenta
 
         ######################################################################
         # Seteo de botones para recorrer menú
         ######################################################################
 
         # Seteo de la página principal StackedWidget
-        self.main_ui.StackedWidget.setCurrentIndex(6)
+        self.stacked_principal.setCurrentIndex(6)
         # Seteo de la pagina principal del stacked de ventas
-        self.main_ui.stackedVentas.setCurrentIndex(1)
+        self.stacked_ventas.setCurrentIndex(1)
 
-        self.main_ui.btnMenu.clicked.connect(self.ir_menu_principal)
-        self.main_ui.btnMenuClientes.clicked.connect(self.abrir_menu_clientes)
-        self.main_ui.btnMenuServicios.clicked.connect(self.abrir_menu_servicios)
-        self.main_ui.btnMenuTurnos.clicked.connect(self.abrir_menu_turnos)
-        self.main_ui.btnMenuHistorial.clicked.connect(
-            self.abrir_menu_historial
-        )
-        self.main_ui.btnMenuProductos.clicked.connect(
-            self.abrir_menu_productos
-        )
-        self.main_ui.btnMenuVentas.clicked.connect(
-            self.abrir_menu_ventas
-        )
-        self.main_ui.btnMenuCCorriente.clicked.connect(
-            self.abrir_menu_ccorriente
-        )
+        # Botón para ir a menú principal
+        self.btn_menu_historial.clicked.connect(self.ir_menu_principal)
+        # Botón para abrir menú de clientes
+        self.btn_menu_cliente.clicked.connect(self.abrir_menu_clientes)
+        # Botón para abrir menú de servicios
+        self.btn_menu_servicios.clicked.connect(self.abrir_menu_servicios)
+        # Botón para abrir menú de turnos
+        self.btn_menu_turnos.clicked.connect(self.abrir_menu_turnos)
+        # Botón para abrir menú de historial de tratamientos
+        self.btn_menu_historial.clicked.connect(self.abrir_menu_historial)
+        # Botón para abrir menú de productos
+        self.btn_menu_productos.clicked.connect(self.abrir_menu_productos)
+        # Bóton para abrir menú de ventas
+        self.btn_menu_ventas.clicked.connect(self.abrir_menu_ventas)
+        # Botón para abrir menú de cuenta corriente
+        self.btn_menu_ccorriente.clicked.connect(self.abrir_menu_ccorriente)
 
+        ######################################################################
         # Movimiento en stacked de ventas
-        self.main_ui.btnVolverAVenta.clicked.connect(
-            self.ir_nueva_venta
-        )
-        self.main_ui.btnConsultaVentas.clicked.connect(
-            self.ir_consulta_ventas
-        )
 
-
-        ######################################################################
-        # Configuracion de modelos
-        ######################################################################
-        # Definición tabla cuenta corriente
-        self.model_cc = QStandardItemModel()
-        self.model_cc.setHorizontalHeaderLabels(
-            [
-                'id', 
-                'Cliente', 
-                'Fecha', 
-                'Operación', 
-                'Monto Operación', 
-                'Deuda pendiente'
-            ]
-        )
-        self.main_ui.tablaCuentaCorriente.setModel(self.model_cc)
-        self.main_ui.tablaCuentaCorriente.setColumnHidden(0, True)
-        self.main_ui.tablaCuentaCorriente.setColumnWidth(1, 260)
-        self.main_ui.tablaCuentaCorriente.setColumnWidth(2, 120)
-        self.main_ui.tablaCuentaCorriente.setColumnWidth(3, 200)
-        self.main_ui.tablaCuentaCorriente.setColumnWidth(4, 150)
+        # Ir a pantalla de nueva venta
+        self.btn_volver_venta.clicked.connect(self.ir_nueva_venta)
+        # Ir a pantalla de consulta de ventas
+        self.btn_consulta_venta.clicked.connect(self.ir_consulta_ventas)
 
 
         ######################################################################
         # Apertura ventanas secundarias
         ######################################################################
         
-        # SERVICIOS
-        ######################################################################
-        # Abrir ventana para agregar nuevo servicio
-        self.main_ui.btnNuevoServicio.clicked.connect(
-            self.ventana_nuevo_servicio
-        )
-
-        # CLIENTES
-        ######################################################################
+        # Abrir ventana para nuevo servicio
+        self.btn_nuevo_servicio.clicked.connect(self.ventana_nuevo_servicio)
         # Abrir ventana para agendar nuevo cliente
-        self.main_ui.btnNuevoCliente.clicked.connect(
-            self.ventana_nuevo_cliente
-        )
-
-        # PRODUCTOS
-        ######################################################################
-        # Abrir ventana nuevo producto
-        self.main_ui.btnNuevoProducto.clicked.connect(
-            self.ventana_nuevoproducto
-        )
-
-
-        # CUENTAS CORRIENTES
-        ######################################################################
-        # Asignación método carga de operación cuenta corriente
-        self.main_ui.btnCargarCC.clicked.connect(
-            self.cargar_operacion_cc
-        )
-
-        self.main_ui.btnEliminarUltimaCC.clicked.connect(
-            self.eliminar_registro_cc
-        )
-
-
-        # TURNOS
-        ######################################################################
-        # Abrir ventana para agregar nuevo turno
-        self.main_ui.btnNuevoTurno.clicked.connect(
-            self.ventana_nuevo_turno
-        )
-
-        ######################################################################
-        # Configuración de eventos
-        ######################################################################
-        
-        # Asignación de evento para mostrar cuentas corrientes segun cliente
-        self.main_ui.cmbClienteCC.currentTextChanged.connect(
-            self.cargar_cuentacorriente
-        )
-
-        ######################################################################
-        # Llenado comboboxs
-        ######################################################################
-        
-        # Modulo de cuenta corriente
-        self.llenar_cmb_clientescc()
+        self.btn_nuevo_cliente.clicked.connect(self.ventana_nuevo_cliente)
+        # Abrir ventana para nuevo producto
+        self.btn_nuevo_producto.clicked.connect(self.ventana_nuevoproducto)
+        # Abrir ventana para nuevo turno
+        self.btn_nuevo_turno.clicked.connect(self.ventana_nuevo_turno)
 
 
     ##########################################################################
     # Movimiento entre menú principal
     ##########################################################################
 
+    # Método para llevar stacked a menú principal
     def ir_menu_principal(self):
-        self.main_ui.StackedWidget.setCurrentIndex(6)
+        self.stacked_principal.setCurrentIndex(6)
 
+    # Método para llevar stacked a menú clientes
     def abrir_menu_clientes(self):
-        self.main_ui.StackedWidget.setCurrentIndex(7)
-        self.main_ui.lineEditCliente.setFocus()
+        self.stacked_principal.setCurrentIndex(7)
+        self.txt_cliente.setFocus()
 
+    # Método para llevar stacked a menú servicios
     def abrir_menu_servicios(self):
-        self.main_ui.StackedWidget.setCurrentIndex(0)
-    
-    def abrir_menu_turnos(self):
-        self.main_ui.StackedWidget.setCurrentIndex(1)
-    
-    def abrir_menu_historial(self):
-        self.main_ui.StackedWidget.setCurrentIndex(5)
-    
-    def abrir_menu_productos(self):
-        self.main_ui.StackedWidget.setCurrentIndex(4)
-        self.main_ui.txtCodigoProd.setFocus()
-    
-    def abrir_menu_ventas(self):
-        self.main_ui.StackedWidget.setCurrentIndex(2)
-        self.main_ui.txtCodigoProdVenta.setFocus()
+        self.stacked_principal.setCurrentIndex(0)
 
+    # Método para llevar stacked a menú turnos
+    def abrir_menu_turnos(self):
+        self.stacked_principal.setCurrentIndex(1)
+
+    # Método para llevar stacked a menú historial de tratamientos
+    def abrir_menu_historial(self):
+        self.stacked_principal.setCurrentIndex(5)
+
+    # Método para llevar stacked a menú productos
+    def abrir_menu_productos(self):
+        self.stacked_principal.setCurrentIndex(4)
+        self.txt_codigo_producto.setFocus()
+
+    # Método para llevar stacked a menú ventas
+    def abrir_menu_ventas(self):
+        self.stacked_principal.setCurrentIndex(2)
+        self.txt_codigo_prodventa.setFocus()
+
+    # Método para llevar stacked a menú cuenta corriente
     def abrir_menu_ccorriente(self):
-        self.main_ui.StackedWidget.setCurrentIndex(3)
-    
+        self.stacked_principal.setCurrentIndex(3)
+
+    # Método para llevar stacked ventas a ventana consulta ventas
     def ir_consulta_ventas(self):
-        self.main_ui.stackedVentas.setCurrentIndex(0)
-    
+        self.stacked_ventas.setCurrentIndex(0)
+        
+    # Método para llevar stacked ventas a ventana nueva venta
     def ir_nueva_venta(self):
-        self.main_ui.stackedVentas.setCurrentIndex(1)
+        self.stacked_ventas.setCurrentIndex(1)
 
 
     ##########################################################################
@@ -238,207 +191,3 @@ class MainController(QMainWindow):
     def ventana_detalleventa(self, nro_venta: int):
         self.abrir_detalleventa = DetalleVentaController(self, nro_venta)
         self.abrir_detalleventa.exec()
-
-
-
-    ##########################################################################
-    #                       MODULO CUENTA CORRIENTE                          #
-    ##########################################################################
-    ##########################################################################
-    # Métodos configuración de ventana
-    ##########################################################################
-    def llenar_cmb_clientescc(self):
-        ''' Método para llenar combobox de clientes en ventana de cuenta
-            corriente.
-        '''
-        # Limpieza cmb inicial
-        self.main_ui.cmbClienteCC.clear()
-        
-        # Seteo primer elemento del combobox
-        self.main_ui.cmbClienteCC.addItem('Seleccionar cliente', None)
-        # Obtención de clientes y carga en combobox
-        clientes_cc = ModeloCuentaCorriente.clientes_cuentacorriente()
-        if clientes_cc:
-            for cliente in clientes_cc:
-                self.main_ui.cmbClienteCC.addItem(cliente[1], cliente[0])
-    
-    ##########################################################################
-    # Método carga de cuentas corriente en tabla
-    ##########################################################################
-    def cargar_cuentacorriente(self):
-        ''' Método para cargar cuenta corriente de un determinado cliente en
-            tabla.
-        '''
-        # Limpieza inicial de tabla
-        self.model_cc.removeRows(0, self.model_cc.rowCount())
-
-        # Seteo de self.deuda a 0 para reiniciar
-        self.deuda = 0
-
-        # Obtención de cliente seleccionado en el combobox
-        cliente = self.main_ui.cmbClienteCC.currentData()
-
-        # Obtención historial cuenta corriente de dicho cliente
-        cuenta_corriente = ModeloCuentaCorriente.lista_cuentacorriente(
-            cliente=cliente
-        )
-
-        # Carga de historial en tabla
-        for operacion in cuenta_corriente:
-            fecha = date.strftime(operacion.fecha_operacion, "%d/%m/%Y")
-            fila = [
-                QStandardItem(str(operacion.nro_operacion)),
-                QStandardItem(operacion.cliente.nombre),
-                QStandardItem(fecha),
-                QStandardItem(operacion.tipo_operacion),
-                QStandardItem(f'$ {operacion.monto_operacion:.0f}'),
-                QStandardItem(f'$ {operacion.monto_pendiente:.0f}')
-            ]
-            # Alineado de valores
-            for item in fila:
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-
-            self.model_cc.appendRow(fila)
-        
-        # Actualización de self.deuda y visualización en label deuda total
-        if cliente is not None:
-            ult_fila = self.model_cc.rowCount() - 1
-            self.deuda = float(self.model_cc.item(ult_fila, 5).text()[2:])
-            self.main_ui.lblDeudaTotalCC.setText(
-                f"Deuda total: $ {self.deuda:.0f}"
-            )
-        else:
-            self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
-    
-    ##########################################################################
-    # Método carga operación de cuenta corriente
-    ##########################################################################
-    def cargar_operacion_cc(self):
-        ''' Método para cargar operación de cuenta corriente. Se recupera
-            cliente seleccionado, selección del tipo de operación de acuerdo a
-            radiobuttons y en función del tipo de operación y monto, se carga
-            el registro en base de datos y se actualiza tabla.
-            Si la deuda se salda completamente, se elimina la cuenta corriente
-            del cliente en cuestión.
-        '''
-        # Obtención cliente seleccionado en combobox
-        cliente = self.main_ui.cmbClienteCC.currentData()
-
-        # Verificación de selección de cliente
-        if not cliente:
-            QMessageBox.warning(
-                self,
-                'Cuenta Corriente',
-                'Seleccionar un cliente'
-            )
-            return
-        
-        # Obtención tipo de operación de radiobuttons
-        tipo_operacion = None
-
-        if self.main_ui.rbtnSaldarCC.isChecked():
-            tipo_operacion = "Abona"
-        
-        if self.main_ui.rbtnActualizarCC.isChecked():
-            tipo_operacion = "Actualización"
-        
-        # Verificación de selección de tipo de operación
-        if tipo_operacion is None:
-            QMessageBox.warning(
-                self,
-                'Cuenta Corriente',
-                'Seleccionar tipo de operación'
-            )
-            return
-
-        # Obtención de monto de operación
-        try:
-            monto_operacion = float(self.main_ui.txtMontoCC.text())
-        except ValueError:
-            QMessageBox.warning(
-                self,
-                'Cuenta Corriente',
-                'Revisar monto de operación'
-            )
-            return
-        
-        # Carga de operación en base de datos
-        monto_adeudado = self.deuda
-
-        if tipo_operacion == "Abona":
-            deuda_total = monto_adeudado - monto_operacion
-        
-        if tipo_operacion == "Actualización":
-            deuda_total = monto_adeudado + monto_operacion
-
-        ModeloCuentaCorriente.nueva_cuentacorriente(
-            cliente=cliente,
-            fecha=date.today(),
-            tipo_operacion=tipo_operacion,
-            monto_operacion=monto_operacion,
-            monto_pendiente=deuda_total
-        )
-
-        # Mensaje de confirmación
-        QMessageBox.information(
-                self,
-                'Cuenta Corriente',
-                'Operación cargada!'
-            )
-        
-        # Eliminación de cuenta corriente si deuda es saldada completamente
-        if deuda_total <= 0:
-            ModeloCuentaCorriente.eliminar_cuentacorriente(cliente=cliente)
-            self.llenar_cmb_clientescc()
-            self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
-            self.main_ui.txtMontoCC.setText("")
-        
-        self.main_ui.txtMontoCC.setText("")
-        self.cargar_cuentacorriente()
-
-
-    ##########################################################################
-    # Método eliminación registro cuenta corriente
-    ##########################################################################
-    def eliminar_registro_cc(self):
-        ''' Método para eliminar último registro realizado en una determinada
-            cuenta corriente. Se obtiene ultimo número de operación y se
-            elimina.
-        '''
-        # Obtención última fila tabla cuenta corriente
-        ultima_fila = self.model_cc.rowCount() - 1
-        
-        # Verificación ultima_fila > 0 (hay cuenta corriente)
-        if ultima_fila < 0:
-            QMessageBox.warning(
-                self,
-                'Cuentas Corrientes',
-                'Se debe seleccionar una cuenta corriente'
-            )
-            return
-        
-        # Obtención del número de operación
-        nro_operacion = self.model_cc.item(ultima_fila, 0).text()
-
-        # Consulta y eliminación de registro
-        eliminar = QMessageBox.question(
-            self,
-            'Cuentas corrientes',
-            'Eliminar último registro?'
-        )
-
-        if eliminar == QMessageBox.Yes:
-            ModeloCuentaCorriente.eliminar_operacion(nro_operacion)
-            if ultima_fila == 0:
-                self.llenar_cmb_clientescc()
-                self.main_ui.lblDeudaTotalCC.setText("Deuda total: $ 0")
-                self.main_ui.txtMontoCC.setText("")
-
-            QMessageBox.information(
-                self,
-                'Cuentas Corrientes',
-                'Registro de cuenta corriente eliminado!'
-            )
-
-        # Carga de tabla
-        self.cargar_cuentacorriente()

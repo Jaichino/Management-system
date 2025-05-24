@@ -40,7 +40,7 @@ class ModeloCuentaCorriente:
 
             sesion.add(cuenta_corriente)
             sesion.commit()
-    
+
 
     @staticmethod
     def lista_cuentacorriente(cliente: int):
@@ -58,7 +58,8 @@ class ModeloCuentaCorriente:
             ).all()
 
             return detalle_cc
-    
+
+
     @staticmethod
     def eliminar_cuentacorriente(cliente: int):
         ''' Método para eliminar la cuenta corriente de un determinado cliente
@@ -110,7 +111,3 @@ class ModeloCuentaCorriente:
             ).all()
 
             return clientes
-
-
-if __name__ == '__main__':
-    pass

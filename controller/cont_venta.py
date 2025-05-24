@@ -1,6 +1,7 @@
 ##############################################################################
 # Importaciones
 ##############################################################################
+
 from typing import TYPE_CHECKING
 from datetime import date
 
@@ -153,6 +154,10 @@ class VentasController(QObject):
         self.btn_elimina_venta.clicked.connect(
             self.eliminar_venta
         )
+    
+
+    ##########################################################################
+    # MÉTODOS CONFIGURACIONES DE INTERFAZ Y MODELOS
 
     ##########################################################################
     # Métodos para seteo de ComboBoxs
@@ -240,6 +245,7 @@ class VentasController(QObject):
         self.spinbox_cantidad.setMaximum(stock_disponible)
         # Seteo campo precio
         self.txt_precio_prod.setText(f"{precio:.0f}")
+
 
     ##########################################################################
     # MÉTODOS MANEJO CARRITO DE VENTA
@@ -541,7 +547,7 @@ class VentasController(QObject):
                 )
 
                 # Actualización cmb clientes cc
-                self.main_controller.llenar_cmb_clientescc()
+                self.main_controller.cc_controller.llenar_cmb_clientescc()
 
             # Mensaje de confirmación de venta generada
             if monto_entregado < self.total_abonar:
@@ -688,7 +694,8 @@ class VentasController(QObject):
                 nro_venta=venta.nro_venta:self.main_controller.ventana_detalleventa(nro_venta)
             )
             self.modelo_cventa.setCellWidget(i, 7, btn)
-    
+
+
     ##########################################################################
     # Método para eliminar ventas
     ##########################################################################
@@ -701,6 +708,14 @@ class VentasController(QObject):
         '''
         # Obtención de la fila seleccionada
         fila = self.modelo_cventa.currentIndex().row()
+
+        if fila == -1:
+            QMessageBox.warning(
+                self.main_controller,
+                'Consulta de ventas',
+                'Tenes que elegir una venta'
+            )
+            return
 
         # Obtención del número de venta y cliente
         nro_venta = int(self.modelo_cventa.item(fila, 0).text())
@@ -741,6 +756,7 @@ class VentasController(QObject):
             )
 
 
+
 ##############################################################################
 ##############################################################################
 #                   CONTROLADOR VENTANA DETALLE VENTAS                       #
@@ -756,43 +772,66 @@ class DetalleVentaController(QDialog):
         self.main_controller = main_controller
         self.nro_venta = nro_venta
 
-        # Definición del modelo de tabla para ver detalle venta
-        self.modelo_dventa = QStandardItemModel()
-        self.modelo_dventa.setHorizontalHeaderLabels(
-            ['id','Producto','Precio', 'Cantidad', 'Subtotal']
-        )
-        self.ui_detalleventa.tablaDetalleVenta.setModel(self.modelo_dventa)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnHidden(0, True)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(1, 490)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(2,100)
-        self.ui_detalleventa.tablaDetalleVenta.setColumnWidth(3,80)
+        ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        self.btn_generar_factura = self.ui_detalleventa.btnGenFactura
+        self.tabla_detalle = self.ui_detalleventa.tablaDetalleVenta
+        self.lbl_titulo = self.ui_detalleventa.lblTitulo
+        self.lbl_total_productos = self.ui_detalleventa.lblTotalProductos
+        self.lbl_total_pagar = self.ui_detalleventa.lblTotalAbonar
+        self.lbl_interes = self.ui_detalleventa.lblTotalInteres
+
+        ######################################################################
+        # Inicialización de modelos y configuraciones iniciales
+        ######################################################################
+        # Inicialización modelo tabla detalle de ventas
+        self.configuracion_modelo_detalleventa()
 
         # Inicialización de la ventana detalle venta con venta correspondiente
         self.cargar_detalle_venta(nro_venta=nro_venta)
 
+        ######################################################################
+        # Asignación de métodos a botones
+        ######################################################################
         # Asignación método generación de facturas pdf
-        self.ui_detalleventa.btnGenFactura.clicked.connect(
-            self.imprimir_factura
+        self.btn_generar_factura.clicked.connect(self.imprimir_factura)
+
+
+    ##########################################################################
+    # Configuración modelo en tabla detalle de ventas
+    ##########################################################################
+    def configuracion_modelo_detalleventa(self):
+        self.modelo_dventa = QStandardItemModel()
+        self.modelo_dventa.setHorizontalHeaderLabels(
+            ['id','Producto','Precio', 'Cantidad', 'Subtotal']
         )
+        self.tabla_detalle.setModel(self.modelo_dventa)
+        self.tabla_detalle.setColumnHidden(0, True)
+        self.tabla_detalle.setColumnWidth(1, 490)
+        self.tabla_detalle.setColumnWidth(2,100)
+        self.tabla_detalle.setColumnWidth(3,80)
 
 
+    ##########################################################################
     # Método para cargar el detalle de venta seleccionado en consulta venta
+    ##########################################################################
     def cargar_detalle_venta(self, nro_venta: int):
         # Se busca el detalle de venta segun nro_venta
         detalle = ModeloVentas.consulta_detalleventa(nro_venta=nro_venta)
 
         # Se pone número de venta en título
-        self.ui_detalleventa.lblTitulo.setText(f"Detalle de venta #{nro_venta}")
+        self.lbl_titulo.setText(f"Detalle de venta #{nro_venta}")
 
         # Completado de información de venta en lables
         total_prod = detalle[0].venta.monto_total
         interes = detalle[0].venta.interes
         tot_abonar = total_prod + interes
-        self.ui_detalleventa.lblTotalProductos.setText(
+        self.lbl_total_productos.setText(
             f"Total productos: $ {total_prod}"
         )
-        self.ui_detalleventa.lblTotalInteres.setText(f'Interes: $ {interes}')
-        self.ui_detalleventa.lblTotalAbonar.setText(
+        self.lbl_interes.setText(f'Interes: $ {interes}')
+        self.lbl_total_pagar.setText(
             f"Total a abonar: $ {tot_abonar}"
         )
 
@@ -814,7 +853,9 @@ class DetalleVentaController(QDialog):
             self.modelo_dventa.appendRow(fila)
 
 
-    # Generación de factura pdf venta nro_venta
+    ##########################################################################
+    # Método para generación de factura pdf venta nro_venta
+    ##########################################################################
     def imprimir_factura(self):
         ''' Método para generar generar la factura PDF de la compra que se ha
             seleccionado desde la tabla consulta de ventas.
@@ -856,4 +897,4 @@ class DetalleVentaController(QDialog):
         )
 
         # Bloqueo de botón
-        self.ui_detalleventa.btnGenFactura.setEnabled(False)
+        self.btn_generar_factura.setEnabled(False)

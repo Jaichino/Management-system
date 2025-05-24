@@ -59,7 +59,7 @@ class ServiciosController(QObject):
     def mostrar_servicios(self):
         # Definición del contenedor de las tarjetas
         contenedor = self.cont_servicios.layout()
-        contenedor.setContentsMargins(10,10,10,10)
+        contenedor.setContentsMargins(5,5,5,5)
         contenedor.setSpacing(5)
 
         # Limpieza previa del contenedor
@@ -157,14 +157,29 @@ class NuevoServicioController(QMainWindow):
         self.model_serv = ModeloServicio()
         self.main_controller = main_controller
 
-        # Variables que sirven para decidir en método guardar_servicio
+        ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        self.txt_nombre = self.ui_servicio.txtNombre
+        self.txt_duracion = self.ui_servicio.txtDuracion
+        self.txt_precio = self.ui_servicio.txtPrecio
+
+        self.btn_guardar_servicio = self.ui_servicio.btnGuardarServicio
+
+        ######################################################################
+        # Configuración de variables iniciales
+        ######################################################################
+        # Variable para decidir entre edición o creación de servicio
         self.modo = 'nuevo'
+        # Variable para guardar el id del servicio
         self.id_servicio = None
     
+
+        ######################################################################
+        # Asignación de métodos a botones
+        ######################################################################
         # Asignación método nuevo_servicio a boton btnGuardarServicio
-        self.ui_servicio.btnGuardarServicio.clicked.connect(
-            self.guardar_servicio
-        )
+        self.btn_guardar_servicio.clicked.connect(self.guardar_servicio)
 
 
     ##########################################################################
@@ -172,9 +187,9 @@ class NuevoServicioController(QMainWindow):
     ##########################################################################
     def guardar_servicio(self):
         # Recuperación de valores de campos
-        nombre = self.ui_servicio.txtNombre.text().upper()
-        duracion = self.ui_servicio.txtDuracion.text()
-        precio = self.ui_servicio.txtPrecio.text()
+        nombre = self.txt_nombre.text().upper()
+        duracion = self.txt_duracion.text()
+        precio = self.txt_precio.text()
 
         try:
             duracion = int(duracion)
@@ -200,9 +215,9 @@ class NuevoServicioController(QMainWindow):
                 )
 
             # Limpieza de campos
-            self.ui_servicio.txtNombre.setText("")
-            self.ui_servicio.txtDuracion.setText("")
-            self.ui_servicio.txtPrecio.setText("")
+            self.txt_nombre.setText("")
+            self.txt_duracion.setText("")
+            self.txt_precio.setText("")
 
             # Actualización del listado de servicios
             self.main_controller.servicio_controller.mostrar_servicios()
@@ -223,7 +238,7 @@ class NuevoServicioController(QMainWindow):
                 'Nuevo Servicio',
                 f'Error - {e}'
             )
-    
+
 
     ##########################################################################
     # Método para carga de información en ventana nuevo servicio
@@ -240,9 +255,9 @@ class NuevoServicioController(QMainWindow):
         if servicio:
             self.modo = 'editar'
             self.id_servicio = servicio.id
-            self.ui_servicio.txtNombre.setText(servicio.nombre)
-            self.ui_servicio.txtDuracion.setText(str(servicio.duracion))
-            self.ui_servicio.txtPrecio.setText(f'{servicio.precio:.0f}')
+            self.txt_nombre.setText(servicio.nombre)
+            self.txt_duracion.setText(str(servicio.duracion))
+            self.txt_precio.setText(f'{servicio.precio:.0f}')
         else:
             self.modo = 'nuevo'
             self.id_servicio = None

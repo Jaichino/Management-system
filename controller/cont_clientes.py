@@ -157,8 +157,9 @@ class ClienteController(QObject):
             ModeloCliente.editar_cliente(id_cliente, nombre, telefono, email)
             self.cargar_clientes()
 
-            self.main_controller.llenar_cmb_clientes_venta()
+            self.main_controller.venta_controller.llenar_cmb_clientes_venta()
 
+        # Manejo de excepciones
         except ValueError:
             QMessageBox.critical(
                 self.main_controller,
@@ -222,15 +223,31 @@ class NuevoClienteController(QMainWindow):
         self.main_controller = main_controller
         self.modelo_cliente = ModeloCliente()
 
-        self.ui_cliente.btnAgregarCliente.clicked.connect(self.nuevo_cliente)
+        ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        self.txt_nombre = self.ui_cliente.txtNombre
+        self.txt_cel = self.ui_cliente.txtCelular
+        self.txt_email = self.ui_cliente.txtEmail
+
+        self.btn_nuevocliente = self.ui_cliente.btnAgregarCliente
+
+        ######################################################################
+        # Asignación de métodos a botones
+        ######################################################################
+        # Asignación método para agregar nuevos clientes
+        self.btn_nuevocliente.clicked.connect(self.nuevo_cliente)
 
 
+    ##########################################################################
+    # Método para crear nuevos clientes
+    ##########################################################################
     def nuevo_cliente(self):
         try:
             # Recuperación de valores de campo
-            nombre = self.ui_cliente.txtNombre.text().upper() 
-            cel = self.ui_cliente.txtCelular.text()
-            email = self.ui_cliente.txtEmail.text().lower()
+            nombre = self.txt_nombre.text().upper() 
+            cel = self.txt_cel.text()
+            email = self.txt_email.text().lower()
 
             # Comprobación de que se llenan campos obligatorios
             if nombre == '':
@@ -248,9 +265,9 @@ class NuevoClienteController(QMainWindow):
             self.modelo_cliente.nuevo_cliente(nombre, cel, email)
 
             # Limpieza de campos
-            nombre = self.ui_cliente.txtNombre.setText("")
-            cel = self.ui_cliente.txtCelular.setText("")
-            email = self.ui_cliente.txtEmail.setText("")
+            nombre = self.txt_nombre.setText("")
+            cel = self.txt_cel.setText("")
+            email = self.txt_email.setText("")
 
             # Actualización de tabla
             self.main_controller.cliente_controller.cargar_clientes()
@@ -259,11 +276,12 @@ class NuevoClienteController(QMainWindow):
             QMessageBox.information(self, "Nuevo Cliente", "Cliente Creado!")
 
             # Actualización de combobox de clientes interfaz de ventas
-            self.main_controller.llenar_cmb_clientes_venta()
+            self.main_controller.venta_controller.llenar_cmb_clientes_venta()
 
             # Cierre de ventana
             self.close()
 
+        # Manejo de excepciones
         except ValueError:
             QMessageBox.critical(
                 self,

@@ -98,7 +98,7 @@ class TurnoController(QObject):
     def agregar_turnos(self, fecha: date):
         # Se define el contenedor donde irán las tarjetas
         contenedor = self.cont_turnos.layout()
-        contenedor.setContentsMargins(10,10,10,10)
+        contenedor.setContentsMargins(5,5,5,5)
         contenedor.setSpacing(5)
 
         # Se borran widgets del layout
@@ -290,17 +290,38 @@ class NuevoTurnoController(QMainWindow):
         self.modelo_turno = ModeloTurno()
         self.main_controller = main_controller
 
+        ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        # Txts
+        self.txt_observacion = self.ui_turno.txtObservacion
+
+        # Times
+        self.date_turno = self.ui_turno.dateEditTurno
+        self.hora_turno = self.ui_turno.timeEditTurno
+
+        # Comboboxs
+        self.cmb_cliente = self.ui_turno.cmbCliente
+        self.cmb_servicio = self.ui_turno.cmbServicio
+        
+        # Botones
+        self.btn_agendar = self.ui_turno.btnAgendarTurno
+
+        ######################################################################
+        # Configuraciones iniciales de interfaz y modelos
+        ######################################################################
         # Inicialización de ComboBox clientes y servicios
         self.cargar_lista_clientes()
         self.cargar_lista_servicios()
 
         # Inicialización de campo de fecha con día actual
-        self.ui_turno.dateEditTurno.setDate(datetime.now())
+        self.date_turno.setDate(datetime.now())
 
+        ######################################################################
+        # Asignación de métodos a botones
+        ######################################################################
         # Asignación método nuevo_turno a botón
-        self.ui_turno.btnAgendarTurno.clicked.connect(
-            self.nuevo_turno
-        )
+        self.btn_agendar.clicked.connect(self.nuevo_turno)
 
 
     ##########################################################################
@@ -310,25 +331,25 @@ class NuevoTurnoController(QMainWindow):
         ''' Método para cargar el listado de clientes existentes al ComboBox
             cmbCliente
         '''
-        self.ui_turno.cmbCliente.clear()
-        self.ui_turno.cmbCliente.addItem("Seleccionar cliente", None)
+        self.cmb_cliente.clear()
+        self.cmb_cliente.addItem("Seleccionar cliente", None)
 
         clientes = ModeloCliente.lista_clientes()
         for cliente in clientes:
             if cliente.nombre == "CLIENTE NO REGISTRADO":
                 continue
-            self.ui_turno.cmbCliente.addItem(cliente.nombre, cliente.id)
+            self.cmb_cliente.addItem(cliente.nombre, cliente.id)
 
 
     def cargar_lista_servicios(self):
         ''' Método para cargar el listado de servicios existentes al ComboBox
             cmbServicio
         '''
-        self.ui_turno.cmbServicio.clear()
+        self.cmb_servicio.clear()
 
         servicios = ModeloServicio.lista_servicios()
         for servicio in servicios:
-            self.ui_turno.cmbServicio.addItem(servicio.nombre, servicio.id)
+            self.cmb_servicio.addItem(servicio.nombre, servicio.id)
 
 
     ##########################################################################
@@ -366,12 +387,12 @@ class NuevoTurnoController(QMainWindow):
             se actualiza el contenedor de turnos.
         '''
         # Obtención de campos
-        cliente = self.ui_turno.cmbCliente.currentData()
-        fecha = self.ui_turno.dateEditTurno.date()
-        hora = self.ui_turno.timeEditTurno.time()
-        servicio = self.ui_turno.cmbServicio.currentData()
-        observacion = self.ui_turno.txtObservacion.toPlainText()
-        nombre_servicio = self.ui_turno.cmbServicio.currentText()
+        cliente = self.cmb_cliente.currentData()
+        fecha = self.date_turno.date()
+        hora = self.hora_turno.time()
+        servicio = self.cmb_servicio.currentData()
+        observacion = self.txt_observacion.toPlainText()
+        nombre_servicio = self.cmb_servicio.currentText()
 
         # Comprobación de selección de cliente
         if cliente is None:
@@ -396,6 +417,7 @@ class NuevoTurnoController(QMainWindow):
             hora.minute()
         )
 
+        # Comprobación de que no hay solapamiento de turnos
         if not self.solapamiento_turnos(fecha_form, hora_form, duracion):
             QMessageBox.critical(
                 self,
@@ -426,5 +448,3 @@ class NuevoTurnoController(QMainWindow):
 
         # Actualización de combobox pagina historial clientes
         self.main_controller.turno_controller.llenar_cmb_clientes()
-
-    
