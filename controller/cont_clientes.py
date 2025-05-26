@@ -205,7 +205,11 @@ class ClienteController(QObject):
                 f"Se eliminó a {nombre_cliente}"
             )
         
+        # Actualización tabla clientes
         self.cargar_clientes()
+
+        # Actualización combobox cliente cuenta corriente (si tiene)
+        self.main_controller.cc_controller.llenar_cmb_clientescc()
 
 
 
