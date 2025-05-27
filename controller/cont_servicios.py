@@ -81,7 +81,7 @@ class ServiciosController(QObject):
                     f'{serv.duracion} minutos'
                 )
                 tarjeta.widget_tserv.lblPrecio.setText(
-                    f'$ {serv.precio}'
+                    f'$ {serv.precio:.0f}'
                 )
 
                 # Asignación de método eliminar servicio
@@ -247,7 +247,7 @@ class NuevoServicioController(QMainWindow):
         ''' Método para decidir si al presionar boton btnGuardarServicio, se 
             edita un servicio seleccionado o se carga un nuevo servicio.
 
-            Se llama desde MainController y se le pasa el servicio que se
+            Se llama desde ServicioController y se le pasa el servicio que se
             selecciona en una determinada tarjeta. Se setea el self.modo a
             editar para que luego el metodo guardar_servicio no lo cargue como
             uno nuevo, sino que aplique el metodo editar_servicio

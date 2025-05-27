@@ -23,7 +23,7 @@ class WidgetTarjetaTurno(object):
         if not widgetTarjetaTurnos.objectName():
             widgetTarjetaTurnos.setObjectName(u"widgetTarjetaTurnos")
         widgetTarjetaTurnos.resize(746, 150)
-        widgetTarjetaTurnos.setMinimumSize(QSize(0, 0))
+        widgetTarjetaTurnos.setMinimumSize(QSize(0, 150))
         widgetTarjetaTurnos.setMaximumSize(QSize(16777215, 150))
         widgetTarjetaTurnos.setStyleSheet(u"background-color:white")
         self.gridLayout = QGridLayout(widgetTarjetaTurnos)
@@ -51,7 +51,7 @@ class WidgetTarjetaTurno(object):
         self.contenedorHora = QWidget(self.widget)
         self.contenedorHora.setObjectName(u"contenedorHora")
         self.contenedorHora.setStyleSheet(u"border: 2px solid #7D3928;\n"
-"\n"
+"background-color: rgb(255, 225, 225);\n"
 "")
         self.gridLayout_2 = QGridLayout(self.contenedorHora)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -74,6 +74,7 @@ class WidgetTarjetaTurno(object):
         self.contenedorDuracion = QWidget(self.widget)
         self.contenedorDuracion.setObjectName(u"contenedorDuracion")
         self.contenedorDuracion.setStyleSheet(u"border: 2px solid #7D3928;\n"
+"background-color: rgb(255, 225, 225);\n"
 "")
         self.gridLayout_4 = QGridLayout(self.contenedorDuracion)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
@@ -124,6 +125,15 @@ class WidgetTarjetaTurno(object):
 
         self.verticalLayout_2.addWidget(self.titServicio)
 
+        self.titPrecio = QLabel(self.encabezados)
+        self.titPrecio.setObjectName(u"titPrecio")
+        self.titPrecio.setFont(font1)
+        self.titPrecio.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.titPrecio.setStyleSheet(u"color: #7D3928;")
+        self.titPrecio.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_2.addWidget(self.titPrecio)
+
         self.titObservacion = QLabel(self.encabezados)
         self.titObservacion.setObjectName(u"titObservacion")
         self.titObservacion.setFont(font1)
@@ -133,14 +143,13 @@ class WidgetTarjetaTurno(object):
 
         self.verticalLayout_2.addWidget(self.titObservacion)
 
-        self.titPrecio = QLabel(self.encabezados)
-        self.titPrecio.setObjectName(u"titPrecio")
-        self.titPrecio.setFont(font1)
-        self.titPrecio.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.titPrecio.setStyleSheet(u"color: #7D3928;")
-        self.titPrecio.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label = QLabel(self.encabezados)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font1)
+        self.label.setStyleSheet(u"color: #7D3928;")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_2.addWidget(self.titPrecio)
+        self.verticalLayout_2.addWidget(self.label)
 
 
         self.horizontalLayout.addWidget(self.encabezados)
@@ -168,19 +177,26 @@ class WidgetTarjetaTurno(object):
 
         self.verticalLayout_3.addWidget(self.lblServicio)
 
-        self.lblObservacion = QLabel(self.labelsTurnos)
-        self.lblObservacion.setObjectName(u"lblObservacion")
-        self.lblObservacion.setFont(font2)
-        self.lblObservacion.setStyleSheet(u"color: #7D3928;")
-
-        self.verticalLayout_3.addWidget(self.lblObservacion)
-
         self.lblPrecio = QLabel(self.labelsTurnos)
         self.lblPrecio.setObjectName(u"lblPrecio")
         self.lblPrecio.setFont(font2)
         self.lblPrecio.setStyleSheet(u"color: #7D3928;")
 
         self.verticalLayout_3.addWidget(self.lblPrecio)
+
+        self.lblSenia = QLabel(self.labelsTurnos)
+        self.lblSenia.setObjectName(u"lblSenia")
+        self.lblSenia.setFont(font2)
+        self.lblSenia.setStyleSheet(u"color: #7D3928;")
+
+        self.verticalLayout_3.addWidget(self.lblSenia)
+
+        self.lblFaltaPagar = QLabel(self.labelsTurnos)
+        self.lblFaltaPagar.setObjectName(u"lblFaltaPagar")
+        self.lblFaltaPagar.setFont(font1)
+        self.lblFaltaPagar.setStyleSheet(u"color: #7D3928;")
+
+        self.verticalLayout_3.addWidget(self.lblFaltaPagar)
 
 
         self.horizontalLayout.addWidget(self.labelsTurnos)
@@ -249,12 +265,14 @@ class WidgetTarjetaTurno(object):
         self.lblDuracion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"120 min", None))
         self.titCliente.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Cliente:", None))
         self.titServicio.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Servicio:", None))
-        self.titObservacion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Observaci\u00f3n: ", None))
         self.titPrecio.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Precio servicio:", None))
+        self.titObservacion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Se\u00f1a:", None))
+        self.label.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Falta pagar:", None))
         self.lblCliente.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
         self.lblServicio.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
-        self.lblObservacion.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
         self.lblPrecio.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
+        self.lblSenia.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
+        self.lblFaltaPagar.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"TextLabel", None))
         self.btnCancelarTurno.setText(QCoreApplication.translate("widgetTarjetaTurnos", u"Cancelar", None))
     # retranslateUi
 

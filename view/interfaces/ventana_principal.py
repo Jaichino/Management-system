@@ -285,15 +285,15 @@ class VentanaPrincipal(object):
         self.verticalLayout_6.setContentsMargins(2, 0, 2, 0)
         self.encabezadoServicios = QWidget(self.MenuServicios)
         self.encabezadoServicios.setObjectName(u"encabezadoServicios")
-        self.encabezadoServicios.setMinimumSize(QSize(0, 150))
-        self.encabezadoServicios.setMaximumSize(QSize(16777215, 150))
+        self.encabezadoServicios.setMinimumSize(QSize(0, 100))
+        self.encabezadoServicios.setMaximumSize(QSize(16777215, 100))
         self.encabezadoServicios.setStyleSheet(u"background-color: #F7E7DC;\n"
 "border: 2px solid #DCBCA6;\n"
 "border-radius: 10px\n"
 "")
         self.horizontalLayout_3 = QHBoxLayout(self.encabezadoServicios)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(-1, 9, -1, -1)
+        self.horizontalLayout_3.setContentsMargins(-1, 4, -1, 4)
         self.widgetTituloServicios = QWidget(self.encabezadoServicios)
         self.widgetTituloServicios.setObjectName(u"widgetTituloServicios")
         sizePolicy.setHeightForWidth(self.widgetTituloServicios.sizePolicy().hasHeightForWidth())
@@ -303,7 +303,7 @@ class VentanaPrincipal(object):
         self.widgetTituloServicios.setStyleSheet(u"border: 0px;")
         self.verticalLayout_17 = QVBoxLayout(self.widgetTituloServicios)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-        self.verticalLayout_17.setContentsMargins(9, 9, 9, 9)
+        self.verticalLayout_17.setContentsMargins(0, 9, 9, 9)
         self.tituloServicios = QLabel(self.widgetTituloServicios)
         self.tituloServicios.setObjectName(u"tituloServicios")
         sizePolicy1.setHeightForWidth(self.tituloServicios.sizePolicy().hasHeightForWidth())
@@ -330,16 +330,26 @@ class VentanaPrincipal(object):
         self.widgetBotones.setObjectName(u"widgetBotones")
         sizePolicy.setHeightForWidth(self.widgetBotones.sizePolicy().hasHeightForWidth())
         self.widgetBotones.setSizePolicy(sizePolicy)
-        self.widgetBotones.setMinimumSize(QSize(400, 120))
+        self.widgetBotones.setMinimumSize(QSize(400, 80))
         self.widgetBotones.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.widgetBotones.setStyleSheet(u"border: 0px;")
         self.horizontalLayout_4 = QHBoxLayout(self.widgetBotones)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.horizontalLayout_4.setContentsMargins(9, -1, -1, 9)
+        self.horizontalLayout_4.setContentsMargins(9, 4, -1, 4)
+        self.espaciador = QWidget(self.widgetBotones)
+        self.espaciador.setObjectName(u"espaciador")
+        self.gridLayout_2 = QGridLayout(self.espaciador)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+
+        self.horizontalLayout_4.addWidget(self.espaciador)
+
         self.botonera = QWidget(self.widgetBotones)
         self.botonera.setObjectName(u"botonera")
-        self.gridLayout_2 = QGridLayout(self.botonera)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.botonera.setMinimumSize(QSize(400, 0))
+        self.botonera.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.verticalLayout_15 = QVBoxLayout(self.botonera)
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
         self.btnNuevoServicio = QPushButton(self.botonera)
         self.btnNuevoServicio.setObjectName(u"btnNuevoServicio")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
@@ -353,7 +363,7 @@ class VentanaPrincipal(object):
         font3.setPointSize(14)
         self.btnNuevoServicio.setFont(font3)
         self.btnNuevoServicio.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.btnNuevoServicio.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btnNuevoServicio.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.btnNuevoServicio.setAutoFillBackground(False)
         self.btnNuevoServicio.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
@@ -372,20 +382,10 @@ class VentanaPrincipal(object):
 "	\n"
 "}")
 
-        self.gridLayout_2.addWidget(self.btnNuevoServicio, 0, 0, 1, 1)
+        self.verticalLayout_15.addWidget(self.btnNuevoServicio)
 
 
         self.horizontalLayout_4.addWidget(self.botonera)
-
-        self.espaciador = QWidget(self.widgetBotones)
-        self.espaciador.setObjectName(u"espaciador")
-        self.espaciador.setMinimumSize(QSize(400, 0))
-        self.espaciador.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.verticalLayout_15 = QVBoxLayout(self.espaciador)
-        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.verticalLayout_15.setContentsMargins(-1, 0, -1, 0)
-
-        self.horizontalLayout_4.addWidget(self.espaciador)
 
 
         self.horizontalLayout_3.addWidget(self.widgetBotones)
@@ -432,6 +432,7 @@ class VentanaPrincipal(object):
 "")
         self.horizontalLayout_5 = QHBoxLayout(self.encabezadoTurnos)
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(0, 9, -1, -1)
         self.contenedorTitulo = QWidget(self.encabezadoTurnos)
         self.contenedorTitulo.setObjectName(u"contenedorTitulo")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Expanding)
@@ -443,6 +444,7 @@ class VentanaPrincipal(object):
         self.contenedorTitulo.setStyleSheet(u"border: 0px;")
         self.horizontalLayout_6 = QHBoxLayout(self.contenedorTitulo)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(0, -1, -1, -1)
         self.tituloTurnos = QLabel(self.contenedorTitulo)
         self.tituloTurnos.setObjectName(u"tituloTurnos")
         self.tituloTurnos.setFont(font2)
@@ -2719,24 +2721,13 @@ class VentanaPrincipal(object):
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
-"	font: 12pt \"Century Gothic\";\n"
+"	font: 10pt \"Century Gothic\";\n"
 "	gridline-color: rgb(125, 57, 40);\n"
 "	selection-background-color: #D3B9B4;\n"
 "	selection-color: rgb(0, 0, 0);\n"
 "	background-color: #FDF5EE;\n"
 "}\n"
 "\n"
-"\n"
-"/*QHeaderView {\n"
-"	color: rgb(125, 57, 40);\n"
-"	background-color: #F7E7DC;\n"
-"	font-weight: bold;\n"
-"	font-family: century-gothic;\n"
-"	font-size: 12pt;\n"
-"	gridline-color: rgb(125, 57, 40);\n"
-"	border-radius: 10px;\n"
-"	border-right: 1px solid rgb(125, 57, 40);\n"
-"}*/\n"
 "\n"
 "QHeaderView::section {\n"
 "    color: rgb(125, 57, 40);\n"
@@ -2751,12 +2742,12 @@ class VentanaPrincipal(object):
 "}\n"
 "\n"
 "QLineEdit {\n"
-""
-                        "	color: rgb(125, 57, 40);\n"
+"	color: rgb(125, 57, 40);\n"
 "}\n"
 "")
         self.tablaHistorial.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.tablaHistorial.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+        self.tablaHistorial.setAlternatingRowColors(True)
         self.tablaHistorial.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tablaHistorial.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tablaHistorial.horizontalHeader().setStretchLastSection(True)
@@ -2820,6 +2811,7 @@ class VentanaPrincipal(object):
         self.widgetTituloCliente.setStyleSheet(u"border: 0px")
         self.verticalLayout_7 = QVBoxLayout(self.widgetTituloCliente)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(0, -1, -1, -1)
         self.tituloClientes = QLabel(self.widgetTituloCliente)
         self.tituloClientes.setObjectName(u"tituloClientes")
         self.tituloClientes.setFont(font2)
@@ -3040,7 +3032,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(3)
+        self.StackedWidget.setCurrentIndex(5)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QComboBox, QDateEdit,
-    QGridLayout, QHBoxLayout, QLabel, QMainWindow,
-    QPushButton, QSizePolicy, QTextEdit, QTimeEdit,
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QMainWindow, QPushButton, QSizePolicy, QTimeEdit,
     QVBoxLayout, QWidget)
 from view import recursos_rc
 
@@ -32,7 +32,7 @@ class VentanaTurno(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QSize(400, 350))
+        MainWindow.setMinimumSize(QSize(400, 500))
         MainWindow.setMaximumSize(QSize(400, 500))
         icon = QIcon()
         icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
@@ -338,6 +338,7 @@ class VentanaTurno(object):
         self.horizontalLayout_5.setContentsMargins(0, -1, 0, -1)
         self.widget_15 = QWidget(self.widget_6)
         self.widget_15.setObjectName(u"widget_15")
+        self.widget_15.setMinimumSize(QSize(150, 0))
         self.widget_15.setMaximumSize(QSize(150, 16777215))
         self.gridLayout_7 = QGridLayout(self.widget_15)
         self.gridLayout_7.setObjectName(u"gridLayout_7")
@@ -355,17 +356,17 @@ class VentanaTurno(object):
         self.widget_16.setObjectName(u"widget_16")
         self.gridLayout_12 = QGridLayout(self.widget_16)
         self.gridLayout_12.setObjectName(u"gridLayout_12")
-        self.gridLayout_12.setContentsMargins(-1, 0, 0, 0)
-        self.txtObservacion = QTextEdit(self.widget_16)
-        self.txtObservacion.setObjectName(u"txtObservacion")
-        self.txtObservacion.setFont(font2)
-        self.txtObservacion.setStyleSheet(u"color: rgb(125, 57, 40);\n"
+        self.gridLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.txtSenia = QLineEdit(self.widget_16)
+        self.txtSenia.setObjectName(u"txtSenia")
+        self.txtSenia.setFont(font1)
+        self.txtSenia.setStyleSheet(u"color: rgb(125, 57, 40);\n"
 "border: 2px solid #C18484;\n"
 "background-color: white;\n"
 "border-radius: 5px;\n"
 "")
 
-        self.gridLayout_12.addWidget(self.txtObservacion, 0, 0, 1, 1)
+        self.gridLayout_12.addWidget(self.txtSenia, 0, 0, 1, 1)
 
 
         self.horizontalLayout_5.addWidget(self.widget_16)
@@ -428,7 +429,7 @@ class VentanaTurno(object):
         self.dateEditTurno.setDisplayFormat(QCoreApplication.translate("MainWindow", u"dd/MM/yyyy", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Hora", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Servicio", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Observaci\u00f3n", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Se\u00f1a", None))
         self.btnAgendarTurno.setText(QCoreApplication.translate("MainWindow", u"Agendar", None))
     # retranslateUi
 

@@ -18,7 +18,8 @@ class ModeloTurno:
         cliente: int, 
         servicio: int, 
         fecha: date, 
-        hora: time, 
+        hora: time,
+        senia: float, 
         obs: str = None,
         estado: str = 'confirmado'
     ):
@@ -28,6 +29,7 @@ class ModeloTurno:
             :param int servicio: ID del servicio a realizar
             :param date fecha: Fecha del servicio
             :param time hora: Hora del servicio
+            :param float senia: Monto entregado como seña
             :param str obs: Observaciones sobre el turno
             :param str estado: Estado del turno
         '''
@@ -37,6 +39,7 @@ class ModeloTurno:
                 servicio_id=servicio,
                 fecha=fecha,
                 hora=hora,
+                senia=senia,
                 observacion=obs,
                 estado=estado
             )
@@ -60,7 +63,7 @@ class ModeloTurno:
                     Turno.hora,
                     Cliente.nombre, 
                     Servicio.nombre, 
-                    Turno.observacion, 
+                    Turno.senia, 
                     Servicio.precio,
                     Servicio.duracion,
                     Turno.id
@@ -107,6 +110,7 @@ class ModeloTurno:
             if servicio is None:
                 query = (
                     select(
+                        Turno.id,
                         Turno.fecha,
                         Cliente.nombre,
                         Servicio.nombre,
@@ -120,6 +124,7 @@ class ModeloTurno:
             else:
                 query = (
                     select(
+                        Turno.id,
                         Turno.fecha,
                         Cliente.nombre,
                         Servicio.nombre,
@@ -156,3 +161,21 @@ class ModeloTurno:
             ).all()
 
             return clientes
+    
+
+    @staticmethod
+    def actualizar_turno(nro_turno: int, observacion: str):
+        ''' Método para actualizar el campo de observación en turnos agendados
+
+            :param int nro_turno: ID del turno a modificar
+            :param str observacion: Nueva observación de turno
+        '''
+        with Session(engine) as sesion:
+            turno_modificar = sesion.exec(
+                select(Turno)
+                .where(Turno.id == nro_turno)
+            ).one()
+
+            turno_modificar.observacion = observacion
+            sesion.add(turno_modificar)
+            sesion.commit()

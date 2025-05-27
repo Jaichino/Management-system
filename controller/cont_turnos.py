@@ -83,6 +83,11 @@ class TurnoController(QObject):
             self.actualizar_turnos
         )
 
+        # Asignación de evento para actualización de campo observaciones
+        self.model_thist.itemChanged.connect(
+            self.editar_observacion_turno
+        )
+
         ######################################################################
         # Asignación de métodos a botones
         ######################################################################
@@ -113,7 +118,7 @@ class TurnoController(QObject):
 
         for turno in turnos:
             tarjeta = TarjetaTurnosController()
-            
+            monto_faltante = turno[5] - turno[4]
             # Se obtiene hora de finalización
             hora_inicio = datetime.combine(datetime.today(), turno[1])
             hora_fin = hora_inicio + timedelta(minutes=turno[6])
@@ -122,12 +127,15 @@ class TurnoController(QObject):
             # Carga de valores en widget
             tarjeta.widget_tarjetaturno.lblCliente.setText(turno[2])
             tarjeta.widget_tarjetaturno.lblServicio.setText(turno[3])
-            tarjeta.widget_tarjetaturno.lblObservacion.setText(turno[4])
+            tarjeta.widget_tarjetaturno.lblSenia.setText(f'$ {turno[4]:.0f}')
             tarjeta.widget_tarjetaturno.lblHoraTurno.setText(
                 time.strftime(turno[1],"%H:%M")
             )
-            tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno[5]}')
+            tarjeta.widget_tarjetaturno.lblPrecio.setText(f'$ {turno[5]:.0f}')
             tarjeta.widget_tarjetaturno.lblDuracion.setText(hora_fin_format)
+            tarjeta.widget_tarjetaturno.lblFaltaPagar.setText(
+                f'$ {monto_faltante:.0f}'
+            )
 
             # Se captura id en botón
             tarjeta.widget_tarjetaturno.btnCancelarTurno.clicked.connect(
@@ -221,14 +229,15 @@ class TurnoController(QObject):
         # Definición del modelo para insertar datos
         self.model_thist = QStandardItemModel()
         self.model_thist.setHorizontalHeaderLabels(
-            ["Turno", "Fecha Turno", "Tratamiento", "Observación"]
+            ["id", "N°", "Fecha Turno", "Tratamiento", "Observación"]
         )
         # Seteo del modelo a tabla y dimensiones de columnas
         self.tabla_historial.setModel(self.model_thist)
-
-        self.tabla_historial.setColumnWidth(0,80)
-        self.tabla_historial.setColumnWidth(1,120)
-        self.tabla_historial.setColumnWidth(2,250)
+        
+        self.tabla_historial.setColumnHidden(0, True)
+        self.tabla_historial.setColumnWidth(1,40)
+        self.tabla_historial.setColumnWidth(2,120)
+        self.tabla_historial.setColumnWidth(3,200)
 
 
     ##########################################################################
@@ -260,12 +269,13 @@ class TurnoController(QObject):
 
         # Carga de datos en tabla
         for i, turno in enumerate(turnos, start=1):
-            fecha_format = date.strftime(turno[0], '%d/%m/%Y')
+            fecha_format = date.strftime(turno[1], '%d/%m/%Y')
             fila = [
+                QStandardItem(str(turno[0])),
                 QStandardItem(str(i)),
                 QStandardItem(fecha_format),
-                QStandardItem(turno[2]),
-                QStandardItem(turno[3])
+                QStandardItem(turno[3]),
+                QStandardItem(turno[4])
             ]
             # Alineado de valores
             for item in fila:
@@ -274,6 +284,29 @@ class TurnoController(QObject):
             self.model_thist.appendRow(fila)
 
 
+    ##########################################################################
+    # Método para la edición del campo de observaciones
+    ##########################################################################
+    def editar_observacion_turno(self):
+        ''' Método para realizar la actualización del campo observaciones en
+            la tabla de historial de turnos
+        '''
+        # Obtención de fila seleccionada
+        fila_seleccionada = self.tabla_historial.currentIndex().row()
+
+        # Obtención del nro_turno y valor de columna observación
+        observacion = self.model_thist.item(fila_seleccionada, 4).text()
+        turno = self.model_thist.item(fila_seleccionada, 0).text()
+
+        # Actualización del campo observación
+        ModeloTurno.actualizar_turno(nro_turno=turno, observacion=observacion)
+
+        # Mensaje de confirmación
+        QMessageBox.information(
+            self.main_controller,
+            "Historial de turnos",
+            "Observación cargada!"
+        )
 
 ##############################################################################
 ##############################################################################
@@ -294,7 +327,7 @@ class NuevoTurnoController(QMainWindow):
         # Llamada a widgets necesarios
         ######################################################################
         # Txts
-        self.txt_observacion = self.ui_turno.txtObservacion
+        self.txt_senia = self.ui_turno.txtSenia
 
         # Times
         self.date_turno = self.ui_turno.dateEditTurno
@@ -391,7 +424,7 @@ class NuevoTurnoController(QMainWindow):
         fecha = self.date_turno.date()
         hora = self.hora_turno.time()
         servicio = self.cmb_servicio.currentData()
-        observacion = self.txt_observacion.toPlainText()
+        senia = self.txt_senia.text()
         nombre_servicio = self.cmb_servicio.currentText()
 
         # Comprobación de selección de cliente
@@ -402,6 +435,10 @@ class NuevoTurnoController(QMainWindow):
                 "Se debe elegir un cliente"
             )
             return
+        
+        # Asignación de 0 si senia == ''
+        if senia == '':
+            senia = 0
         
         # Obtención de la duración del turno
         duracion = ModeloServicio.info_servicio(servicio).duracion
@@ -419,32 +456,45 @@ class NuevoTurnoController(QMainWindow):
 
         # Comprobación de que no hay solapamiento de turnos
         if not self.solapamiento_turnos(fecha_form, hora_form, duracion):
-            QMessageBox.critical(
+            QMessageBox.information(
                 self,
                 'Carga de turno',
                 'Hay un turno que coincide con el horario elegido!'
             )
             return
+        try:
+            senia = float(senia)
+            
+            # Carga de turno
+            self.modelo_turno.nuevo_turno(
+                cliente=cliente,
+                servicio=servicio,
+                fecha=fecha_form,
+                hora=hora_form,
+                senia=senia
+            )
 
-        # Carga de turno
-        self.modelo_turno.nuevo_turno(
-            cliente, servicio, fecha_form, hora_form, observacion
-        )
+            # Cerrado de ventana
+            self.close()
 
-        # Cerrado de ventana
-        self.close()
+            QMessageBox.information(
+                self,
+                'Carga de turno',
+                f'{nombre_servicio} agendado para {fecha_form.strftime("%d/%m")}'
+            )
 
-        QMessageBox.information(
-            self,
-            'Carga de turno',
-            f'{nombre_servicio} agendado para {fecha_form.strftime("%d/%m")}'
-        )
+            # Actualización de contenedor
+            self.main_controller.turno_controller.agregar_turnos(fecha_form)
+            self.main_controller.turno_controller.calendario.setSelectedDate(
+                fecha
+            )
 
-        # Actualización de contenedor
-        self.main_controller.turno_controller.agregar_turnos(fecha_form)
-        self.main_controller.turno_controller.calendario.setSelectedDate(
-            fecha
-        )
+            # Actualización de combobox pagina historial clientes
+            self.main_controller.turno_controller.llenar_cmb_clientes()
 
-        # Actualización de combobox pagina historial clientes
-        self.main_controller.turno_controller.llenar_cmb_clientes()
+        except ValueError:
+            QMessageBox.warning(
+                self,
+                'Nuevo Turno',
+                'Revisar monto de seña ingresado'
+            )

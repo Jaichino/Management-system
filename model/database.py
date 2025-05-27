@@ -70,6 +70,7 @@ class Turno(SQLModel, table=True):
     hora: time
     observacion: str | None = None
     estado: EstadoTurno
+    senia: float
 
     cliente: Cliente = Relationship(back_populates="turnos_cliente")
     servicio: Servicio = Relationship(back_populates="turnos_servicio")

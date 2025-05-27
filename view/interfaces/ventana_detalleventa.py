@@ -174,7 +174,11 @@ class VentanaDetalleVenta(object):
         sizePolicy.setHeightForWidth(self.lblTotalAbonar.sizePolicy().hasHeightForWidth())
         self.lblTotalAbonar.setSizePolicy(sizePolicy)
         self.lblTotalAbonar.setMinimumSize(QSize(0, 30))
-        self.lblTotalAbonar.setFont(font2)
+        font3 = QFont()
+        font3.setFamilies([u"Century Gothic"])
+        font3.setPointSize(12)
+        font3.setBold(True)
+        self.lblTotalAbonar.setFont(font3)
         self.lblTotalAbonar.setStyleSheet(u"color:#7D3928;")
         self.lblTotalAbonar.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
@@ -196,10 +200,10 @@ class VentanaDetalleVenta(object):
         self.btnGenFactura.setObjectName(u"btnGenFactura")
         self.btnGenFactura.setMinimumSize(QSize(0, 35))
         self.btnGenFactura.setMaximumSize(QSize(200, 16777215))
-        font3 = QFont()
-        font3.setFamilies([u"Century Gothic"])
-        font3.setPointSize(14)
-        self.btnGenFactura.setFont(font3)
+        font4 = QFont()
+        font4.setFamilies([u"Century Gothic"])
+        font4.setPointSize(14)
+        self.btnGenFactura.setFont(font4)
         self.btnGenFactura.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnGenFactura.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
