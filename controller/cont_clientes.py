@@ -6,8 +6,11 @@ from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtWidgets import QMainWindow, QMessageBox
+from PySide6.QtWidgets import (
+    QMainWindow, QMessageBox, QTableWidgetItem, QPushButton
+)
 
+from utils.generador_fichas import crear_ficha_cosmetologica
 from view.interfaces.ventana_clientes import VentanaCliente
 from model.modelo_cliente import ModeloCliente
 if TYPE_CHECKING:
@@ -68,20 +71,19 @@ class ClienteController(QObject):
     ##########################################################################
     def configurar_modelo_tablaclientes(self):
         # Se establece modelo y headers del modelo
-        self.modelo_tcliente = QStandardItemModel()
+        self.modelo_tcliente = self.tabla_cliente
+        self.modelo_tcliente.setColumnCount(5)
         self.modelo_tcliente.setHorizontalHeaderLabels(
-            ["ID","Nombre", "Teléfono", "Email"]
+            ["ID","Nombre", "Teléfono", "Email", "Ficha"]
         )
-
-        # Seteo de modelo en tabla de clientes
-        self.tabla_cliente.setModel(self.modelo_tcliente)
 
         # Se oculta la columna de id de cliente
         self.tabla_cliente.setColumnHidden(0, True)
 
         # Seteo de dimensiones fijas de columnas
         self.tabla_cliente.setColumnWidth(1,200)
-        self.tabla_cliente.setColumnWidth(2,300)
+        self.tabla_cliente.setColumnWidth(2,200)
+        self.tabla_cliente.setColumnWidth(3,300)
 
 
     ##########################################################################
@@ -89,41 +91,76 @@ class ClienteController(QObject):
     ##########################################################################
 
     def cargar_clientes(self):
-        # Se limpia el modelo antes de cargar clientes
-        self.modelo_tcliente.removeRows(0, self.modelo_tcliente.rowCount())
 
-        # Se verifica si hay algún filtro de nombre de cliente aplicado
-        filtro = self.txt_cliente.text()
-        if filtro == '':
-            # Se recuperan clientes de la base de datos
-            clientes = ModeloCliente.lista_clientes()
+        try:
+            self.modelo_tcliente.blockSignals(True)
+            # Se verifica si hay algún filtro de nombre de cliente aplicado
+            filtro = self.txt_cliente.text()
+            if filtro == '':
+                # Se recuperan clientes de la base de datos
+                clientes = ModeloCliente.lista_clientes()
 
-        else:
-            # Se recuperan clientes con el filtro de nombre aplicado
-            clientes = ModeloCliente.filtrar_cliente(filtro)
-            if not clientes:
-                QMessageBox.information(
-                    self.main_controller,
-                    "Clientes",
-                    "No se encontraron clientes"
-                )
-                return
-        
-        # Se crean filas y se cargan al modelo
-        for cliente in clientes:
-                if cliente.nombre == 'CLIENTE NO REGISTRADO':
-                    continue
-                fila = [
-                    QStandardItem(str(cliente.id)),
-                    QStandardItem(cliente.nombre),
-                    QStandardItem(str(cliente.telefono)),
-                    QStandardItem(cliente.email)
-                ]
-                # Alineado de valores
-                for item in fila:
-                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                
-                self.modelo_tcliente.appendRow(fila)
+            else:
+                # Se recuperan clientes con el filtro de nombre aplicado
+                clientes = ModeloCliente.filtrar_cliente(filtro)
+                if not clientes:
+                    QMessageBox.information(
+                        self.main_controller,
+                        "Clientes",
+                        "No se encontraron clientes"
+                    )
+                    return
+            
+            for i, c in enumerate(clientes, start=0):
+                if c.nombre == "CLIENTE NO REGISTRADO":
+                    clientes.pop(i)
+
+
+            # Posicionamiento de clientes en tabla
+            self.modelo_tcliente.setRowCount(len(clientes))
+
+            for i, cliente in enumerate(clientes):
+
+                    self.modelo_tcliente.setItem(
+                        i, 0, QTableWidgetItem(str(cliente.id))
+                    )
+                    self.modelo_tcliente.setItem(
+                        i, 1, QTableWidgetItem(cliente.nombre)
+                    )
+                    self.modelo_tcliente.setItem(
+                        i, 2, QTableWidgetItem(str(cliente.telefono))
+                    )
+                    self.modelo_tcliente.setItem(
+                        i, 3, QTableWidgetItem(cliente.email)
+                    )
+
+                    # Creación de botón en ultima columna
+                    btn = QPushButton("Ficha cosmetológica")
+                    btn.setStyleSheet(
+                    ''' QPushButton {
+                                    color: #7D3928;
+                                    font-size: 12pt
+                        }
+                        QPushButton:hover {
+                                    font-weight: bold;
+                                    color: #7D3928;
+                                    background-color: #F7E0D3;
+                        }
+                    '''
+                    )  
+                    btn.setCursor(Qt.PointingHandCursor)
+
+                    # Conexión de botón con método creación ficha cosmetológica
+                    btn.clicked.connect(
+                        lambda _,
+                        id=cliente.id : self.abrir_fichacosmetologica(
+                            cliente_id=id
+                        )
+                    )
+
+                    self.modelo_tcliente.setCellWidget(i, 4, btn)
+        finally:
+            self.modelo_tcliente.blockSignals(False)
 
 
     ##########################################################################
@@ -211,6 +248,21 @@ class ClienteController(QObject):
         # Actualización combobox cliente cuenta corriente (si tiene)
         self.main_controller.cc_controller.llenar_cmb_clientescc()
 
+
+    ##########################################################################
+    # Método para la apertura de fichas cosmetológicas por cliente
+    ##########################################################################
+    def abrir_fichacosmetologica(self, cliente_id: int):
+        ''' Método para vincular al botón de ver ficha cosmetológica en tabla
+            de clientes. Se recupera el id respectivo del botón y se ejecuta
+            la función crear_ficha_cosmetologica()
+        '''
+        # Información del cliente ingresado
+        cliente = ModeloCliente.info_cliente(cliente_id)
+        nombre = cliente.nombre
+
+        # Creación o apertura de ficha cosmetológica
+        crear_ficha_cosmetologica(cliente_id=cliente_id, nombre=nombre)
 
 
 ##############################################################################

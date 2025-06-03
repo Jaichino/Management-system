@@ -403,7 +403,7 @@ class VentanaPrincipal(object):
         self.scrollAreaServicio.setAlignment(Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignTop)
         self.contenedorServicios = QWidget()
         self.contenedorServicios.setObjectName(u"contenedorServicios")
-        self.contenedorServicios.setGeometry(QRect(0, 0, 82, 16))
+        self.contenedorServicios.setGeometry(QRect(0, 0, 879, 532))
         self.verticalLayout_3 = QVBoxLayout(self.contenedorServicios)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 0, 2, 0)
@@ -564,7 +564,7 @@ class VentanaPrincipal(object):
         self.scrollAreaTurnos.setWidgetResizable(True)
         self.contenedorTurnos = QWidget()
         self.contenedorTurnos.setObjectName(u"contenedorTurnos")
-        self.contenedorTurnos.setGeometry(QRect(0, 0, 98, 28))
+        self.contenedorTurnos.setGeometry(QRect(0, 0, 879, 462))
         self.verticalLayout_16 = QVBoxLayout(self.contenedorTurnos)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
@@ -2962,11 +2962,9 @@ class VentanaPrincipal(object):
         self.gridLayout = QGridLayout(self.widgetTabla)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.tablaClientes = QTableView(self.widgetTabla)
+        self.tablaClientes = QTableWidget(self.widgetTabla)
         self.tablaClientes.setObjectName(u"tablaClientes")
-        self.tablaClientes.setFont(font9)
-        self.tablaClientes.setStyleSheet(u"\n"
-"QTableView {\n"
+        self.tablaClientes.setStyleSheet(u"QTableWidget {\n"
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
@@ -3004,15 +3002,12 @@ class VentanaPrincipal(object):
 "QLineEdit {\n"
 ""
                         "	color: rgb(125, 57, 40);\n"
-"}\n"
-"")
+"}")
         self.tablaClientes.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.tablaClientes.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
         self.tablaClientes.setAlternatingRowColors(True)
         self.tablaClientes.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tablaClientes.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.tablaClientes.setShowGrid(True)
-        self.tablaClientes.setCornerButtonEnabled(False)
         self.tablaClientes.horizontalHeader().setStretchLastSection(True)
         self.tablaClientes.verticalHeader().setVisible(False)
 
@@ -3032,7 +3027,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(5)
+        self.StackedWidget.setCurrentIndex(7)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

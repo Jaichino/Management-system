@@ -9,3 +9,5 @@ __init__.py
 icono.ico
 bla_estetica.db
 importacion_bd.py
+fichas_cosmetologicas/
+plantillas/
