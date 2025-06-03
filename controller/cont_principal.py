@@ -77,7 +77,7 @@ class MainController(QMainWindow):
         self.stacked_ventas.setCurrentIndex(1)
 
         # Botón para ir a menú principal
-        self.btn_menu_historial.clicked.connect(self.ir_menu_principal)
+        self.btn_menu_principal.clicked.connect(self.ir_menu_principal)
         # Botón para abrir menú de clientes
         self.btn_menu_cliente.clicked.connect(self.abrir_menu_clientes)
         # Botón para abrir menú de servicios
