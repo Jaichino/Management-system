@@ -4,20 +4,12 @@
 
 import shutil
 import os
-import sys
-from pathlib import Path
+
+from utils.resouce_path import get_resource_path, get_output_path
 
 ##############################################################################
 # Función para creación de fichas cosmetológicas
 ##############################################################################
-def get_resource_path(relative_path):
-    """Obtiene la ruta absoluta al recurso, compatible con PyInstaller."""
-    try:
-        base_path = Path(sys._MEIPASS)
-    except AttributeError:
-        base_path = Path(__file__).resolve().parent.parent  # raíz del proyecto
-    return base_path / relative_path
-
 
 def crear_ficha_cosmetologica(cliente_id: int, nombre: str):
     ''' Función para creación de fichas comestológicas. Primero se obtienen
@@ -36,7 +28,7 @@ def crear_ficha_cosmetologica(cliente_id: int, nombre: str):
 
     # Rutas
     path_plantilla = get_resource_path(ubicacion_plantilla)
-    path_fichas = get_resource_path(carpeta_destino)
+    path_fichas = get_output_path(carpeta_destino)
     path_fichas.mkdir(exist_ok=True) # Crea la carpeta si no existe
 
     # Nombramiento del archivo

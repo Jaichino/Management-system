@@ -8,6 +8,6 @@ facturas/
 __init__.py
 icono.ico
 bla_estetica.db
-importacion_bd.py
 fichas_cosmetologicas/
 plantillas/
+import_bd.py

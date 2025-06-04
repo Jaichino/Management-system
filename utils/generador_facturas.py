@@ -2,28 +2,19 @@
 # Importaciones
 ##############################################################################
 
-import sys
 import os
-from pathlib import Path
 from datetime import date
+
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
+from utils.resouce_path import get_resource_path, get_output_path
+
 ##############################################################################
 # Función generadora de facturas
 ##############################################################################
-
-def get_resource_path(relative_path):
-    """Obtiene la ruta absoluta al recurso, compatible con PyInstaller."""
-    try:
-        base_path = Path(sys._MEIPASS)
-    except AttributeError:
-        base_path = Path(__file__).resolve().parent.parent  # raíz del proyecto
-    return base_path / relative_path
-
-
 def generar_factura_pdf(
         cliente: str, 
         productos: list, 
@@ -42,7 +33,7 @@ def generar_factura_pdf(
         :param float interes: Recargo de la venta
     '''
     # Ruta de salida
-    ruta_facturas = get_resource_path('facturas')
+    ruta_facturas = get_output_path('facturas')
     ruta_facturas.mkdir(parents=True, exist_ok=True)
 
     # Nombre del archivo
