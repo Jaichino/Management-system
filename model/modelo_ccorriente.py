@@ -3,8 +3,11 @@
 ##############################################################################
 
 from datetime import date
-from sqlmodel import select, Session, join, distinct
+
+from sqlmodel import select, Session, join, distinct, func
 from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import aliased
+
 from model.database import engine, CuentaCorriente, Cliente
 
 ##############################################################################
@@ -108,6 +111,34 @@ class ModeloCuentaCorriente:
                 .join(
                     CuentaCorriente, CuentaCorriente.cliente_id == Cliente.id
                 )
+                .order_by(Cliente.nombre)
             ).all()
 
             return clientes
+    
+
+    @staticmethod
+    def deuda_total_cuentacorrientes() -> float:
+        ''' Método para obtener la deuda total en cuentas corrientes de todos
+            los clientes.
+        '''
+        with Session(engine) as sesion:
+            subquery = (
+                select(
+                    func.max(CuentaCorriente.nro_operacion).label("nro_operacion"),
+                    CuentaCorriente.monto_pendiente
+                )
+                .group_by(CuentaCorriente.cliente_id)
+                .subquery()
+            )
+            
+            cc_alias = aliased(CuentaCorriente)
+
+            query = (
+                select(func.sum(cc_alias.monto_pendiente))
+                .join(subquery, cc_alias.nro_operacion == subquery.c.nro_operacion)
+            )
+            results = sesion.exec(query).one()
+
+            return results or 0.0
+

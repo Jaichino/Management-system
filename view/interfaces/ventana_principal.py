@@ -2018,9 +2018,16 @@ class VentanaPrincipal(object):
         self.widget_48 = QWidget(self.encabezadoCCorriente)
         self.widget_48.setObjectName(u"widget_48")
         self.widget_48.setStyleSheet(u"border: 0")
-        self.gridLayout_40 = QGridLayout(self.widget_48)
-        self.gridLayout_40.setObjectName(u"gridLayout_40")
-        self.gridLayout_40.setContentsMargins(0, -1, 50, -1)
+        self.verticalLayout_40 = QVBoxLayout(self.widget_48)
+        self.verticalLayout_40.setObjectName(u"verticalLayout_40")
+        self.lblDineroCalle = QLabel(self.widget_48)
+        self.lblDineroCalle.setObjectName(u"lblDineroCalle")
+        self.lblDineroCalle.setFont(font1)
+        self.lblDineroCalle.setStyleSheet(u"color: rgb(125, 57, 40);")
+        self.lblDineroCalle.setAlignment(Qt.AlignmentFlag.AlignBottom|Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing)
+
+        self.verticalLayout_40.addWidget(self.lblDineroCalle)
+
 
         self.horizontalLayout_25.addWidget(self.widget_48)
 
@@ -3056,7 +3063,7 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(5)
+        self.StackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -3107,6 +3114,7 @@ class VentanaPrincipal(object):
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"CUENTAS CORRIENTES", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Cliente", None))
         self.cmbClienteCC.setPlaceholderText("")
+        self.lblDineroCalle.setText(QCoreApplication.translate("MainWindow", u"Dinero en calle: $", None))
         self.btnEliminarUltimaCC.setText(QCoreApplication.translate("MainWindow", u"Eliminar \u00faltimo registro", None))
         self.lblDeudaTotalCC.setText(QCoreApplication.translate("MainWindow", u"Deuda total: $ x", None))
         self.rbtnSaldarCC.setText(QCoreApplication.translate("MainWindow", u"Saldar deuda", None))

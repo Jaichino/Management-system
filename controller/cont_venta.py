@@ -549,6 +549,9 @@ class VentasController(QObject):
                 # Actualización cmb clientes cc
                 self.main_controller.cc_controller.llenar_cmb_clientescc()
 
+                # Actualización dinero en calle
+                self.main_controller.cc_controller.ver_dinero_calle()
+
             # Mensaje de confirmación de venta generada
             if monto_entregado < self.total_abonar:
                 mensaje = 'Venta y deuda cargadas !'

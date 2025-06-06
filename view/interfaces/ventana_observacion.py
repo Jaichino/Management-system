@@ -18,6 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QDialog, QGridLayout, QLabel,
     QPlainTextEdit, QPushButton, QSizePolicy, QVBoxLayout,
     QWidget)
+from view import recursos_rc
 
 class VentanaObservacion(object):
     def setupUi(self, Dialog):
@@ -26,6 +27,9 @@ class VentanaObservacion(object):
         Dialog.resize(430, 320)
         Dialog.setMinimumSize(QSize(430, 320))
         Dialog.setMaximumSize(QSize(430, 320))
+        icon = QIcon()
+        icon.addFile(u":/images/images/icono.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        Dialog.setWindowIcon(icon)
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(2, 2, 2, 2)
@@ -71,6 +75,10 @@ class VentanaObservacion(object):
         self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.editObservacion = QPlainTextEdit(self.widget_3)
         self.editObservacion.setObjectName(u"editObservacion")
+        font1 = QFont()
+        font1.setFamilies([u"Century Gothic"])
+        font1.setPointSize(12)
+        self.editObservacion.setFont(font1)
         self.editObservacion.setStyleSheet(u"color: rgb(125, 57, 40);\n"
 "border: 2px solid #C18484;\n"
 "background-color: white;\n"
@@ -93,10 +101,8 @@ class VentanaObservacion(object):
         self.btnGuardarObs.setObjectName(u"btnGuardarObs")
         self.btnGuardarObs.setMinimumSize(QSize(100, 30))
         self.btnGuardarObs.setMaximumSize(QSize(100, 16777215))
-        font1 = QFont()
-        font1.setFamilies([u"Century Gothic"])
-        font1.setPointSize(12)
         self.btnGuardarObs.setFont(font1)
+        self.btnGuardarObs.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.btnGuardarObs.setStyleSheet(u"QPushButton {\n"
 "	color: #7D3928;\n"
 "	border: 1px solid;\n"

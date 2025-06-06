@@ -35,6 +35,7 @@ class CuentaCorrienteController(QObject):
         self.txt_montocc = main_controller.main_ui.txtMontoCC
         self.btn_cargarcc = main_controller.main_ui.btnCargarCC
         self.btn_eliminarcc = main_controller.main_ui.btnEliminarUltimaCC
+        self.lbl_dinerocalle = main_controller.main_ui.lblDineroCalle
 
         ######################################################################
         # Variables iniciales
@@ -51,6 +52,9 @@ class CuentaCorrienteController(QObject):
         
         # Llenado de combobox de clientes
         self.llenar_cmb_clientescc()
+
+        # Visualización de dinero en calle
+        self.ver_dinero_calle()
 
         ######################################################################
         # Asignación de métodos a botones
@@ -252,6 +256,9 @@ class CuentaCorrienteController(QObject):
         self.txt_montocc.setText("")
         self.cargar_cuentacorriente()
 
+        # Actualización dinero en calle
+        self.ver_dinero_calle()
+
 
     ##########################################################################
     # Método eliminación registro cuenta corriente
@@ -298,3 +305,17 @@ class CuentaCorrienteController(QObject):
 
         # Carga de tabla
         self.cargar_cuentacorriente()
+
+        # Actualización dinero en calle
+        self.ver_dinero_calle()
+    
+
+    ##########################################################################
+    # Método para visualizar dinero en calle
+    ##########################################################################
+    def ver_dinero_calle(self):
+        # Obtención de dinero en calle
+        dinero_calle = ModeloCuentaCorriente.deuda_total_cuentacorrientes()
+
+        # Actualización de label
+        self.lbl_dinerocalle.setText(f"Dinero en calle: $ {dinero_calle:.0f}")
