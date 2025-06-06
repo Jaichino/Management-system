@@ -81,9 +81,9 @@ class ClienteController(QObject):
         self.tabla_cliente.setColumnHidden(0, True)
 
         # Seteo de dimensiones fijas de columnas
-        self.tabla_cliente.setColumnWidth(1,200)
+        self.tabla_cliente.setColumnWidth(1,250)
         self.tabla_cliente.setColumnWidth(2,200)
-        self.tabla_cliente.setColumnWidth(3,300)
+        self.tabla_cliente.setColumnWidth(3,250)
 
 
     ##########################################################################

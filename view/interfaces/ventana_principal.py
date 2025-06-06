@@ -18,10 +18,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractSpinBox, QApplication, QCalendarWidget,
     QCheckBox, QComboBox, QDateEdit, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLayout, QLineEdit, QMainWindow, QPushButton,
-    QRadioButton, QScrollArea, QSizePolicy, QSpinBox,
-    QStackedWidget, QTableView, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+    QLayout, QLineEdit, QMainWindow, QPlainTextEdit,
+    QPushButton, QRadioButton, QScrollArea, QSizePolicy,
+    QSpinBox, QStackedWidget, QTableView, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget)
 from view import recursos_rc
 
 class VentanaPrincipal(object):
@@ -2522,7 +2522,7 @@ class VentanaPrincipal(object):
         self.MenuHistorial.setObjectName(u"MenuHistorial")
         self.verticalLayout_18 = QVBoxLayout(self.MenuHistorial)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.verticalLayout_18.setContentsMargins(2, 0, 2, 0)
+        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
         self.encabezadoHistorial = QWidget(self.MenuHistorial)
         self.encabezadoHistorial.setObjectName(u"encabezadoHistorial")
         self.encabezadoHistorial.setMaximumSize(QSize(16777215, 150))
@@ -2708,26 +2708,36 @@ class VentanaPrincipal(object):
 
         self.verticalLayout_18.addWidget(self.encabezadoHistorial)
 
-        self.widgetTablaHist = QWidget(self.MenuHistorial)
-        self.widgetTablaHist.setObjectName(u"widgetTablaHist")
-        self.widgetTablaHist.setStyleSheet(u"border: 0px;")
-        self.gridLayout_5 = QGridLayout(self.widgetTablaHist)
+        self.widget_51 = QWidget(self.MenuHistorial)
+        self.widget_51.setObjectName(u"widget_51")
+        self.gridLayout_5 = QGridLayout(self.widget_51)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.gridLayout_5.setHorizontalSpacing(6)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.tablaHistorial = QTableView(self.widgetTablaHist)
+        self.tablaHistorial = QTableWidget(self.widget_51)
         self.tablaHistorial.setObjectName(u"tablaHistorial")
-        self.tablaHistorial.setStyleSheet(u"\n"
-"QTableView {\n"
+        self.tablaHistorial.setStyleSheet(u"QTableWidget {\n"
 "	border: 2px solid #DEC4AE;\n"
 "	border-radius: 10px;\n"
 "	color: rgb(125, 57, 40);\n"
-"	font: 10pt \"Century Gothic\";\n"
+"	font: 12pt \"Century Gothic\";\n"
 "	gridline-color: rgb(125, 57, 40);\n"
 "	selection-background-color: #D3B9B4;\n"
 "	selection-color: rgb(0, 0, 0);\n"
 "	background-color: #FDF5EE;\n"
 "}\n"
 "\n"
+"\n"
+"/*QHeaderView {\n"
+"	color: rgb(125, 57, 40);\n"
+"	background-color: #F7E7DC;\n"
+"	font-weight: bold;\n"
+"	font-family: century-gothic;\n"
+"	font-size: 12pt;\n"
+"	gridline-color: rgb(125, 57, 40);\n"
+"	border-radius: 10px;\n"
+"	border-right: 1px solid rgb(125, 57, 40);\n"
+"}*/\n"
 "\n"
 "QHeaderView::section {\n"
 "    color: rgb(125, 57, 40);\n"
@@ -2742,11 +2752,10 @@ class VentanaPrincipal(object):
 "}\n"
 "\n"
 "QLineEdit {\n"
-"	color: rgb(125, 57, 40);\n"
-"}\n"
-"")
-        self.tablaHistorial.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.tablaHistorial.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked)
+""
+                        "	color: rgb(125, 57, 40);\n"
+"}")
+        self.tablaHistorial.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tablaHistorial.setAlternatingRowColors(True)
         self.tablaHistorial.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tablaHistorial.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -2756,7 +2765,27 @@ class VentanaPrincipal(object):
         self.gridLayout_5.addWidget(self.tablaHistorial, 0, 0, 1, 1)
 
 
-        self.verticalLayout_18.addWidget(self.widgetTablaHist)
+        self.verticalLayout_18.addWidget(self.widget_51)
+
+        self.widget_52 = QWidget(self.MenuHistorial)
+        self.widget_52.setObjectName(u"widget_52")
+        sizePolicy3.setHeightForWidth(self.widget_52.sizePolicy().hasHeightForWidth())
+        self.widget_52.setSizePolicy(sizePolicy3)
+        self.widget_52.setMinimumSize(QSize(885, 120))
+        self.widget_52.setMaximumSize(QSize(885, 120))
+        self.horizontalLayout_28 = QHBoxLayout(self.widget_52)
+        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
+        self.txtUltimaObservacion = QPlainTextEdit(self.widget_52)
+        self.txtUltimaObservacion.setObjectName(u"txtUltimaObservacion")
+        self.txtUltimaObservacion.setFont(font1)
+        self.txtUltimaObservacion.setStyleSheet(u"color: #7D3928;")
+        self.txtUltimaObservacion.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.txtUltimaObservacion.setReadOnly(True)
+
+        self.horizontalLayout_28.addWidget(self.txtUltimaObservacion)
+
+
+        self.verticalLayout_18.addWidget(self.widget_52)
 
         self.StackedWidget.addWidget(self.MenuHistorial)
         self.IntroPage = QWidget()
@@ -3027,14 +3056,14 @@ class VentanaPrincipal(object):
 
         self.retranslateUi(MainWindow)
 
-        self.StackedWidget.setCurrentIndex(7)
+        self.StackedWidget.setCurrentIndex(5)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Turnero BLA", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"BLA - Sistema de gesti\u00f3n", None))
         self.btnMenu.setText(QCoreApplication.translate("MainWindow", u"Men\u00fa", None))
         self.btnMenuProductos.setText(QCoreApplication.translate("MainWindow", u"Productos", None))
         self.btnMenuVentas.setText(QCoreApplication.translate("MainWindow", u"Ventas", None))
@@ -3094,6 +3123,7 @@ class VentanaPrincipal(object):
         self.lblClienteHist.setText(QCoreApplication.translate("MainWindow", u"Cliente", None))
         self.lblServicioHist.setText(QCoreApplication.translate("MainWindow", u"Servicio", None))
         self.btnBuscarHist.setText(QCoreApplication.translate("MainWindow", u"Buscar", None))
+        self.txtUltimaObservacion.setPlainText(QCoreApplication.translate("MainWindow", u"Ultima observaci\u00f3n: ", None))
         self.tituloClientes.setText(QCoreApplication.translate("MainWindow", u"GESTI\u00d3N DE CLIENTES", None))
         self.btnFiltrarCliente.setText(QCoreApplication.translate("MainWindow", u"Filtrar", None))
         self.btnNuevoCliente.setText(QCoreApplication.translate("MainWindow", u"Nuevo cliente", None))

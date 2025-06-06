@@ -6,13 +6,14 @@ from typing import TYPE_CHECKING
 from datetime import datetime, timedelta, date, time
 
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QMessageBox, QSpacerItem, QSizePolicy
+    QMainWindow, QWidget, QMessageBox, QSpacerItem, QSizePolicy, 
+    QTableWidgetItem, QPushButton, QDialog
 )
 from PySide6.QtCore import QObject, QDate, Qt
-from PySide6.QtGui import QStandardItem, QStandardItemModel
 
 from view.interfaces.ventana_turnos import VentanaTurno
 from view.interfaces.widget_tarjetaturno import WidgetTarjetaTurno
+from view.interfaces.ventana_observacion import VentanaObservacion
 from model.modelo_turno import ModeloTurno
 from model.modelo_cliente import ModeloCliente
 from model.modelo_servicio import ModeloServicio
@@ -52,6 +53,7 @@ class TurnoController(QObject):
         self.cmb_servicio_hist = main_controller.main_ui.cmbServicioHist
         self.tabla_historial = main_controller.main_ui.tablaHistorial
         self.btn_buscar_historial = main_controller.main_ui.btnBuscarHist
+        self.lbl_obs = main_controller.main_ui.txtUltimaObservacion
 
 
         ######################################################################
@@ -83,10 +85,6 @@ class TurnoController(QObject):
             self.actualizar_turnos
         )
 
-        # Asignación de evento para actualización de campo observaciones
-        self.model_thist.itemChanged.connect(
-            self.editar_observacion_turno
-        )
 
         ######################################################################
         # Asignación de métodos a botones
@@ -94,6 +92,10 @@ class TurnoController(QObject):
         # Asignación método para mostrar historial de turnos por cliente
         self.btn_buscar_historial.clicked.connect(
             self.carga_historial
+        )
+
+        self.btn_buscar_historial.clicked.connect(
+            self.inicializar_ultima_obs
         )
 
 
@@ -191,7 +193,8 @@ class TurnoController(QObject):
         # Actualización de pantalla y cmb clientes historial
         self.agregar_turnos(fecha)
         self.llenar_cmb_clientes()
-        self.model_thist.removeRows(0, self.model_thist.rowCount())
+
+
 
     ##########################################################################
     #                          HISTORIAL TURNOS                              #
@@ -227,17 +230,15 @@ class TurnoController(QObject):
     ##########################################################################
     def configuracion_modelo_tablahistorial(self):
         # Definición del modelo para insertar datos
-        self.model_thist = QStandardItemModel()
-        self.model_thist.setHorizontalHeaderLabels(
+        self.tabla_historial.setColumnCount(5)
+        self.tabla_historial.setHorizontalHeaderLabels(
             ["id", "N°", "Fecha Turno", "Tratamiento", "Observación"]
         )
-        # Seteo del modelo a tabla y dimensiones de columnas
-        self.tabla_historial.setModel(self.model_thist)
         
         self.tabla_historial.setColumnHidden(0, True)
-        self.tabla_historial.setColumnWidth(1,40)
-        self.tabla_historial.setColumnWidth(2,120)
-        self.tabla_historial.setColumnWidth(3,200)
+        self.tabla_historial.setColumnWidth(1,50)
+        self.tabla_historial.setColumnWidth(2,200)
+        self.tabla_historial.setColumnWidth(3,300)
 
 
     ##########################################################################
@@ -256,57 +257,156 @@ class TurnoController(QObject):
                 'Historial Clientes',
                 'Tenes que elegir un cliente !'
             )
-            self.model_thist.removeRows(0, self.model_thist.rowCount())
+            self.tabla_historial.setRowCount(0)
             return
-
-        # Se limpia el modelo antes de cargar clientes
-        self.model_thist.removeRows(0, self.model_thist.rowCount())
+            
 
         # Obtención de historial
         turnos = ModeloTurno.historial_turnos(
             cliente=cliente, fecha=fecha, servicio=servicio
         )
 
+        self.tabla_historial.setRowCount(len(turnos))
+
         # Carga de datos en tabla
         for i, turno in enumerate(turnos, start=1):
             fecha_format = date.strftime(turno[1], '%d/%m/%Y')
-            fila = [
-                QStandardItem(str(turno[0])),
-                QStandardItem(str(i)),
-                QStandardItem(fecha_format),
-                QStandardItem(turno[3]),
-                QStandardItem(turno[4])
-            ]
-            # Alineado de valores
-            for item in fila:
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-
-            self.model_thist.appendRow(fila)
-
+            
+            self.tabla_historial.setItem(
+                i-1, 0, QTableWidgetItem(str(turno[0]))
+            )
+            self.tabla_historial.setItem(
+                i-1, 1, QTableWidgetItem(str(i))
+            )
+            self.tabla_historial.setItem(
+                i-1, 2, QTableWidgetItem(fecha_format)
+            )
+            self.tabla_historial.setItem(
+                i-1, 3, QTableWidgetItem(turno[3])
+            )
+            
+            # Creación de botón
+            btn = QPushButton("Observación")
+            btn.setStyleSheet(
+                ''' QPushButton {
+                                color: #7D3928;
+                                font-size: 12pt
+                    }
+                    QPushButton:hover {
+                                font-weight: bold;
+                                color: #7D3928;
+                                background-color: #F7E0D3;
+                    }
+                '''
+            )
+            btn.setCursor(Qt.PointingHandCursor)
+            btn.clicked.connect(
+                lambda _,
+                turno_id = turno[0] : self.main_controller.ventana_observacion(
+                    turno_id=turno_id
+                )
+            )
+            self.tabla_historial.setCellWidget(i-1, 4, btn)
+    
 
     ##########################################################################
-    # Método para la edición del campo de observaciones
+    # Método para inicializar ventana con la última observación del cliente
     ##########################################################################
-    def editar_observacion_turno(self):
-        ''' Método para realizar la actualización del campo observaciones en
-            la tabla de historial de turnos
-        '''
-        # Obtención de fila seleccionada
-        fila_seleccionada = self.tabla_historial.currentIndex().row()
+    def inicializar_ultima_obs(self):
+        # Recuperación de cliente y servicio
+        cliente = self.cmb_cliente_hist.currentData()
+        servicio = self.cmb_servicio_hist.currentData()
 
-        # Obtención del nro_turno y valor de columna observación
-        observacion = self.model_thist.item(fila_seleccionada, 4).text()
-        turno = self.model_thist.item(fila_seleccionada, 0).text()
-
-        # Actualización del campo observación
-        ModeloTurno.actualizar_turno(nro_turno=turno, observacion=observacion)
-
-        # Mensaje de confirmación
-        QMessageBox.information(
-            self.main_controller,
-            "Historial de turnos",
-            "Observación cargada!"
+        # Obtención de historiales para ese cliente y servicio
+        historiales = ModeloTurno.historial_turnos(
+            cliente, date.today(), servicio
         )
+
+        if historiales:
+            # Obtención de la última observación
+            ultima_observacion = historiales[-1][4]
+            ult_servicio = historiales[-1][3]
+        else:
+            ultima_observacion = ""
+            ult_servicio = ""
+
+        if ultima_observacion is None:
+            ultima_observacion = ""
+
+        # Seteo de última observación
+        if not servicio:
+            self.lbl_obs.setPlainText(
+                f"Ultima observación [{ult_servicio}]: {ultima_observacion}")
+
+        else:
+            self.lbl_obs.setPlainText(
+                f'Ultima observacion: {ultima_observacion}'
+            )
+
+
+
+##############################################################################
+##############################################################################
+#                   CONTROLADOR VENTANA OBSERVACIONES                        #
+##############################################################################
+##############################################################################
+class VentanaObservacionController(QDialog):
+    def __init__(self, main_controller: 'MainController', turno_id: int):
+        super().__init__()
+        self.ui_obs = VentanaObservacion()
+        self.ui_obs.setupUi(self)
+        self.main_controller = main_controller
+        self.turno_id = turno_id
+
+        ######################################################################
+        # Llamada a widgets necesarios
+        ######################################################################
+        self.txt_observacion = self.ui_obs.editObservacion
+        self.btn_guardar_obs = self.ui_obs.btnGuardarObs
+
+
+        ######################################################################
+        # Configuraciones inicialización
+        ######################################################################
+        # Inicialización con observación de turno
+        self.inicializacion_observacion()
+
+        ######################################################################
+        # Seteo de métodos en botones
+        ######################################################################
+        self.btn_guardar_obs.clicked.connect(self.actualizar_observacion)
+
+
+    ##########################################################################
+    # Método para recuperar observación cargada en turno al iniciar ventana
+    ##########################################################################
+    def inicializacion_observacion(self):
+        # Información de turno
+        info = ModeloTurno.info_turno(self.turno_id)
+        observacion = info.observacion
+
+        # Configuración de campo de texto con observación
+        self.txt_observacion.setPlainText(observacion)
+    
+
+    ##########################################################################
+    # Método para modificar la observación de un turno determinado
+    ##########################################################################
+    def actualizar_observacion(self):
+        # Recuperación de texto en txt_observacion
+        observacion = self.txt_observacion.toPlainText()
+
+        # Guardado de observación en base de datos
+        ModeloTurno.actualizar_turno(self.turno_id, observacion)
+        QMessageBox.information(
+            self,
+            'Observación de turno',
+            'Observación cargada !'
+        )
+
+        # Actualización de ventana principal
+        self.main_controller.turno_controller.inicializar_ultima_obs()
+
 
 ##############################################################################
 ##############################################################################
@@ -491,6 +591,10 @@ class NuevoTurnoController(QMainWindow):
 
             # Actualización de combobox pagina historial clientes
             self.main_controller.turno_controller.llenar_cmb_clientes()
+            # Limpieza de tabla
+            self.main_controller.turno_controller.tabla_historial.setRowCount(0)
+            # Seteo ultima observación
+            self.main_controller.turno_controller.lbl_obs.setPlainText("Ultima observación: ")
 
         except ValueError:
             QMessageBox.warning(

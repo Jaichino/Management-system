@@ -9,7 +9,9 @@ from controller.cont_clientes import ClienteController, NuevoClienteController
 from controller.cont_servicios import (
     NuevoServicioController, ServiciosController
 )
-from controller.cont_turnos import NuevoTurnoController, TurnoController
+from controller.cont_turnos import (
+    NuevoTurnoController, TurnoController, VentanaObservacionController
+)
 from controller.cont_producto import (
     ProductoController, NuevoProductoController
 )
@@ -191,3 +193,9 @@ class MainController(QMainWindow):
     def ventana_detalleventa(self, nro_venta: int):
         self.abrir_detalleventa = DetalleVentaController(self, nro_venta)
         self.abrir_detalleventa.exec()
+
+    # Apertura ventana observaciones de turnos
+    def ventana_observacion(self, turno_id: int):
+        self.abrir_observacion = VentanaObservacionController(self, turno_id)
+        self.abrir_observacion.exec()
+

@@ -179,3 +179,18 @@ class ModeloTurno:
             turno_modificar.observacion = observacion
             sesion.add(turno_modificar)
             sesion.commit()
+    
+
+    @staticmethod
+    def info_turno(nro_turno: int):
+        ''' Método para obtener la información de un turno específico
+
+            :param int nro_turno: ID del turno a consultar
+        '''
+        with Session(engine) as sesion:
+            turno = sesion.exec(
+                select(Turno)
+                .where(Turno.id == nro_turno)
+            ).one()
+
+            return turno
