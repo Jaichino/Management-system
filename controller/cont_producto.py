@@ -270,6 +270,10 @@ class NuevoProductoController(QDialog):
         # Hacer foco en campo de código
         self.txt_codigo.setFocus()
 
+        # Evita que el boton del QDialog se accione con el Enter
+        self.btn_guardar_producto.setAutoDefault(False)
+        self.btn_guardar_producto.setDefault(False)
+
         ######################################################################
         # Asignación de métodos a botones
         ######################################################################\
