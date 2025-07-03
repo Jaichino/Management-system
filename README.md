@@ -1,4 +1,4 @@
-# BLA System
+# Management System
 
 A desktop application designed for managing a cosmetics business, built with Python, SQLModel, PyQt6, and SQLite.
 
