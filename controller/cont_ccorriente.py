@@ -164,10 +164,10 @@ class CuentaCorrienteController(QObject):
             ult_fila = self.model_cc.rowCount() - 1
             self.deuda = float(self.model_cc.item(ult_fila, 5).text()[2:])
             self.lbl_deudatotal.setText(
-                f"Deuda total: $ {self.deuda:.0f}"
+                f"Deuda cliente: $ {self.deuda:.0f}"
             )
         else:
-            self.lbl_deudatotal.setText("Deuda total: $ 0")
+            self.lbl_deudatotal.setText("Deuda cliente: $ 0")
 
 
     ##########################################################################
@@ -250,7 +250,7 @@ class CuentaCorrienteController(QObject):
         if deuda_total <= 0:
             ModeloCuentaCorriente.eliminar_cuentacorriente(cliente=cliente)
             self.llenar_cmb_clientescc()
-            self.lbl_deudatotal.setText("Deuda total: $ 0")
+            self.lbl_deudatotal.setText("Deuda cliente: $ 0")
             self.txt_montocc.setText("")
         
         self.txt_montocc.setText("")
@@ -294,7 +294,7 @@ class CuentaCorrienteController(QObject):
             ModeloCuentaCorriente.eliminar_operacion(nro_operacion)
             if ultima_fila == 0:
                 self.llenar_cmb_clientescc()
-                self.lbl_deudatotal.setText("Deuda total: $ 0")
+                self.lbl_deudatotal.setText("Deuda cliente: $ 0")
                 self.txt_montocc.setText("")
 
             QMessageBox.information(
@@ -318,4 +318,4 @@ class CuentaCorrienteController(QObject):
         dinero_calle = ModeloCuentaCorriente.deuda_total_cuentacorrientes()
 
         # Actualización de label
-        self.lbl_dinerocalle.setText(f"Dinero en calle: $ {dinero_calle:.0f}")
+        self.lbl_dinerocalle.setText(f"Deuda total: $ {dinero_calle:.0f}")
